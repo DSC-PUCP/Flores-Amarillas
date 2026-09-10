@@ -31,12 +31,18 @@ curl -fsSL https://bun.sh/install | bash
 > **Windows:** si clonas este repo y falla con `Filename too long`, usa
 > `git -c core.longpaths=true clone ...`. Hay rutas de plantillas muy anidadas.
 
+> **No uses el flag `--bun`.** `bun --bun run build` falla con
+> `wrangler.unstable_readConfig is not a function`: ese flag obliga a ejecutar
+> los binarios con el runtime de Bun, y la interoperabilidad CommonJS de Bun no
+> expone ese export de wrangler al plugin de Cloudflare. Con `bun run build` a
+> secas, vite corre bajo Node y compila bien. Es lo que hace CI.
+
 ## Arranque
 
 ```bash
 bun install
 cp .env.example .env   # y completa los valores
-bun --bun run dev
+bun run dev
 ```
 
 ## Variables de entorno
@@ -57,11 +63,11 @@ ahora todo pasa por variables de entorno.
 ## Scripts
 
 ```bash
-bun --bun run dev       # servidor de desarrollo
-bun --bun run build     # build de producción
-bun --bun run check     # formatea y lintea (correr ANTES de cada PR)
-bun --bun run test      # tests
-bun --bun run deploy    # build + deploy a Cloudflare Workers
+bun run dev       # servidor de desarrollo
+bun run build     # build de producción
+bun run check     # formatea y lintea (correr ANTES de cada PR)
+bun run test      # tests
+bun run deploy    # build + deploy a Cloudflare Workers
 ```
 
 ---
@@ -117,7 +123,7 @@ Ver también el diagrama en `docs/proceso_agregar_plantilla.drawio`.
 - De `developer` a `main` mergea únicamente el tech lead.
 - **Nada llega a `main` sin el checklist de QA firmado.** Después del
   lanzamiento el sitio tiene clientes pagando: cada deploy pasa por regresión.
-- `bun --bun run check` antes de cada PR.
+- `bun run check` antes de cada PR.
 - Una plantilla = una rama. El único archivo compartido es
   `template-components.ts`: agrega solo tu línea.
 

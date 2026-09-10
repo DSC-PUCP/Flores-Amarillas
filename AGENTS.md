@@ -13,43 +13,43 @@ Install
 - `bun install`
 
 Dev server
-- `bun --bun run dev`
+- `bun run dev`
 
 Build
-- `bun --bun run build`
+- `bun run build`
 
 Preview production build
-- `bun --bun run preview`
+- `bun run preview`
 
 Lint
-- `bun --bun run lint`
+- `bun run lint`
 
 Format
-- `bun --bun run format`
+- `bun run format`
 
 Lint + format (writes files)
-- `bun --bun run check`
+- `bun run check`
 
 Tests (Vitest, run all)
-- `bun --bun run test`
+- `bun run test`
 
 Run a single test file
-- `bun --bun run test -- src/path/to/file.test.tsx`
-- `bun --bun run test -- src/path/to/file.spec.ts`
+- `bun run test -- src/path/to/file.test.tsx`
+- `bun run test -- src/path/to/file.spec.ts`
 
 Run a single test by name
-- `bun --bun run test -- -t "name substring"`
+- `bun run test -- -t "name substring"`
 
 Watch tests
-- `bun --bun run test -- --watch`
+- `bun run test -- --watch`
 
 Storybook
-- `bun --bun run storybook`
-- `bun --bun run build-storybook`
+- `bun run storybook`
+- `bun run build-storybook`
 
 Cloudflare types and deploy
-- `bun --bun run cf-typegen`
-- `bun --bun run deploy`
+- `bun run cf-typegen`
+- `bun run deploy`
 
 ## Project Structure
 
@@ -147,4 +147,4 @@ Error handling
 
 - If env validation fails, check `.env` values for required `VITE_*` keys.
 - If routing errors occur, re-run dev server to regenerate `routeTree.gen.ts`.
-- For Cloudflare SSR issues, run `bun --bun run cf-typegen` and check `wrangler.json`.
+- For Cloudflare SSR issues, run `bun run cf-typegen` and check `wrangler.json`.
