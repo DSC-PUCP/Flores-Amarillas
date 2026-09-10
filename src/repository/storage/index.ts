@@ -5,7 +5,7 @@ import type {
 import getSupabaseClient from '@/lib/supabase';
 import { Result } from '@/lib/utils';
 
-const BUCKET_NAME = 'Valentines';
+const BUCKET_NAME = 'flores-amarillas';
 
 export const storageRepository: StorageRepository = {
   uploadImage: async ({ file, pageId, fileId }: UploadImageParams) => {

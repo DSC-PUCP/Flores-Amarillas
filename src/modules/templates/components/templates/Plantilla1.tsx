@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'node_modules/@tanstack/react-router/dist/esm/link';
+import { Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Button } from '@/components/ui/button';
