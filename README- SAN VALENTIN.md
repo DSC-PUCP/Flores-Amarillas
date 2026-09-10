@@ -113,8 +113,8 @@ Ver también el diagrama en `docs/proceso_agregar_plantilla.drawio`.
 
 ## Cómo trabajamos
 
-- `main` es producción. Se trabaja en `dev` y se abre PR.
-- De `dev` a `main` mergea únicamente el tech lead.
+- `main` es producción. Se trabaja en `developer` y se abre PR.
+- De `developer` a `main` mergea únicamente el tech lead.
 - **Nada llega a `main` sin el checklist de QA firmado.** Después del
   lanzamiento el sitio tiene clientes pagando: cada deploy pasa por regresión.
 - `bun --bun run check` antes de cada PR.
