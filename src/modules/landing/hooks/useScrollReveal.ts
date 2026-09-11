@@ -65,8 +65,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>() {
     // 2. Con el estado inicial ya resuelto, se arma el CSS de movimiento.
     root.dataset.motion = 'on';
 
-    if (pending.length === 0) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -79,7 +77,36 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>() {
     );
 
     for (const node of pending) observer.observe(node);
-    return () => observer.disconnect();
+
+    /**
+     * Hay bloques que aparecen despues del primer render: las tarjetas de
+     * plan se montan recien cuando responde el servicio. Sin esto quedarian
+     * fuera del escaneo inicial y, con el estado oculto ya activo, invisibles
+     * para siempre.
+     */
+    const watchNewNodes = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const added of mutation.addedNodes) {
+          if (!(added instanceof HTMLElement)) continue;
+          const candidates = added.matches('[data-reveal]') ? [added] : [];
+          for (const node of added.querySelectorAll<HTMLElement>(
+            '[data-reveal]'
+          )) {
+            candidates.push(node);
+          }
+          for (const node of candidates) {
+            if (node.dataset.revealed === 'true') continue;
+            observer.observe(node);
+          }
+        }
+      }
+    });
+    watchNewNodes.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      watchNewNodes.disconnect();
+    };
   }, []);
 
   return rootRef;

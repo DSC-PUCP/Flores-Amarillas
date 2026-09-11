@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { ArrowRight, Expand, Flower2, RotateCcw, Sparkles } from 'lucide-react';
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const MESSAGES = [
   {
@@ -99,6 +99,50 @@ export function ShowcaseSection() {
     }
   }, [preview, loaded]);
 
+  /**
+   * El ejemplo se pre-renderiza en el servidor, asi que el iframe empieza a
+   * cargar antes de que React hidrate esta seccion. Cuando termina primero,
+   * su evento `load` ya paso y el `onLoad` de React nunca se dispara; el
+   * aviso de `flower-demo:ready` se pierde por el mismo motivo. Antes eso
+   * solo rompia la edicion en vivo, pero al ocultar el iframe hasta que
+   * carga, la carrera perdida dejaba la seccion en blanco.
+   *
+   * Se comprueba directamente si el documento ya termino, y ademas queda un
+   * plazo de seguridad: pase lo que pase con los mensajes, el ejemplo se
+   * muestra.
+   */
+  const watchFrameRef = useRef<(() => void) | null>(null);
+
+  const attachFrame = useCallback((node: HTMLIFrameElement | null) => {
+    watchFrameRef.current?.();
+    watchFrameRef.current = null;
+    frameRef.current = node;
+    if (!node) return;
+
+    const markLoaded = () => setLoaded(true);
+
+    // Mismo origen, asi que contentDocument es accesible.
+    if (node.contentDocument?.readyState === 'complete') {
+      markLoaded();
+      return;
+    }
+
+    node.addEventListener('load', markLoaded);
+    const safety = setTimeout(markLoaded, 4000);
+    watchFrameRef.current = () => {
+      node.removeEventListener('load', markLoaded);
+      clearTimeout(safety);
+    };
+  }, []);
+
+  /**
+   * El escuchador se registra una sola vez y lee la edicion actual desde una
+   * referencia. Con `preview` en las dependencias se desmontaba y volvia a
+   * montar en cada tecleo, y un `ready` que llegara en ese hueco se perdia.
+   */
+  const previewRef = useRef(preview);
+  previewRef.current = preview;
+
   useEffect(() => {
     const sendWhenReady = (event: MessageEvent<unknown>) => {
       if (
@@ -114,14 +158,14 @@ export function ShowcaseSection() {
       ) {
         setLoaded(true);
         frameRef.current?.contentWindow?.postMessage(
-          { type: 'flower-demo:update', ...preview },
+          { type: 'flower-demo:update', ...previewRef.current },
           window.location.origin
         );
       }
     };
     window.addEventListener('message', sendWhenReady);
     return () => window.removeEventListener('message', sendWhenReady);
-  }, [preview]);
+  }, []);
 
   const remaining = MESSAGE_LIMIT - message.length;
   const counterLevel =
@@ -266,13 +310,12 @@ export function ShowcaseSection() {
                 </output>
               )}
               <iframe
-                ref={frameRef}
+                ref={attachFrame}
                 key={version}
                 src="/preview?embed=true"
                 title="Prueba tu dedicatoria: abre el sobre y descubre la carta"
                 className="bloom-preview-frame"
                 loading="lazy"
-                onLoad={() => setLoaded(true)}
               />
             </div>
             <Link

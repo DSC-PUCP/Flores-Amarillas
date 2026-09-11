@@ -1,4 +1,5 @@
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
+import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useScrollReveal } from './useScrollReveal';
 
@@ -123,5 +124,57 @@ describe('useScrollReveal', () => {
     ]);
 
     expect(getByTestId('below').dataset.revealed).toBe('true');
+  });
+  it('also watches blocks that mount later, like the plan cards', async () => {
+    stubMatchMedia(false);
+    stubLayout({ aboveTop: 120, belowTop: 4000 });
+
+    const observed: Element[] = [];
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        observe(node: Element) {
+          observed.push(node);
+        }
+        unobserve() {}
+        disconnect() {}
+      }
+    );
+
+    /** Imita a PlansSection: las tarjetas llegan despues de cargar datos. */
+    function LateBlock() {
+      const ref = useScrollReveal<HTMLDivElement>();
+      const [loaded, setLoaded] = useState(false);
+      return (
+        <div className="bloom-site" ref={ref}>
+          <p data-reveal data-testid="above">
+            Ya visible
+          </p>
+          <button type="button" onClick={() => setLoaded(true)}>
+            cargar
+          </button>
+          {loaded && (
+            <article data-reveal="grow" data-testid="late">
+              Tarjeta tardia
+            </article>
+          )}
+        </div>
+      );
+    }
+
+    const { getByTestId, getByRole, queryByTestId } = render(<LateBlock />);
+    expect(queryByTestId('late')).toBeNull();
+    observed.length = 0;
+
+    act(() => {
+      getByRole('button', { name: 'cargar' }).click();
+    });
+
+    // El MutationObserver entrega en microtarea, no de forma sincrona.
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(observed).toContain(getByTestId('late'));
   });
 });
