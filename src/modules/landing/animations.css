@@ -54,3 +54,286 @@
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
+/* --- Flores Amarillas --- */
+
+/* Vaivén horizontal suave, como pétalos movidos por el viento */
+@keyframes sway {
+  0%,
+  100% {
+    transform: translateX(-12px);
+  }
+  50% {
+    transform: translateX(12px);
+  }
+}
+
+/* Latido lento del sol / halo dorado */
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+}
+
+/* Giro muy lento para el sol decorativo */
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-sway {
+  animation: sway var(--sway-duration, 6s) ease-in-out infinite;
+}
+
+.animate-glow-breathe {
+  animation: glow-breathe 7s ease-in-out infinite;
+}
+
+.animate-slow-spin {
+  animation: slow-spin 40s linear infinite;
+}
+
+/* --- Escena y ornamentos (v2: profundidad) --- */
+
+/* Mariposa: revolotea en diagonal, no solo sube */
+@keyframes flutter {
+  0% {
+    transform: translate(0, 0) rotate(-6deg) scale(1);
+  }
+  25% {
+    transform: translate(26px, -22px) rotate(8deg) scale(0.94);
+  }
+  50% {
+    transform: translate(6px, -44px) rotate(-4deg) scale(1.04);
+  }
+  75% {
+    transform: translate(-24px, -20px) rotate(10deg) scale(0.96);
+  }
+  100% {
+    transform: translate(0, 0) rotate(-6deg) scale(1);
+  }
+}
+
+/* Pétalo cayendo: baja girando y derivando de lado */
+@keyframes petal-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(-8vh) translateX(0) rotate(0deg);
+  }
+  8% {
+    opacity: var(--petal-opacity, 0.7);
+  }
+  90% {
+    opacity: var(--petal-opacity, 0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(102vh) translateX(var(--petal-drift, 60px))
+      rotate(var(--petal-spin, 420deg));
+  }
+}
+
+/* Aparición "que crece desde la tierra" para las etapas de los planes */
+@keyframes grow-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scaleY(0.72);
+  }
+  60% {
+    transform: translateY(-3px) scaleY(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.animate-flutter {
+  animation: flutter var(--flutter-duration, 11s) ease-in-out infinite;
+}
+
+.animate-petal-fall {
+  animation: petal-fall var(--duration, 16s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.animate-grow-in {
+  animation: grow-in 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  transform-origin: bottom center;
+}
+
+/* Textura de papel: grano sutil para que el crema no sea un color plano */
+.paper-grain {
+  background-image:
+    radial-gradient(
+      circle at 20% 30%,
+      rgb(180 140 60 / 4%) 0 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgb(140 120 60 / 3%) 0 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 45% 85%,
+      rgb(160 130 70 / 3%) 0 1px,
+      transparent 1px
+    );
+  background-size:
+    90px 90px,
+    130px 130px,
+    170px 170px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flutter,
+  .animate-petal-fall,
+  .animate-grow-in,
+  .animate-slow-spin,
+  .animate-sway,
+  .animate-glow-breathe,
+  .animate-float-fade {
+    animation: none;
+  }
+}
+
+/* --- v3: elegancia y movimiento sutil --- */
+
+/* La tarjeta-regalo respira: flota apenas y se inclina de forma casi imperceptible */
+@keyframes float-card {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.2deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(0.6deg);
+  }
+}
+
+/* Polen dorado: sube en diagonal, gira y se desvanece */
+@keyframes pollen {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.7);
+  }
+  12% {
+    opacity: var(--pollen-opacity, 0.5);
+  }
+  80% {
+    opacity: var(--pollen-opacity, 0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--pollen-x, 40px), var(--pollen-y, -220px), 0)
+      scale(1.05);
+  }
+}
+
+/* Destello que recorre el botón principal, muy espaciado */
+@keyframes sheen {
+  0%,
+  88% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-18deg);
+  }
+}
+
+/* Halo que late lentamente detrás de la tarjeta */
+@keyframes aura {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.06);
+  }
+}
+
+/* Entrada suave hacia arriba */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float-card {
+  animation: float-card 9s ease-in-out infinite;
+}
+
+.animate-pollen {
+  animation: pollen var(--duration, 14s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.animate-sheen {
+  animation: sheen 7s ease-in-out infinite;
+}
+
+.animate-aura {
+  animation: aura 8s ease-in-out infinite;
+}
+
+.animate-rise-in {
+  animation: rise-in 0.9s ease-out both;
+  animation-delay: var(--delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-card,
+  .animate-pollen,
+  .animate-sheen,
+  .animate-aura,
+  .animate-rise-in {
+    animation: none;
+  }
+}
+
+/* Luciérnagas: parpadean y derivan, para la sección oscura */
+@keyframes firefly {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: var(--firefly-opacity, 0.9);
+  }
+  50% {
+    opacity: 0.25;
+    transform: translate(var(--firefly-x, 30px), var(--firefly-y, -40px));
+  }
+  80% {
+    opacity: var(--firefly-opacity, 0.9);
+  }
+}
+
+.animate-firefly {
+  animation: firefly var(--duration, 9s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-firefly {
+    animation: none;
+  }
+}

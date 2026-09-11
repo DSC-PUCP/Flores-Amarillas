@@ -3,6 +3,11 @@ export const createScrollToSection =
     e.preventDefault();
     const section = document.getElementById(sectionId);
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+      section.scrollIntoView({
+        behavior: reducedMotion ? 'instant' : 'smooth',
+      });
     }
   };

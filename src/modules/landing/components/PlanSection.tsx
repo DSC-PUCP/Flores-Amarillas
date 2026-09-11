@@ -1,101 +1,131 @@
-import { Link } from '@tanstack/react-router';
+import { Flower2, Loader2, RefreshCw } from 'lucide-react';
+import type { Plan } from '@/core/models';
 import { usePlans } from '../hooks/usePlans';
+import { PlanCard } from './PlanCard';
 
-export function PlansSection() {
-  const { data: plans = [], isLoading, error } = usePlans();
+interface PlansSectionProps {
+  /** Datos de revisión visual: la landing siempre usa los planes publicados. */
+  plansOverride?: Plan[];
+  /** La ruta de revisión visual puede desactivar la navegación. */
+  interactive?: boolean;
+}
 
-  if (isLoading) {
-    return (
-      <section id="plans" className="relative py-20 px-4">
-        <div className="text-center">
-          <div>Cargando planes...</div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section id="plans" className="relative py-20 px-4">
-        <div className="text-center">
-          <div>Error al cargar los planes: {error.message}</div>
-        </div>
-      </section>
-    );
-  }
+export function PlansSection({
+  plansOverride,
+  interactive = true,
+}: PlansSectionProps = {}) {
+  const {
+    data: fetchedPlans = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = usePlans();
+  const isPreview = plansOverride !== undefined;
+  const plans = plansOverride ?? fetchedPlans;
+  const showLoading = !isPreview && isLoading;
+  const showError = !isPreview && Boolean(error) && plans.length === 0;
+  const showEmpty = !showLoading && !showError && plans.length === 0;
 
   return (
-    <section id="plans" className="relative py-20 px-4 overflow-hidden">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl text-slate-900 dark:text-slate-100 font-bold mb-4">
-            Elige tu Plan
-          </h2>
-          <p className="text-slate-600 dark:text-slate-300">
-            Desde opciones gratuitas hasta experiencias premium
+    <section
+      id="plans"
+      aria-labelledby="plans-title"
+      className="scroll-mt-24 bg-[#FFFCF4] px-5 py-20 text-[#183E32] sm:px-8 lg:py-28"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+              <span className="size-2 rounded-full bg-[#F17B62]" />
+              Un detalle, a tu manera
+            </p>
+            <h2
+              id="plans-title"
+              className="max-w-xl font-display text-4xl leading-[1.1] tracking-[-0.035em] sm:text-5xl"
+            >
+              Tú pones el cariño.
+              <br />
+              <span className="italic">Elige tu dedicatoria.</span>
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-[#183E32]/75">
+            Compara lo que incluye cada opción. Después, elige tu diseño y
+            personalízalo con las palabras y los recuerdos que lo hacen suyo.
           </p>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,320px))] gap-8 justify-center">
-          {plans.map((plan) => (
+        {showLoading ? (
+          <div aria-live="polite">
+            <p className="mb-6 flex items-center justify-center gap-2 text-sm">
+              <Loader2
+                aria-hidden="true"
+                className="size-4 motion-safe:animate-spin"
+              />
+              Buscando los planes disponibles…
+            </p>
             <div
-              key={plan.id}
-              className="w-full max-w-sm h-96 flex flex-col rounded-xl p-6 border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              aria-hidden="true"
+              className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2"
             >
-              {/* Header del plan */}
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                  {plan.name}
-                </h3>
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-4xl font-bold text-rose-600 dark:text-rose-400">
-                    S./ {plan.price}
-                  </span>
-                  {plan.price > 0 && (
-                    <span className="text-slate-500 dark:text-slate-400">
-                      c/u
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Área para descripción y características - expandible */}
-              <div className="flex-grow mb-6">
-                <div className="space-y-3">
-                  {/* Placeholder para descripción futura */}
-                  <p className="text-sm text-slate-600 dark:text-slate-300 text-center">
-                    {plan.description}
-                  </p>
-
-                  {/* Espacio reservado para características futuras */}
-                  <div className="space-y-2 pt-4">
-                    {
-                      plan.features.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center text-sm text-slate-600 dark:text-slate-300"
-                        >
-                          <span className="w-2 h-2 bg-rose-400 rounded-full mr-3"></span>
-                          {feature}
-                        </div>
-                      ))
-                    }
-
-                  </div>
-                </div>
-              </div>
-
-              {/* Botón fijo en la parte inferior */}
-              <div className="mt-auto">
-                <Link to="/template" className="block w-full">
-                  <button className="w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 bg-rose-600 hover:bg-rose-700 text-white shadow-md hover:shadow-lg">
-                    Seleccionar Plan
-                  </button>
-                </Link>
-              </div>
+              {['first', 'second'].map((id) => (
+                <div
+                  key={id}
+                  className="h-80 rounded-[28px] border border-[#183E32]/10 bg-[#EAF0E4]/60 motion-safe:animate-pulse"
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : showError || showEmpty ? (
+          <div
+            aria-live="polite"
+            className="mx-auto flex max-w-xl flex-col items-center rounded-[28px] border border-[#183E32]/15 bg-white px-6 py-12 text-center"
+          >
+            <Flower2
+              aria-hidden="true"
+              className="mb-5 size-10 text-[#F17B62]"
+            />
+            <h3 className="mb-3 text-xl font-semibold">
+              {showError
+                ? 'No pudimos cargar los precios'
+                : 'Estamos preparando los próximos detalles'}
+            </h3>
+            <p className="max-w-sm text-sm leading-6 text-[#183E32]/75">
+              {showError
+                ? 'Vuelve a intentarlo para consultar los planes disponibles. Mientras tanto, puedes seguir explorando la experiencia de arriba.'
+                : 'Por ahora no hay planes disponibles. Puedes volver a consultar en un momento.'}
+            </p>
+            {!isPreview && (
+              <button
+                type="button"
+                onClick={() => void refetch()}
+                disabled={isFetching}
+                className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#FFD329] px-6 py-3 text-sm font-bold transition-colors hover:bg-[#F2C21A] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32] disabled:cursor-wait disabled:opacity-60"
+              >
+                <RefreshCw
+                  aria-hidden="true"
+                  className={
+                    isFetching ? 'size-4 motion-safe:animate-spin' : 'size-4'
+                  }
+                />
+                {isFetching ? 'Consultando…' : 'Volver a intentar'}
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-stretch justify-center gap-6 [&>article]:basis-full sm:[&>article]:basis-[calc(50%-12px)] lg:[&>article]:basis-[calc(33.333%-16px)] [&>article]:grow">
+            {plans.map((plan) => (
+              <PlanCard key={plan.id} plan={plan} interactive={interactive} />
+            ))}
+          </div>
+        )}
+
+        {!showLoading && !showError && !showEmpty && (
+          <p className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#183E32]/70">
+            En los diseños de pago, primero revisas tu dedicatoria y después
+            coordinas la activación por WhatsApp. El pago se valida manualmente.
+          </p>
+        )}
       </div>
     </section>
   );

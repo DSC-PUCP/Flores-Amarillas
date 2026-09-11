@@ -2,150 +2,178 @@ import {
   createFileRoute,
   Link,
   Outlet,
-  useRouter,
+  useRouterState,
 } from '@tanstack/react-router';
-import { Heart, Menu, Moon, Sun, X } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, Flower2, Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import bloomCss from '@/modules/landing/bloom.css?url';
 
 export const Route = createFileRoute('/__layout')({
+  head: () => ({ links: [{ rel: 'stylesheet', href: bloomCss }] }),
   component: LayoutComponent,
 });
 
+const NAV_ITEMS = [
+  { hash: 'demo', label: 'Prueba el regalo' },
+  { hash: 'how-it-works', label: 'Cómo funciona' },
+  { hash: 'plans', label: 'Planes' },
+  { hash: 'faq', label: 'Preguntas' },
+];
+
 function LayoutComponent() {
   const [isOpen, setIsOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const [progress, setProgress] = useState(0);
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
 
-  const router = useRouter();
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  useEffect(() => {
     setIsOpen(false);
-  };
+    setActiveSection('');
+    if (pathname !== '/home') {
+      setProgress(0);
+      return;
+    }
+    const updateProgress = () => {
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(
+        height > 0 ? Math.min(1, Math.max(0, window.scrollY / height)) : 0
+      );
+      if (window.scrollY < 200) setActiveSection('');
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        }
+      },
+      { rootMargin: '-15% 0px -55% 0px', threshold: 0 }
+    );
+    for (const item of NAV_ITEMS) {
+      const node = document.getElementById(item.hash);
+      if (node) observer.observe(node);
+    }
+    return () => {
+      window.removeEventListener('scroll', updateProgress);
+      observer.disconnect();
+    };
+  }, [pathname]);
 
-  const scrollToPlans = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsOpen(false);
-
-    const scroll = () => {
-      const section = document.getElementById('plans');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    if (!isOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        document.getElementById('bloom-menu-toggle')?.focus();
       }
     };
-
-    // Si no está en home, navegar primero
-    if (router.state.location.pathname !== '/home') {
-      router.navigate({ to: '/home' });
-      setTimeout(scroll, 100);
-    } else {
-      scroll();
-    }
-  };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [isOpen]);
 
   return (
-    <div className={`${darkMode ? 'dark' : ''} min-h-screen flex flex-col`}>
-      <nav className=" fixed w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 transition-colors duration-300 ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <Link
-              to="/home"
-              onClick={scrollToTop}
-              className="flex items-center gap-2 group"
-            >
-              <div className="bg-gradient-to-br from-rose-500 to-pink-600 p-2 rounded-lg group-hover:scale-110 transition-transform shadow-lg shadow-rose-500/20">
-                <Heart className="h-6 w-6 text-white fill-current" />
-              </div>
-              <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-slate-100">
-                Love<span className="text-rose-500">Dedicatorias</span>
-              </span>
-            </Link>
-
-            <div className="hidden md:flex items-center space-x-8">
+    <div className="bloom-shell">
+      <a href="#main-content" className="bloom-skip">
+        Saltar al contenido
+      </a>
+      <header className="bloom-nav">
+        <div className="bloom-nav-inner">
+          <Link
+            to="/home"
+            className="bloom-logo"
+            onClick={() => setIsOpen(false)}
+          >
+            <span className="bloom-logo-mark">
+              <Flower2 />
+            </span>
+            <span>
+              Dedicatorias <em>en Flor</em>
+            </span>
+          </Link>
+          <nav className="bloom-nav-links" aria-label="Navegación principal">
+            {NAV_ITEMS.map((item) => (
               <Link
+                key={item.hash}
                 to="/home"
-                onClick={scrollToTop}
-                className="text-slate-600 dark:text-slate-300 hover:text-rose-600 transition-colors font-medium"
-                activeProps={{ className: 'text-rose-600 font-medium' }}
+                hash={item.hash}
+                aria-current={
+                  pathname === '/home' && activeSection === item.hash
+                    ? 'location'
+                    : undefined
+                }
               >
-                Inicio
+                {item.label}
               </Link>
-              <button
-                onClick={scrollToPlans}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-              >
-                Crear Dedicatoria
-              </button>
-            </div>
-
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="text-slate-900 dark:text-slate-100 p-2"
-              >
-                {isOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </button>
-            </div>
+            ))}
+          </nav>
+          <div className="bloom-nav-action">
+            <Link to="/template" className="bloom-button">
+              Crear mi regalo <ArrowRight size={14} />
+            </Link>
+            <button
+              id="bloom-menu-toggle"
+              type="button"
+              className="bloom-menu-toggle"
+              aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={isOpen}
+              aria-controls="bloom-mobile-menu"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X size={21} /> : <Menu size={21} />}
+            </button>
           </div>
         </div>
-
         {isOpen && (
-          <div className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-            <div className="px-4 pt-2 pb-6 space-y-2">
+          <nav
+            id="bloom-mobile-menu"
+            className="bloom-mobile-menu"
+            aria-label="Navegación móvil"
+          >
+            {NAV_ITEMS.map((item) => (
               <Link
+                key={item.hash}
                 to="/home"
-                onClick={scrollToTop}
-                className="block px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-rose-600"
+                hash={item.hash}
+                onClick={() => setIsOpen(false)}
               >
-                Inicio
+                {item.label}
               </Link>
-              <div className="pt-4">
-                <button
-                  onClick={scrollToPlans}
-                  className="w-full bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-medium"
-                >
-                  Crear Dedicatoria
-                </button>
-              </div>
-            </div>
-          </div>
+            ))}
+          </nav>
         )}
-      </nav>
-
-      <main className="flex-1 pt-20">
+        <div
+          className="bloom-scroll-progress"
+          style={{ scale: `${progress} 1` }}
+          aria-hidden="true"
+        />
+      </header>
+      <main id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 mt-auto">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-slate-600 dark:text-slate-300">
-          © 2026 Valentine Web Gift. Hecho con 💖
+      <footer className="bloom-footer">
+        <div className="bloom-container">
+          <Link to="/home" className="bloom-logo">
+            <span className="bloom-logo-mark">
+              <Flower2 />
+            </span>
+            <span>
+              Dedicatorias <em>en Flor</em>
+            </span>
+          </Link>
+          <p>© 2026 · Pequeños detalles. Bonitas formas de querer.</p>
+          <div className="bloom-footer-links">
+            <Link to="/home" hash="demo">
+              Ver el regalo
+            </Link>
+            <Link to="/home" hash="faq">
+              ¿Tienes dudas?
+            </Link>
+          </div>
         </div>
       </footer>
-
-      {/* Botón Dark / Light flotante */}
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="
-          fixed bottom-6 right-6 z-50
-          h-12 w-12 rounded-full
-          flex items-center justify-center
-          bg-white dark:bg-slate-900
-          border border-slate-200 dark:border-slate-700
-          shadow-md hover:shadow-lg
-          transition-all duration-300
-        "
-        aria-label="Cambiar tema"
-      >
-        {darkMode ? (
-          <Sun className="h-5 w-5 text-yellow-400" />
-        ) : (
-          <Moon className="h-5 w-5 text-blue-500" />
-        )}
-      </button>
     </div>
   );
 }
