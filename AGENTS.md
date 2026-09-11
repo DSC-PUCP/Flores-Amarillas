@@ -12,6 +12,13 @@ No Cursor rules (.cursor/rules/ or .cursorrules) or Copilot instructions
 Install
 - `bun install`
 
+> The Cloudflare config file must stay named `wrangler.jsonc`, not
+> `wrangler.json`. Bun's resolver matches the bare specifier `wrangler` against
+> a `wrangler.json` in the project root before looking in `node_modules`, so
+> `@cloudflare/vite-plugin` ends up importing the config file instead of the
+> package and the build fails with
+> `wrangler.unstable_readConfig is not a function`.
+
 Dev server
 - `bun --bun run dev`
 
@@ -147,4 +154,4 @@ Error handling
 
 - If env validation fails, check `.env` values for required `VITE_*` keys.
 - If routing errors occur, re-run dev server to regenerate `routeTree.gen.ts`.
-- For Cloudflare SSR issues, run `bun --bun run cf-typegen` and check `wrangler.json`.
+- For Cloudflare SSR issues, run `bun --bun run cf-typegen` and check `wrangler.jsonc`.

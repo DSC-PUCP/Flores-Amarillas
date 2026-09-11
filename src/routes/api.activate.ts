@@ -13,7 +13,7 @@ export const Route = createFileRoute('/api/activate')({
             return new Response('Empty request body', { status: 400 });
           }
           body = JSON.parse(text);
-        } catch (error) {
+        } catch {
           return new Response('Invalid JSON in request body', { status: 400 });
         }
 
