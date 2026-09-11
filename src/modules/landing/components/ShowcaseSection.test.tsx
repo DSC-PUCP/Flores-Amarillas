@@ -176,4 +176,67 @@ describe('ShowcaseSection', () => {
         .value
     ).toBe('Valeria');
   });
+  it('moves the idea selection with the arrow keys and keeps a single tab stop', () => {
+    render(<ShowcaseSection />);
+    loadPreviewFrame();
+
+    const love = screen.getByRole('button', { name: 'Para mi amor' });
+    const friend = screen.getByRole('button', { name: 'Para mi amiga' });
+    const family = screen.getByRole('button', { name: 'Para mi familia' });
+
+    // Solo la opción activa es alcanzable con el tabulador.
+    expect(love.getAttribute('tabindex')).toBe('0');
+    expect(friend.getAttribute('tabindex')).toBe('-1');
+
+    love.focus();
+    fireEvent.keyDown(love, { key: 'ArrowRight' });
+
+    expect(friend.getAttribute('aria-pressed')).toBe('true');
+    expect(friend.getAttribute('tabindex')).toBe('0');
+    expect(love.getAttribute('tabindex')).toBe('-1');
+    expect(document.activeElement).toBe(friend);
+    expect(
+      screen.getByLabelText<HTMLInputElement>('¿Para quién son estas flores?')
+        .value
+    ).toBe('Lucía');
+
+    // Se recorre en ciclo hacia atrás desde la primera opción.
+    fireEvent.keyDown(friend, { key: 'ArrowLeft' });
+    fireEvent.keyDown(love, { key: 'ArrowLeft' });
+    expect(family.getAttribute('aria-pressed')).toBe('true');
+    expect(document.activeElement).toBe(family);
+
+    fireEvent.keyDown(family, { key: 'Home' });
+    expect(love.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('says whether the edits already reached the example', () => {
+    render(<ShowcaseSection />);
+    loadPreviewFrame();
+
+    expect(screen.getByText('Ejemplo actualizado')).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText('Algo que quieras decirle'), {
+      target: { value: 'Un mensaje nuevo.' },
+    });
+    expect(screen.getByText('Llevando tus cambios…')).toBeTruthy();
+
+    flushTyping();
+    expect(screen.getByText('Ejemplo actualizado')).toBeTruthy();
+  });
+
+  it('warns when the message is close to the character limit', () => {
+    render(<ShowcaseSection />);
+    loadPreviewFrame();
+    const message = screen.getByLabelText('Algo que quieras decirle');
+
+    fireEvent.change(message, { target: { value: 'a'.repeat(100) } });
+    expect(screen.getByText('100/250').getAttribute('data-level')).toBe('ok');
+
+    fireEvent.change(message, { target: { value: 'a'.repeat(215) } });
+    expect(screen.getByText('215/250').getAttribute('data-level')).toBe('warn');
+
+    fireEvent.change(message, { target: { value: 'a'.repeat(250) } });
+    expect(screen.getByText('250/250').getAttribute('data-level')).toBe('full');
+  });
 });

@@ -1,4 +1,5 @@
 import { ArrowUpRight, Flower2, Heart, Image, Link2 } from 'lucide-react';
+import type { CSSProperties } from 'react';
 
 export function FeaturesSection() {
   return (
@@ -9,7 +10,7 @@ export function FeaturesSection() {
     >
       <div className="bloom-container">
         <div className="bloom-includes-heading">
-          <div>
+          <div data-reveal="left">
             <span className="bloom-eyebrow">
               <span /> MUCHO MÁS QUE UN «FELIZ DÍA»
             </span>
@@ -19,13 +20,17 @@ export function FeaturesSection() {
               <em>Mucho de ustedes.</em>
             </h2>
           </div>
-          <p>
+          <p data-reveal="right">
             Un regalo digital que reúne lo que una foto suelta o un mensaje de
             chat no pueden contar juntos.
           </p>
         </div>
         <div className="bloom-includes-grid">
-          <article className="bloom-feature bloom-feature-letter">
+          <article
+            className="bloom-feature bloom-feature-letter"
+            data-reveal="grow"
+            style={{ '--reveal-i': 0 } as CSSProperties}
+          >
             <span className="bloom-feature-icon">
               <Heart size={21} />
             </span>
@@ -50,7 +55,11 @@ export function FeaturesSection() {
               <Heart size={19} />
             </div>
           </article>
-          <article className="bloom-feature bloom-feature-photos">
+          <article
+            className="bloom-feature bloom-feature-photos"
+            data-reveal="grow"
+            style={{ '--reveal-i': 1 } as CSSProperties}
+          >
             <span className="bloom-feature-icon">
               <Image size={21} />
             </span>
@@ -74,7 +83,11 @@ export function FeaturesSection() {
               </div>
             </div>
           </article>
-          <article className="bloom-feature bloom-feature-link">
+          <article
+            className="bloom-feature bloom-feature-link"
+            data-reveal="grow"
+            style={{ '--reveal-i': 2 } as CSSProperties}
+          >
             <span className="bloom-feature-icon">
               <Link2 size={21} />
             </span>

@@ -35,3 +35,54 @@ Prompt utilizado con la herramienta integrada:
 - La comprobación TypeScript global encuentra errores en módulos existentes de viajes, Storybook, gráficos y otras plantillas fuera del rediseño.
 
 No hubo navegador conectado para revisión visual en esta sesión. La consulta al Supabase configurado no resolvió DNS, por lo que no se verificaron los precios ni la disponibilidad del catálogo en vivo. Los estados de carga/error permiten reintentar sin mostrar datos de compra inventados. No se modificaron datos remotos ni se desplegó el sitio.
+
+## Capa de movimiento (rama `angel-mp`)
+
+Sobre el rediseño traspasado se añadió una capa de animación e interacción en
+`src/modules/landing/motion.css`, que se carga después de `bloom.css` porque
+aquel archivo cierra con un `animation: none` general para movimiento
+reducido y cualquier animación nueva tiene que declararse después.
+
+- **Revelado al hacer scroll.** Un único `IntersectionObserver`
+  (`hooks/useScrollReveal.ts`) atiende todos los `[data-reveal]` de la página.
+  Primero revela lo que ya está en pantalla y recién entonces marca
+  `data-motion="on"` en la raíz, que es lo que activa el estado oculto en CSS:
+  así el HTML pre-renderizado se ve completo aunque el JS no llegue y al
+  hidratar no parpadea nada. Sin `IntersectionObserver` o con movimiento
+  reducido, revela todo de una vez.
+- **Parallax del hero** (`hooks/useParallax.ts`). Escribe `--px`, `--py` y
+  `--scroll` como variables CSS desde `requestAnimationFrame`, sin estado de
+  React. Cada capa del arte —ramo, sticker, carta, nota de entrega, órbita—
+  se mueve a distinta profundidad. Inactivo en punteros gruesos.
+- **Ambiente** (`art/Ambient.tsx`). Pétalos que caen, polen que sube y
+  mariposas que cruzan, según los elementos propuestos en
+  `creatividad/conceptos/elementos-flores-amarillas.md`. Valores escritos a
+  mano, no sorteados, para que el marcado del servidor y el del cliente
+  coincidan.
+- **Navegación.** La barra se encoge y gana sombra al bajar, el subrayado de
+  la sección activa se desliza, el menú móvil se despliega y repliega (queda
+  en el DOM para poder animar el cierre) y aparece un botón de volver arriba.
+- **Ejemplo interactivo.** Las ideas de dedicatoria se recorren con las
+  flechas con un solo punto de tabulación, un indicador dice si los cambios
+  ya llegaron al ejemplo, el contador avisa al acercarse al límite y el
+  iframe aparece con una transición cuando termina de cargar.
+- **Resto de secciones.** Entrada escalonada de tarjetas y pasos, la línea de
+  cada paso se dibuja al entrar en pantalla, los planes escriben sus
+  características de arriba abajo y la cinta del hero es una marquesina
+  continua que se detiene al pasar el puntero.
+
+Todo se apaga con `prefers-reduced-motion: reduce`, dejando el contenido
+visible y nunca oculto.
+
+### Verificación de esta rama
+
+- `npm run build`: compilación y prerender de 9 páginas.
+- `npm test`: 13 pruebas en verde, incluidas las del revelado (sin
+  `IntersectionObserver`, con movimiento reducido y durante la hidratación),
+  la navegación por teclado de las ideas, el indicador de sincronización y el
+  contador de caracteres.
+- `biome check` limpio en `src/modules/landing` y `src/routes`.
+- Revisión del HTML servido en `/home`, `/preview` y `/template`.
+
+No se revisó en un navegador real en esta sesión ni se verificaron precios
+contra Supabase: el rediseño no cambia el esquema, las consultas ni los datos.

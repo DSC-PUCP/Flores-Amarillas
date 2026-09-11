@@ -47,7 +47,7 @@ export function FaqSection() {
       className="scroll-mt-24 border-t border-[#183E32]/10 bg-[#FFFCF4] px-5 py-20 text-[#183E32] sm:px-8 lg:py-24"
     >
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
-        <div>
+        <div data-reveal="left">
           <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
             <span className="size-2 rounded-full bg-[#F17B62]" />
             Antes de regalar
@@ -66,11 +66,16 @@ export function FaqSection() {
           </p>
           <Flower2
             aria-hidden="true"
-            className="mt-8 hidden size-20 rotate-12 fill-[#FFD329] stroke-[#183E32] stroke-[1] md:block"
+            className="bloom-faq-flower mt-8 hidden size-20 rotate-12 fill-[#FFD329] stroke-[#183E32] stroke-[1] md:block"
           />
         </div>
 
-        <Accordion type="single" collapsible defaultValue="gift">
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue="gift"
+          data-reveal="right"
+        >
           {QUESTIONS.map(({ id, question, answer }) => (
             <AccordionItem key={id} value={id} className="border-[#183E32]/15">
               <AccordionTrigger className="items-center rounded-lg py-6 text-base leading-6 font-semibold text-[#183E32] hover:no-underline focus-visible:ring-[#183E32]/30 [&>svg]:size-5 [&>svg]:text-[#183E32]">

@@ -6,32 +6,67 @@ import {
   Heart,
   MousePointer2,
 } from 'lucide-react';
-import type { MouseEvent } from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
+import { Ambient } from '../art/Ambient';
+import { useParallax } from '../hooks/useParallax';
 
 interface HeroSectionProps {
   onViewDemo: (e: MouseEvent) => void;
   onCreateGift: (e: MouseEvent) => void;
 }
 
+/** Palabras de la cinta. Se repiten dos veces para que la marquesina no corte. */
+const RIBBON_WORDS = [
+  'Tus palabras',
+  'Sus fotos favoritas',
+  'Una sorpresa por descubrir',
+  'Un enlace para regalar',
+];
+
+function RibbonTrack({ hidden }: { hidden?: boolean }) {
+  return (
+    <div className="bloom-ribbon-track" aria-hidden={hidden || undefined}>
+      {RIBBON_WORDS.map((word) => (
+        <span key={word} className="bloom-ribbon-item">
+          {word}
+          <Flower2 />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
+  // El arte responde al puntero y al scroll escribiendo variables CSS.
+  const artRef = useParallax<HTMLDivElement>();
+
   return (
     <section className="bloom-hero" aria-labelledby="hero-title">
+      {/* Va al nivel del hero, no del arte, para que los pétalos crucen toda
+          la escena y no solo la columna derecha. */}
+      <Ambient />
       <div className="bloom-container bloom-hero-grid">
         <div className="bloom-hero-copy">
-          <span className="bloom-event">
+          <span
+            className="bloom-event"
+            style={{ '--enter-i': 0 } as CSSProperties}
+          >
             <Flower2 size={16} /> 21 DE SEPTIEMBRE · FLORES AMARILLAS
           </span>
-          <h1 id="hero-title">
+          <h1 id="hero-title" style={{ '--enter-i': 1 } as CSSProperties}>
             Flores amarillas.
             <br />Y todo eso
             <br />
             <em>que sientes.</em>
           </h1>
-          <p>
+          <p style={{ '--enter-i': 2 } as CSSProperties}>
             Hay personas que te hacen florecer. Regálales una página con tus
             fotos, tus palabras y una sorpresa que se abre con un enlace.
           </p>
-          <div className="bloom-actions">
+          <div
+            className="bloom-actions"
+            style={{ '--enter-i': 3 } as CSSProperties}
+          >
             <button
               type="button"
               className="bloom-button bloom-button-green"
@@ -47,7 +82,10 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
               Quiero ver cómo es <ArrowDown size={17} />
             </button>
           </div>
-          <div className="bloom-hero-assurances">
+          <div
+            className="bloom-hero-assurances"
+            style={{ '--enter-i': 4 } as CSSProperties}
+          >
             <span>
               <Check size={15} /> Sin crear una cuenta
             </span>
@@ -56,17 +94,19 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
             </span>
           </div>
         </div>
-        <div className="bloom-hero-art">
+        <div className="bloom-hero-art" ref={artRef}>
           <div className="bloom-art-orbit" aria-hidden="true" />
           <div className="bloom-art-circle" aria-hidden="true" />
           <span
             className="bloom-art-spark bloom-art-spark-one"
+            style={{ '--twinkle': '5.5s' } as CSSProperties}
             aria-hidden="true"
           >
             ✳
           </span>
           <span
             className="bloom-art-spark bloom-art-spark-two"
+            style={{ '--twinkle': '4.1s' } as CSSProperties}
             aria-hidden="true"
           >
             ✦
@@ -121,14 +161,10 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
         </div>
       </div>
       <div className="bloom-ribbon">
-        <span>Tus palabras</span>
-        <Flower2 />
-        <span>Sus fotos favoritas</span>
-        <Flower2 />
-        <span>Una sorpresa por descubrir</span>
-        <Flower2 />
-        <span>Un enlace para regalar</span>
-        <Flower2 />
+        <RibbonTrack />
+        {/* Copia idéntica: al desplazar la primera un ancho completo, esta
+            ocupa su lugar y el bucle no tiene costura. */}
+        <RibbonTrack hidden />
       </div>
     </section>
   );

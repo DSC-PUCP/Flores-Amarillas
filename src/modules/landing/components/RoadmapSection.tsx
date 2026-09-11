@@ -6,6 +6,7 @@ import {
   Send,
   SquarePen,
 } from 'lucide-react';
+import type { CSSProperties } from 'react';
 
 const STEPS = [
   {
@@ -37,7 +38,7 @@ export function RoadmapSection() {
     >
       <div className="bloom-container">
         <div className="bloom-how-top">
-          <div>
+          <div data-reveal="left">
             <span className="bloom-eyebrow">
               <span /> TÚ PONES EL CARIÑO
             </span>
@@ -54,8 +55,12 @@ export function RoadmapSection() {
           />
         </div>
         <div className="bloom-steps">
-          {STEPS.map(({ number, icon: Icon, title, text }) => (
-            <article key={number}>
+          {STEPS.map(({ number, icon: Icon, title, text }, index) => (
+            <article
+              key={number}
+              data-reveal
+              style={{ '--reveal-i': index } as CSSProperties}
+            >
               <div className="bloom-step-top">
                 <span>{number}</span>
                 <Icon size={25} strokeWidth={1.5} />
@@ -66,11 +71,11 @@ export function RoadmapSection() {
           ))}
         </div>
         <div className="bloom-how-bottom">
-          <p>
+          <p data-reveal="left">
             No necesitas saber diseñar. Solo saber a quién quieres alegrarle el
             día.
           </p>
-          <Link to="/template" className="bloom-text-link">
+          <Link to="/template" className="bloom-text-link" data-reveal="right">
             Vamos a crear ese regalo <ArrowRight size={18} />
           </Link>
         </div>

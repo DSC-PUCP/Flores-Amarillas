@@ -1,4 +1,5 @@
 import { Flower2, Loader2, RefreshCw } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import type { Plan } from '@/core/models';
 import { usePlans } from '../hooks/usePlans';
 import { PlanCard } from './PlanCard';
@@ -35,7 +36,7 @@ export function PlansSection({
     >
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
+          <div data-reveal="left">
             <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
               <span className="size-2 rounded-full bg-[#F17B62]" />
               Un detalle, a tu manera
@@ -49,7 +50,10 @@ export function PlansSection({
               <span className="italic">Elige tu dedicatoria.</span>
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-6 text-[#183E32]/75">
+          <p
+            data-reveal="right"
+            className="max-w-sm text-sm leading-6 text-[#183E32]/75"
+          >
             Compara lo que incluye cada opción. Después, elige tu diseño y
             personalízalo con las palabras y los recuerdos que lo hacen suyo.
           </p>
@@ -114,14 +118,23 @@ export function PlansSection({
           </div>
         ) : (
           <div className="flex flex-wrap items-stretch justify-center gap-6 [&>article]:basis-full sm:[&>article]:basis-[calc(50%-12px)] lg:[&>article]:basis-[calc(33.333%-16px)] [&>article]:grow">
-            {plans.map((plan) => (
-              <PlanCard key={plan.id} plan={plan} interactive={interactive} />
+            {plans.map((plan, index) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                interactive={interactive}
+                index={index}
+              />
             ))}
           </div>
         )}
 
         {!showLoading && !showError && !showEmpty && (
-          <p className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#183E32]/70">
+          <p
+            data-reveal
+            style={{ '--reveal-i': 3 } as CSSProperties}
+            className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#183E32]/70"
+          >
             En los diseños de pago, primero revisas tu dedicatoria y después
             coordinas la activación por WhatsApp. El pago se valida manualmente.
           </p>

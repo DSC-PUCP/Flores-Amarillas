@@ -4,12 +4,21 @@ import {
   Outlet,
   useRouterState,
 } from '@tanstack/react-router';
-import { ArrowRight, Flower2, Menu, X } from 'lucide-react';
+import { ArrowRight, ArrowUp, Flower2, Menu, X } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import bloomCss from '@/modules/landing/bloom.css?url';
+import motionCss from '@/modules/landing/motion.css?url';
 
 export const Route = createFileRoute('/__layout')({
-  head: () => ({ links: [{ rel: 'stylesheet', href: bloomCss }] }),
+  head: () => ({
+    links: [
+      { rel: 'stylesheet', href: bloomCss },
+      // Después de bloom.css: la capa de movimiento necesita ganarle al
+      // `animation: none` con el que aquel archivo cierra.
+      { rel: 'stylesheet', href: motionCss },
+    ],
+  }),
   component: LayoutComponent,
 });
 
@@ -24,6 +33,7 @@ function LayoutComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const [progress, setProgress] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
@@ -33,6 +43,7 @@ function LayoutComponent() {
     setActiveSection('');
     if (pathname !== '/home') {
       setProgress(0);
+      setIsScrolled(false);
       return;
     }
     const updateProgress = () => {
@@ -40,6 +51,7 @@ function LayoutComponent() {
       setProgress(
         height > 0 ? Math.min(1, Math.max(0, window.scrollY / height)) : 0
       );
+      setIsScrolled(window.scrollY > 12);
       if (window.scrollY < 200) setActiveSection('');
     };
     updateProgress();
@@ -74,12 +86,19 @@ function LayoutComponent() {
     return () => document.removeEventListener('keydown', closeOnEscape);
   }, [isOpen]);
 
+  const scrollToTop = () => {
+    const instant = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    window.scrollTo({ top: 0, behavior: instant ? 'instant' : 'smooth' });
+  };
+
   return (
     <div className="bloom-shell">
       <a href="#main-content" className="bloom-skip">
         Saltar al contenido
       </a>
-      <header className="bloom-nav">
+      <header className="bloom-nav" data-scrolled={isScrolled}>
         <div className="bloom-nav-inner">
           <Link
             to="/home"
@@ -126,24 +145,28 @@ function LayoutComponent() {
             </button>
           </div>
         </div>
-        {isOpen && (
-          <nav
-            id="bloom-mobile-menu"
-            className="bloom-mobile-menu"
-            aria-label="Navegación móvil"
-          >
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.hash}
-                to="/home"
-                hash={item.hash}
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        {/* Queda siempre en el DOM para poder animar también el cierre: si se
+            montara y desmontara, la salida no tendría transición. Cerrado
+            colapsa a alto cero y `visibility: hidden` lo saca del recorrido
+            por teclado y del lector de pantalla. */}
+        <nav
+          id="bloom-mobile-menu"
+          className="bloom-mobile-menu"
+          data-open={isOpen}
+          aria-label="Navegación móvil"
+        >
+          {NAV_ITEMS.map((item, index) => (
+            <Link
+              key={item.hash}
+              to="/home"
+              hash={item.hash}
+              style={{ '--enter-i': index } as CSSProperties}
+              onClick={() => setIsOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
         <div
           className="bloom-scroll-progress"
           style={{ scale: `${progress} 1` }}
@@ -153,6 +176,18 @@ function LayoutComponent() {
       <main id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
+      <button
+        type="button"
+        className="bloom-to-top"
+        data-visible={progress > 0.12}
+        // Fuera de vista el botón no debe recibir foco por tabulación.
+        tabIndex={progress > 0.12 ? 0 : -1}
+        aria-hidden={progress > 0.12 ? undefined : true}
+        aria-label="Volver al inicio de la página"
+        onClick={scrollToTop}
+      >
+        <ArrowUp size={19} />
+      </button>
       <footer className="bloom-footer">
         <div className="bloom-container">
           <Link to="/home" className="bloom-logo">

@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { ArrowUpRight, Check, Flower2 } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import type { Plan } from '@/core/models';
 import { cn } from '@/lib/utils';
 
@@ -7,6 +8,8 @@ interface PlanCardProps {
   plan: Plan;
   /** La ruta de revisión visual puede desactivar la navegación. */
   interactive?: boolean;
+  /** Posición en la grilla: escalona la entrada de las tarjetas. */
+  index?: number;
 }
 
 const priceFormatter = new Intl.NumberFormat('es-PE', {
@@ -14,7 +17,11 @@ const priceFormatter = new Intl.NumberFormat('es-PE', {
   maximumFractionDigits: 2,
 });
 
-export function PlanCard({ plan, interactive = true }: PlanCardProps) {
+export function PlanCard({
+  plan,
+  interactive = true,
+  index = 0,
+}: PlanCardProps) {
   const isFree = plan.price === 0;
   const buttonClass = cn(
     'group flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-6 py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]',
@@ -25,11 +32,13 @@ export function PlanCard({ plan, interactive = true }: PlanCardProps) {
 
   return (
     <article
+      data-reveal="grow"
+      style={{ '--reveal-i': index } as CSSProperties}
       className={cn(
-        'relative flex w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border p-7 text-[#183E32] sm:p-9',
+        'group/plan relative flex w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border p-7 text-[#183E32] transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:-translate-y-1.5 sm:p-9',
         isFree
-          ? 'border-[#183E32]/15 bg-white'
-          : 'border-[#E8BB12] bg-[#FFD329]'
+          ? 'border-[#183E32]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.45)]'
+          : 'border-[#E8BB12] bg-[#FFD329] hover:shadow-[0_26px_50px_-26px_rgba(190,140,10,0.75)]'
       )}
     >
       <div className="mb-9 flex items-start justify-between gap-4">
@@ -47,7 +56,7 @@ export function PlanCard({ plan, interactive = true }: PlanCardProps) {
         <Flower2
           aria-hidden="true"
           className={cn(
-            'size-12 shrink-0 rotate-12 stroke-[1.25]',
+            'size-12 shrink-0 rotate-12 stroke-[1.25] transition-transform duration-500 ease-out motion-safe:group-hover/plan:rotate-[24deg] motion-safe:group-hover/plan:scale-110',
             isFree ? 'text-[#F17B62]' : 'text-[#183E32]'
           )}
         />
@@ -80,10 +89,11 @@ export function PlanCard({ plan, interactive = true }: PlanCardProps) {
         Incluye
       </p>
       <ul className="mb-9 space-y-3.5">
-        {plan.features.map((feature) => (
+        {plan.features.map((feature, featureIndex) => (
           <li
             key={feature}
-            className="flex items-start gap-3 text-sm leading-5"
+            style={{ '--feature-i': featureIndex } as CSSProperties}
+            className="bloom-plan-feature flex items-start gap-3 text-sm leading-5"
           >
             <span
               className={cn(
