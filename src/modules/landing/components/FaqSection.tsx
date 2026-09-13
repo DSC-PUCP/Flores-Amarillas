@@ -11,7 +11,7 @@ const QUESTIONS = [
     id: 'gift',
     question: '¿Qué recibe la persona a la que se lo regalo?',
     answer:
-      'Un enlace a una página web con tu dedicatoria, sus nombres y las fotos que agregues. Cada diseño tiene sus propios detalles, como una carta, una galería o un contador de días. Es un regalo digital; puedes enviarlo solo o acompañarlo con un ramo de flores físicas.',
+      'Un enlace a una página web con tu dedicatoria, sus nombres y las fotos que agregues. Cada diseño tiene sus propios detalles, como una carta, una galería o un contador de días. Es un regalo digital: se abre desde el navegador, sin instalar nada.',
   },
   {
     id: 'preview',
