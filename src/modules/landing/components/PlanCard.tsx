@@ -286,9 +286,7 @@ export function PlanCard({
           </button>
         )}
         <p className={cn('mt-3 text-center text-[11px] leading-5', s.apagado)}>
-          {isFree
-            ? 'Elige un diseño y hazlo tuyo.'
-            : 'Activación después de validar tu pago.'}
+          Elige un diseño y hazlo tuyo.
         </p>
       </div>
     </article>

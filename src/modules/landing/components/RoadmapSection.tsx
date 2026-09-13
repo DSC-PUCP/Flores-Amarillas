@@ -25,7 +25,7 @@ const STEPS = [
     number: '03',
     icon: Send,
     title: 'Hazle llegar la sorpresa',
-    text: 'Revisa el resultado y comparte su enlace. Si eliges un diseño de pago, actívalo antes de enviarlo.',
+    text: 'Revisa el resultado y comparte su enlace para hacerle llegar la sorpresa.',
   },
 ];
 
