@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
@@ -42,6 +43,15 @@ export function LoginForm({
 }
 
 function GoogleLogo() {
+  /**
+   * Identificador del recorte.
+   *
+   * Antes la definicion usaba `crypto.randomUUID()` y la referencia apuntaba a
+   * `#clip0_17_40`, asi que nunca coincidian y el recorte no se aplicaba.
+   * Ademas esa funcion no existe fuera de contexto seguro. `useId` da uno
+   * estable, unico por instancia y valido en el servidor y en el navegador.
+   */
+  const clipId = useId();
   return (
     <svg
       className="h-5 w-5"
@@ -50,7 +60,7 @@ function GoogleLogo() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>Google</title>
-      <g clipPath="url(#clip0_17_40)">
+      <g clipPath={`url(#${clipId})`}>
         <path
           d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6761H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z"
           fill="#4285F4"
@@ -69,7 +79,7 @@ function GoogleLogo() {
         />
       </g>
       <defs>
-        <clipPath id={crypto.randomUUID()}>
+        <clipPath id={clipId}>
           <rect width="48" height="48" fill="white" />
         </clipPath>
       </defs>

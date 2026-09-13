@@ -1,4 +1,5 @@
 import type { FileUploadRef, TemplateData } from '@/core/models';
+import { uuid } from '@/lib/uuid';
 import { PlanService } from '@/modules/plan/services';
 import { TemplateService } from '@/modules/templates/services';
 import { lovepageRepository } from '@/repository/lovepage';
@@ -63,7 +64,7 @@ export namespace LovepageService {
 
     //Proceso de subida de ARchivos
     // Page ID para storage path
-    const pageId = crypto.randomUUID();
+    const pageId = uuid();
     // Clone configJson
     const updatedConfig = { ...configJson } as Record<string, unknown>;
     // Subir files y reemplzar URLs
@@ -72,7 +73,7 @@ export namespace LovepageService {
       const uploadedUrls: string[] = [];
 
       for (const singleFile of filesToProcess) {
-        const fileId = crypto.randomUUID();
+        const fileId = uuid();
         //Subidaaaa
         const uploadResult = await storageRepository.uploadImage({
           file: singleFile,
@@ -90,7 +91,7 @@ export namespace LovepageService {
       }
 
       // Si es un array de archivos, guardar array de URLs, si no, guardar URL única
-      if (Array.isArray(file)) {
+      if (Array.isArray(file) || Array.isArray(configJson[key])) {
         setValueByPath(updatedConfig, key, uploadedUrls);
       } else {
         setValueByPath(updatedConfig, key, uploadedUrls[0]);

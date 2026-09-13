@@ -1,3 +1,5 @@
+import type { SongClip } from './song';
+
 type BaseTemplateField = {
   name: string;
   label: string;
@@ -22,6 +24,8 @@ export type ArrayTemplateField = BaseTemplateField & {
   min_items?: number;
   max_items?: number;
   item_max_length?: number; // Para strings: longitud máxima de cada item
+  /** Nombre corto de cada elemento ("razón"): botón "Agregar razón" y "Razón 1". */
+  item_label?: string;
 };
 
 export type BooleanTemplateField = BaseTemplateField & {
@@ -47,8 +51,21 @@ export type DateTemplateField = BaseTemplateField & {
 export type TextAreaTemplateField = BaseTemplateField & {
   type: 'textarea';
   max_length?: number;
-}
+};
 
+export type ChoiceTemplateField = BaseTemplateField & {
+  type: 'choice';
+  options: { value: string; label: string }[];
+  default?: string;
+  appearance?: 'mascot';
+};
+
+/** Canciones de YouTube con fragmento y letra sincronizada. Valor: SongClip[] */
+export type MusicTemplateField = BaseTemplateField & {
+  type: 'music';
+  max_songs?: number;
+  max_clip_seconds?: number;
+};
 
 export type TemplateField =
   | StringTemplateField
@@ -57,10 +74,22 @@ export type TemplateField =
   | ImageTemplateField
   | BooleanTemplateField
   | DateTemplateField
-  | TextAreaTemplateField;
+  | TextAreaTemplateField
+  | MusicTemplateField
+  | ChoiceTemplateField;
 
 export type TemplateFormStep = {
   title: string;
+  description?: string;
+  previewScene?:
+    | 'cover'
+    | 'intro'
+    | 'song'
+    | 'photos'
+    | 'letter'
+    | 'reasons'
+    | 'coupon'
+    | 'finale';
   fields: TemplateField[];
 };
 
@@ -68,7 +97,13 @@ export type TemplateForm = TemplateFormStep[];
 
 export type TemplateData = Record<
   string,
-  string | number | boolean | (string | number | boolean)[] | null | undefined
+  | string
+  | number
+  | boolean
+  | (string | number | boolean)[]
+  | SongClip[]
+  | null
+  | undefined
 >;
 
 export type TemplateConfig = {

@@ -1,0 +1,1047 @@
+/**
+ * Capa de movimiento de la campaña Flores Amarillas.
+ *
+ * Se carga DESPUÉS de bloom.css a propósito: bloom.css termina con un
+ * `animation: none` general para movimiento reducido, así que cualquier
+ * animación nueva tiene que declararse aquí y volver a neutralizarse en el
+ * bloque de movimiento reducido del final de este archivo.
+ *
+ * Todo está acotado a `.bloom-site` / `.bloom-shell` para no tocar el editor
+ * ni las plantillas existentes.
+ */
+
+.bloom-shell,
+.bloom-site {
+  /* Curva estándar: entra rápido y frena largo, como algo que se posa. */
+  --bloom-ease: cubic-bezier(0.22, 0.68, 0.28, 1);
+  /* Rebote contenido para elementos que "brotan". */
+  --bloom-spring: cubic-bezier(0.34, 1.32, 0.5, 1);
+  --bloom-fast: 0.22s;
+  --bloom-mid: 0.42s;
+  --bloom-slow: 0.72s;
+}
+
+/* ------------------------------------------------------------------ */
+/* 1. Revelado al hacer scroll                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * El estado oculto solo se activa cuando el hook marca `data-motion="on"`.
+ * Así el HTML pre-renderizado se ve completo aunque el JS no llegue, y al
+ * hidratar no parpadea nada: el hook revela primero lo que ya está en
+ * pantalla y recién después arma el observador.
+ */
+.bloom-site[data-motion="on"] [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 26px), 0)
+    scale(var(--reveal-scale, 1));
+  transition:
+    opacity var(--bloom-slow) var(--bloom-ease),
+    transform var(--bloom-slow) var(--bloom-ease);
+  transition-delay: calc(var(--reveal-i, 0) * 85ms);
+  will-change: opacity, transform;
+}
+
+.bloom-site[data-motion="on"] [data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Variantes de entrada según el papel del bloque. */
+.bloom-site[data-motion="on"] [data-reveal="left"] {
+  transform: translate3d(-30px, 12px, 0);
+}
+.bloom-site[data-motion="on"] [data-reveal="right"] {
+  transform: translate3d(30px, 12px, 0);
+}
+.bloom-site[data-motion="on"] [data-reveal="grow"] {
+  transform: translate3d(0, 20px, 0) scale(0.965);
+  transform-origin: bottom center;
+  transition-timing-function: var(--bloom-spring);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Barra de navegación                                              */
+/* ------------------------------------------------------------------ */
+
+.bloom-nav {
+  transition:
+    box-shadow var(--bloom-mid) var(--bloom-ease),
+    background var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-nav[data-scrolled="true"] {
+  background: #fffbf2f7;
+  box-shadow: 0 10px 30px -18px #1e3b2a55;
+}
+.bloom-nav-inner {
+  transition: height var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-nav[data-scrolled="true"] .bloom-nav-inner {
+  height: 66px;
+}
+.bloom-logo-mark {
+  transition: transform var(--bloom-mid) var(--bloom-spring);
+}
+.bloom-logo:hover .bloom-logo-mark {
+  transform: rotate(6deg) scale(1.07);
+}
+
+/* Subrayado que se desliza en vez de aparecer de golpe. */
+.bloom-nav-links a::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  background: #e8b84b;
+  left: 0;
+  right: 0;
+  bottom: -12px;
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-nav-links a:hover::after {
+  transform: scaleX(0.55);
+  opacity: 0.6;
+}
+.bloom-nav-links a[aria-current="location"]::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.bloom-scroll-progress {
+  transition: scale 0.12s linear;
+}
+
+/**
+ * Menú móvil: se despliega en vez de aparecer de golpe.
+ *
+ * Cerrado colapsa a alto cero (no basta `visibility: hidden`, que seguiría
+ * ocupando espacio bajo la barra) y el retraso en `visibility` deja que la
+ * animación de salida termine antes de ocultarlo del teclado y del lector.
+ * Por encima del punto de quiebre bloom.css lo deja en `display: none` y
+ * nada de esto se aplica.
+ */
+.bloom-mobile-menu {
+  overflow: hidden;
+  max-height: 0;
+  padding-block: 0;
+  border-top-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    max-height var(--bloom-mid) var(--bloom-ease),
+    padding var(--bloom-mid) var(--bloom-ease),
+    opacity var(--bloom-fast) var(--bloom-ease),
+    visibility 0s linear var(--bloom-mid);
+}
+.bloom-mobile-menu[data-open="true"] {
+  max-height: 70vh;
+  padding-block: 15px 23px;
+  border-top-width: 1px;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.bloom-mobile-menu a {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity var(--bloom-mid) var(--bloom-ease),
+    transform var(--bloom-mid) var(--bloom-ease),
+    background var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-mobile-menu[data-open="true"] a {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--enter-i, 0) * 55ms + 60ms);
+}
+.bloom-menu-toggle svg {
+  transition: transform var(--bloom-mid) var(--bloom-spring);
+}
+.bloom-menu-toggle[aria-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Botones y enlaces                                                */
+/* ------------------------------------------------------------------ */
+
+.bloom-button {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--bloom-fast) var(--bloom-ease),
+    background var(--bloom-fast) var(--bloom-ease),
+    box-shadow var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-button > * {
+  position: relative;
+  z-index: 1;
+}
+.bloom-button:active {
+  transform: translateY(1px) scale(0.985);
+  transition-duration: 0.08s;
+}
+
+/* Destello muy espaciado en el CTA principal: llama sin gritar. */
+.bloom-button-green::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    #fff0c438 45%,
+    #fff0c455 55%,
+    transparent
+  );
+  transform: translateX(-160%) skewX(-18deg);
+  animation: bloom-sheen 8s ease-in-out infinite 2.5s;
+  pointer-events: none;
+}
+@keyframes bloom-sheen {
+  0%,
+  82% {
+    transform: translateX(-160%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+.bloom-text-link svg {
+  transition: transform var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-text-link:hover svg {
+  transform: translateX(4px);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Hero                                                             */
+/* ------------------------------------------------------------------ */
+
+/* Entrada escalonada de la columna de texto. */
+.bloom-hero-copy > * {
+  animation: bloom-rise 0.85s var(--bloom-ease) both;
+  animation-delay: calc(var(--enter-i, 0) * 90ms);
+}
+@keyframes bloom-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* El resaltado amarillo del título se "pinta" al cargar. */
+.bloom-hero h1 em::after {
+  transform-origin: left center;
+  animation: bloom-highlight 0.7s var(--bloom-ease) 0.75s both;
+}
+@keyframes bloom-highlight {
+  from {
+    transform: rotate(-2deg) scaleX(0);
+  }
+  to {
+    transform: rotate(-2deg) scaleX(1);
+  }
+}
+
+/**
+ * Parallax del arte: el hook escribe --px/--py en el rango -1..1 con el
+ * puntero, y --scroll con el avance del scroll del hero. Cada pieza se
+ * mueve a distinta profundidad.
+ */
+.bloom-hero-art {
+  --px: 0;
+  --py: 0;
+  --scroll: 0;
+}
+.bloom-hero-bouquet,
+.bloom-round-sticker,
+.bloom-hero-letter,
+.bloom-delivery-note,
+.bloom-art-circle,
+.bloom-art-orbit,
+.bloom-art-spark {
+  transition: transform 0.55s var(--bloom-ease);
+}
+.bloom-hero-bouquet {
+  transform: rotate(12deg)
+    translate3d(
+      calc(var(--px) * 16px),
+      calc(var(--py) * 13px - var(--scroll) * 28px),
+      0
+    );
+  animation: bloom-breathe 11s ease-in-out 1.2s infinite;
+}
+@keyframes bloom-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 14px 13px #5c752223);
+  }
+  50% {
+    filter: drop-shadow(0 20px 20px #5c752233);
+  }
+}
+.bloom-art-circle {
+  transform: translate3d(
+    calc(var(--px) * -9px),
+    calc(var(--py) * -7px + var(--scroll) * 16px),
+    0
+  );
+}
+.bloom-art-orbit {
+  transform: rotate(-24deg)
+    translate3d(calc(var(--px) * -14px), calc(var(--py) * -11px), 0);
+}
+.bloom-round-sticker {
+  transform: rotate(-14deg)
+    translate3d(calc(var(--px) * 26px), calc(var(--py) * 20px), 0);
+  animation: bloom-sticker-pulse 6s ease-in-out infinite;
+}
+@keyframes bloom-sticker-pulse {
+  0%,
+  100% {
+    outline-color: #ef7a5e;
+  }
+  50% {
+    outline-color: #ef7a5e66;
+  }
+}
+.bloom-round-sticker svg {
+  animation: bloom-heartbeat 2.6s ease-in-out infinite;
+}
+@keyframes bloom-heartbeat {
+  0%,
+  62%,
+  100% {
+    transform: scale(1);
+  }
+  18% {
+    transform: scale(1.22);
+  }
+  34% {
+    transform: scale(1.04);
+  }
+}
+.bloom-delivery-note {
+  transform: rotate(3deg)
+    translate3d(calc(var(--px) * 20px), calc(var(--py) * 16px), 0);
+}
+.bloom-art-spark {
+  animation: bloom-twinkle var(--twinkle, 5s) ease-in-out infinite;
+}
+@keyframes bloom-twinkle {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.85) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12) rotate(18deg);
+  }
+}
+
+/* La carta del hero: se levanta, se endereza y el sello gira. */
+.bloom-hero-letter {
+  transform: rotate(-9deg)
+    translate3d(calc(var(--px) * 30px), calc(var(--py) * 24px), 0);
+  transition:
+    transform var(--bloom-mid) var(--bloom-spring),
+    box-shadow var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-hero-letter:hover,
+.bloom-hero-letter:focus-visible {
+  transform: rotate(-3deg) translate3d(calc(var(--px) * 30px), -9px, 0)
+    scale(1.02);
+  box-shadow: 0 26px 50px #58481240;
+}
+.bloom-hero-letter:active {
+  transform: rotate(-5deg) translate3d(calc(var(--px) * 30px), -2px, 0)
+    scale(0.99);
+  transition-duration: 0.1s;
+}
+.bloom-letter-seal {
+  transition: transform var(--bloom-mid) var(--bloom-spring);
+}
+.bloom-hero-letter:hover .bloom-letter-seal,
+.bloom-hero-letter:focus-visible .bloom-letter-seal {
+  transform: rotate(-14deg) scale(1.12);
+}
+.bloom-letter-message {
+  display: block;
+}
+
+/* La pista de "tócala" se balancea apenas para pedir el clic. */
+.bloom-art-hint {
+  animation: bloom-nudge 3.4s ease-in-out 2s infinite;
+}
+@keyframes bloom-nudge {
+  0%,
+  70%,
+  100% {
+    transform: rotate(-5deg) translateY(0);
+  }
+  80% {
+    transform: rotate(-5deg) translateY(-5px);
+  }
+  90% {
+    transform: rotate(-5deg) translateY(-2px);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Ambiente: pétalos, polen y mariposas                             */
+/* ------------------------------------------------------------------ */
+
+/* El hero aísla su apilamiento para que la capa de ambiente quede detrás de
+   todo su contenido sin escaparse al resto de la página. */
+.bloom-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+.bloom-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -3;
+}
+.bloom-ambient > span {
+  position: absolute;
+  top: -8%;
+  left: var(--x, 50%);
+  display: block;
+  color: var(--tone, #f3c53a);
+  opacity: 0;
+  animation: bloom-drift var(--dur, 17s) linear var(--delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+/**
+ * El recorrido termina en 92vh y la opacidad se apaga al 74%: el hero mide
+ * menos que la ventana, así que si el pétalo llegara opaco hasta abajo se
+ * vería "cortar" contra el borde recortado en vez de desvanecerse.
+ */
+@keyframes bloom-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  9% {
+    opacity: var(--peak, 0.55);
+  }
+  58% {
+    opacity: var(--peak, 0.55);
+  }
+  74% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 70px), 92vh, 0)
+      rotate(var(--spin, 420deg));
+  }
+}
+
+/* El polen sube en vez de caer: da sensación de aire caliente. */
+.bloom-ambient > span[data-kind="pollen"] {
+  top: auto;
+  bottom: -6%;
+  border-radius: 50%;
+  background: currentColor;
+  width: var(--size, 5px);
+  height: var(--size, 5px);
+  animation-name: bloom-pollen;
+}
+@keyframes bloom-pollen {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.6);
+  }
+  14% {
+    opacity: var(--peak, 0.5);
+  }
+  56% {
+    opacity: var(--peak, 0.5);
+  }
+  76% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 40px), -62vh, 0) scale(1.15);
+  }
+}
+
+/* Mariposa: revolotea en diagonal y "aletea" con un escalado rápido. */
+.bloom-ambient > span[data-kind="butterfly"] {
+  top: auto;
+  bottom: 12%;
+  animation-name: bloom-flutter;
+  animation-timing-function: ease-in-out;
+}
+@keyframes bloom-flutter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(-8deg);
+  }
+  10% {
+    opacity: var(--peak, 0.75);
+  }
+  30% {
+    transform: translate3d(18vw, -14vh, 0) rotate(10deg) scaleX(0.6);
+  }
+  55% {
+    transform: translate3d(34vw, -4vh, 0) rotate(-6deg) scaleX(1);
+  }
+  80% {
+    opacity: var(--peak, 0.75);
+    transform: translate3d(52vw, -20vh, 0) rotate(12deg) scaleX(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(68vw, -10vh, 0) rotate(-4deg);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Cinta del hero: marquesina continua                              */
+/* ------------------------------------------------------------------ */
+
+.bloom-ribbon {
+  flex-wrap: nowrap;
+  overflow: hidden;
+  gap: 0;
+  padding-inline: 0;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+/* Una sola pista con todas las copias: asi todas comparten la misma
+   animacion y es imposible que se desfasen entre ellas. */
+.bloom-ribbon-track {
+  display: flex;
+  align-items: center;
+  min-width: max-content;
+  animation: bloom-marquee var(--vuelta, 30s) linear infinite;
+  will-change: transform;
+}
+.bloom-ribbon-copy {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+  padding-right: 42px;
+  flex-shrink: 0;
+  min-width: max-content;
+}
+.bloom-ribbon:hover .bloom-ribbon-track,
+.bloom-ribbon:focus-within .bloom-ribbon-track {
+  animation-play-state: paused;
+}
+/**
+ * La pista se desplaza exactamente el ancho de UNA copia, no su propio ancho.
+ * Al terminar la vuelta, la copia siguiente esta justo donde estaba la
+ * primera, asi que el salto al reiniciar es invisible.
+ *
+ * El ancho lo mide `useMarquee` y llega como variable, porque depende de la
+ * fuente ya cargada y del texto.
+ */
+@keyframes bloom-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(var(--ancho-copia, 0px) * -1), 0, 0);
+  }
+}
+.bloom-ribbon-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 42px;
+  white-space: nowrap;
+}
+.bloom-ribbon-item svg {
+  color: #2d5a3c;
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Sección de ejemplo interactivo                                   */
+/* ------------------------------------------------------------------ */
+
+.bloom-audience {
+  position: relative;
+}
+.bloom-audience button {
+  transition:
+    background var(--bloom-fast) var(--bloom-ease),
+    color var(--bloom-fast) var(--bloom-ease),
+    border-color var(--bloom-fast) var(--bloom-ease),
+    transform var(--bloom-fast) var(--bloom-spring);
+}
+/**
+ * El hover solo aplica al chip que NO esta elegido.
+ *
+ * Sin el `:not(...)` esta regla tenia la misma especificidad que la del chip
+ * seleccionado en bloom.css, pero carga despues, asi que le pisaba el fondo
+ * verde y lo dejaba blanco... con el texto crema encima. Contraste 1.02:
+ * el chip elegido desaparecia justo al pasarle el cursor.
+ */
+.bloom-audience button:not([aria-pressed="true"]):hover {
+  border-color: #1e3b2a66;
+  background: #ffffff80;
+}
+/* El elegido tambien responde, pero aclarando su propio verde. */
+.bloom-audience button[aria-pressed="true"]:hover {
+  background: #2c5640;
+  border-color: #2c5640;
+}
+.bloom-audience button[aria-pressed="true"] {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px -6px #1e3b2a88;
+}
+.bloom-audience button:active {
+  transform: scale(0.96);
+}
+
+.bloom-field input,
+.bloom-field textarea {
+  transition:
+    border-color var(--bloom-fast) var(--bloom-ease),
+    box-shadow var(--bloom-fast) var(--bloom-ease),
+    background var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-field input:hover,
+.bloom-field textarea:hover {
+  border-color: #b6c3a0;
+}
+.bloom-field input:focus,
+.bloom-field textarea:focus {
+  border-color: #e0a81c;
+  background: #fffdf2;
+  box-shadow: 0 0 0 4px #f7c3253d;
+}
+
+/* Estado del contador de caracteres. */
+.bloom-counter {
+  transition: color var(--bloom-fast) var(--bloom-ease);
+  font-variant-numeric: tabular-nums;
+}
+.bloom-counter[data-level="warn"] {
+  color: #b07208;
+  font-weight: 600;
+}
+.bloom-counter[data-level="full"] {
+  color: #c0512f;
+  font-weight: 700;
+}
+
+/* "Se actualiza al escribir": late cuando el cambio llega al ejemplo. */
+.bloom-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.bloom-sync::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9aa88c;
+  transition: background var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-sync[data-state="typing"]::before {
+  background: #e0a81c;
+  animation: bloom-blink 0.9s ease-in-out infinite;
+}
+.bloom-sync[data-state="synced"]::before {
+  background: #34744a;
+  animation: bloom-ping 0.6s var(--bloom-ease);
+}
+@keyframes bloom-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes bloom-ping {
+  0% {
+    box-shadow: 0 0 0 0 #34744a66;
+  }
+  100% {
+    box-shadow: 0 0 0 9px #34744a00;
+  }
+}
+
+.bloom-live-dot {
+  animation: bloom-live 2.4s ease-in-out infinite;
+}
+@keyframes bloom-live {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #34744a55;
+  }
+  60% {
+    box-shadow: 0 0 0 6px #34744a00;
+  }
+}
+
+.bloom-preview-stage {
+  transition: box-shadow var(--bloom-slow) var(--bloom-ease);
+}
+.bloom-preview-stage:hover {
+  box-shadow: 0 28px 60px -34px #3a4c2088;
+}
+.bloom-preview-frame {
+  opacity: 0;
+  transition: opacity var(--bloom-slow) var(--bloom-ease);
+}
+.bloom-preview-window[data-loaded="true"] .bloom-preview-frame {
+  opacity: 1;
+}
+.bloom-preview-loading::after {
+  content: "";
+  display: block;
+  width: 68px;
+  height: 3px;
+  margin: 11px auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e9d79a, #e0a81c, #e9d79a);
+  background-size: 220% 100%;
+  animation: bloom-loading 1.35s ease-in-out infinite;
+}
+@keyframes bloom-loading {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+.bloom-preview-toolbar > button {
+  transition: background var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-preview-toolbar > button svg {
+  transition: transform var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-preview-toolbar > button:hover svg {
+  transform: rotate(-120deg);
+}
+.bloom-preview-toolbar > button:active svg {
+  transform: rotate(-320deg);
+}
+.bloom-expand svg {
+  transition: transform var(--bloom-fast) var(--bloom-spring);
+}
+.bloom-expand:hover svg {
+  transform: scale(1.18);
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Tarjetas de "qué incluye"                                        */
+/* ------------------------------------------------------------------ */
+
+.bloom-feature {
+  transition:
+    transform var(--bloom-mid) var(--bloom-ease),
+    box-shadow var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-feature:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 44px -28px #3d4a2a99;
+}
+.bloom-feature-icon {
+  transition:
+    transform var(--bloom-mid) var(--bloom-spring),
+    background var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-feature:hover .bloom-feature-icon {
+  transform: rotate(-10deg) scale(1.1);
+  background: #ffffff8c;
+}
+.bloom-mini-letter,
+.bloom-mini-photos > div,
+.bloom-chat > * {
+  transition: transform var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-feature:hover .bloom-mini-letter {
+  transform: rotate(-2deg) translateY(-6px);
+}
+.bloom-feature:hover .bloom-photo-one {
+  transform: rotate(-7deg) translate(-6px, -5px);
+}
+.bloom-feature:hover .bloom-photo-two {
+  transform: rotate(6deg) translate(6px, -5px);
+}
+.bloom-feature:hover .bloom-chat > div {
+  transform: translateX(-4px) scale(1.015);
+}
+
+/* Los globos del chat entran uno detrás de otro al revelarse la tarjeta. */
+.bloom-site[data-motion="on"] .bloom-feature-link[data-revealed="true"]
+  .bloom-chat
+  > * {
+  animation: bloom-chat-in 0.5s var(--bloom-spring) both;
+}
+.bloom-chat > *:nth-child(1) {
+  animation-delay: 0.25s;
+}
+.bloom-chat > *:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.bloom-chat > *:nth-child(3) {
+  animation-delay: 1.05s;
+}
+@keyframes bloom-chat-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Pasos ("cómo funciona")                                          */
+/* ------------------------------------------------------------------ */
+
+.bloom-how-flower {
+  animation: bloom-slow-spin 44s linear infinite;
+}
+@keyframes bloom-slow-spin {
+  from {
+    transform: rotate(12deg);
+  }
+  to {
+    transform: rotate(372deg);
+  }
+}
+.bloom-steps > article {
+  position: relative;
+  transition: transform var(--bloom-mid) var(--bloom-ease);
+}
+/* La línea superior se dibuja al entrar en pantalla. */
+.bloom-steps > article::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: #f7c325;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.9s var(--bloom-ease);
+  transition-delay: calc(var(--reveal-i, 0) * 85ms + 180ms);
+}
+.bloom-steps > article[data-revealed="true"]::before {
+  transform: scaleX(1);
+}
+.bloom-steps > article:hover {
+  transform: translateY(-4px);
+}
+.bloom-step-top > span {
+  display: inline-block;
+  transition: transform var(--bloom-mid) var(--bloom-spring);
+}
+.bloom-steps > article:hover .bloom-step-top > span {
+  transform: translateY(-3px) scale(1.08);
+}
+.bloom-step-top > svg {
+  transition:
+    transform var(--bloom-mid) var(--bloom-spring),
+    color var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-steps > article:hover .bloom-step-top > svg {
+  transform: rotate(-8deg) scale(1.14);
+  color: #f7c325;
+}
+
+/* ------------------------------------------------------------------ */
+/* 9 bis. Planes y preguntas                                           */
+/* ------------------------------------------------------------------ */
+
+/* Lo que incluye cada plan se escribe de arriba abajo al aparecer la
+   tarjeta, en vez de llegar todo junto. */
+.bloom-site[data-motion="on"] .bloom-plan-feature {
+  opacity: 0;
+  transform: translateX(-9px);
+  transition:
+    opacity var(--bloom-mid) var(--bloom-ease),
+    transform var(--bloom-mid) var(--bloom-ease);
+}
+.bloom-site[data-motion="on"] [data-revealed="true"] .bloom-plan-feature {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--feature-i, 0) * 65ms + 280ms);
+}
+
+/* La flor decorativa de las preguntas se mece como al viento. */
+.bloom-faq-flower {
+  animation: bloom-sway 8s ease-in-out infinite;
+}
+@keyframes bloom-sway {
+  0%,
+  100% {
+    transform: rotate(6deg) translateY(0);
+  }
+  50% {
+    transform: rotate(18deg) translateY(-7px);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Cierre                                                          */
+/* ------------------------------------------------------------------ */
+
+.bloom-final-flower {
+  animation: bloom-final-spin 70s linear infinite;
+}
+@keyframes bloom-final-spin {
+  from {
+    transform: rotate(-18deg);
+  }
+  to {
+    transform: rotate(342deg);
+  }
+}
+.bloom-final::after {
+  content: "";
+  position: absolute;
+  inset: -40% 25% auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3a880 0%, transparent 62%);
+  z-index: -1;
+  animation: bloom-aura 9s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes bloom-aura {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+.bloom-footer .bloom-logo-mark,
+.bloom-footer-links a {
+  transition:
+    transform var(--bloom-mid) var(--bloom-spring),
+    color var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-footer-links a:hover {
+  color: #f7c325;
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Botón de volver arriba                                          */
+/* ------------------------------------------------------------------ */
+
+.bloom-to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 45;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #1e3b2a26;
+  background: #fffbf2;
+  color: #1e3b2a;
+  box-shadow: 0 12px 28px -14px #1e3b2a77;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(14px) scale(0.9);
+  pointer-events: none;
+  transition:
+    opacity var(--bloom-mid) var(--bloom-ease),
+    transform var(--bloom-mid) var(--bloom-spring),
+    background var(--bloom-fast) var(--bloom-ease);
+}
+.bloom-to-top[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.bloom-to-top:hover {
+  background: #f7c325;
+}
+.bloom-to-top:active {
+  transform: scale(0.93);
+}
+@media (max-width: 700px) {
+  .bloom-to-top {
+    right: 14px;
+    bottom: 14px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 12. Movimiento reducido                                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Va al final a propósito: neutraliza todo lo declarado arriba. El revelado
+ * se apaga dejando el contenido visible, nunca oculto.
+ */
+@media (prefers-reduced-motion: reduce) {
+  /* El comodín tiene menos peso que los selectores de arriba, así que aquí
+     el !important es la única forma de apagarlos todos de una vez. */
+  .bloom-site *,
+  .bloom-shell * {
+    /* biome-ignore lint/complexity/noImportantStyles: apaga reglas más específicas */
+    animation: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: apaga reglas más específicas */
+    transition: none !important;
+  }
+  .bloom-site[data-motion="on"] [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .bloom-ambient {
+    display: none;
+  }
+  .bloom-steps > article::before {
+    transform: scaleX(1);
+  }
+  .bloom-preview-frame {
+    opacity: 1;
+  }
+  .bloom-nav-links a::after {
+    transform: scaleX(0);
+  }
+  .bloom-nav-links a[aria-current="location"]::after {
+    transform: scaleX(1);
+  }
+  .bloom-ribbon-track {
+    animation: none;
+  }
+  .bloom-site[data-motion="on"] .bloom-plan-feature {
+    opacity: 1;
+    transform: none;
+  }
+  .bloom-mobile-menu a {
+    opacity: 1;
+    transform: none;
+  }
+}
