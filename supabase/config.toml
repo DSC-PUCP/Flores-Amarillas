@@ -1,0 +1,14 @@
+project_id = "flores-amarillas"
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]

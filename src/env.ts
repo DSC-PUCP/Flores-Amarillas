@@ -5,7 +5,10 @@ export const env = createEnv({
   server: {
     SERVER_URL: z.url().optional(),
 
-    API_SECRET: z.string().min(1).optional(),
+    FLOW_API_KEY: z.string().min(1).optional(),
+    FLOW_SECRET_KEY: z.string().min(1).optional(),
+    FLOW_MODE: z.enum(['sandbox', 'production']).default('sandbox'),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   },
 
   clientPrefix: 'VITE_',
@@ -14,15 +17,16 @@ export const env = createEnv({
     VITE_APP_TITLE: z.string().min(1).optional(),
     VITE_SUPABASE_URL: z.url(),
     VITE_SUPABASE_KEY: z.string(),
-    VITE_SERVER_URL: z.string().optional(),
+    VITE_SERVER_URL: z.url().optional(),
 
-    // Numero de WhatsApp de ventas, formato internacional sin + ni espacios
-    VITE_WHATSAPP_PHONE: z.string().min(9),
   },
 
   runtimeEnv: {
     ...import.meta.env,
-    API_SECRET: process.env.API_SECRET,
+    FLOW_API_KEY: process.env.FLOW_API_KEY,
+    FLOW_SECRET_KEY: process.env.FLOW_SECRET_KEY,
+    FLOW_MODE: process.env.FLOW_MODE,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     SERVER_URL: process.env.SERVER_URL,
   },
 

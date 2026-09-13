@@ -16,6 +16,8 @@ const mapRowToLovepage = (row: LovepageRow): Lovepage => {
     configJson: row.config_json as TemplateData,
     isPaid: row.is_paid ?? false,
     expiresAt: row.expires_at ? new Date(row.expires_at) : null,
+    flowAmount: row.flow_amount,
+    flowCheckoutUrl: row.flow_checkout_url,
   };
 };
 
@@ -49,14 +51,5 @@ export const lovepageRepository: LovepageRepository = {
     if (error) return Result.error(new Error(error.message));
     if (!data) return Result.success(null);
     return Result.success(data.id);
-  },
-  activate: async (id: string) => {
-    const supabase = getSupabaseClient();
-    const { error } = await supabase.rpc('activate_love_page', {
-      target_page_id: id,
-    });
-
-    if (error) return Result.error(new Error(error.message));
-    return Result.success(undefined);
   },
 };

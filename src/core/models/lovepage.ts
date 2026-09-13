@@ -6,6 +6,8 @@ export type Lovepage = {
   configJson: TemplateData | null;
   isPaid: boolean;
   expiresAt: Date | null;
+  flowAmount: number | null;
+  flowCheckoutUrl: string | null;
 };
 
 export type FileUploadRef = {

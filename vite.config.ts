@@ -11,6 +11,12 @@ const config = defineConfig(({ mode }) => {
   const isProd = mode === 'production'
   
   return {
+    server: {
+      allowedHosts:
+        env.FLOW_MODE === 'sandbox' && env.SERVER_URL
+          ? [new URL(env.SERVER_URL).hostname]
+          : [],
+    },
     plugins: [
       devtools(),
       viteTsConfigPaths({

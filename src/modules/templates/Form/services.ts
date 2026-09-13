@@ -5,8 +5,8 @@ import { lovepageRepository } from '@/repository/lovepage';
 import { storageRepository } from '@/repository/storage';
 
 // Tiempo que vive el preview de un plan pagado antes de expirar.
-// El usuario necesita abrir WhatsApp, escribir, yapear y mandar el comprobante:
-// 5 minutos (valor del proyecto de San Valentin) resulto muy justo.
+// La vista previa puede vencer mientras Flow confirma un pago asincrono;
+// un pago confirmado limpia expires_at y reactiva la pagina.
 const PREVIEW_EXPIRATION_MINUTES = 45;
 
 /*
