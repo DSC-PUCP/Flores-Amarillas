@@ -1,8 +1,8 @@
 import { Flower2, Loader2, RefreshCw } from 'lucide-react';
-import type { CSSProperties } from 'react';
+import { type CSSProperties, useMemo } from 'react';
 import type { Plan } from '@/core/models';
 import { usePlans } from '../hooks/usePlans';
-import { PlanCard } from './PlanCard';
+import { PlanCard, type PlanTier } from './PlanCard';
 
 interface PlansSectionProps {
   /** Datos de revisión visual: la landing siempre usa los planes publicados. */
@@ -27,6 +27,28 @@ export function PlansSection({
   const showLoading = !isPreview && isLoading;
   const showError = !isPreview && Boolean(error) && plans.length === 0;
   const showEmpty = !showLoading && !showError && plans.length === 0;
+
+  /**
+   * Nivel visual de cada plan, por precio.
+   *
+   * Se calcula aqui y no dentro de la tarjeta porque depende del catalogo
+   * entero: cual es el mas caro solo se sabe mirando a los demas. Con dos
+   * planes no hay intermedio, y el mas caro sigue siendo el tope.
+   */
+  const niveles = useMemo(() => {
+    const porPrecio = [...plans].sort((a, b) => a.price - b.price);
+    const mapa = new Map<Plan['id'], PlanTier>();
+    porPrecio.forEach((plan, i) => {
+      if (i === porPrecio.length - 1 && porPrecio.length > 1) {
+        mapa.set(plan.id, 'tope');
+      } else if (i > 0) {
+        mapa.set(plan.id, 'intermedio');
+      } else {
+        mapa.set(plan.id, 'entrada');
+      }
+    });
+    return mapa;
+  }, [plans]);
 
   return (
     <section
@@ -124,6 +146,7 @@ export function PlansSection({
                 plan={plan}
                 interactive={interactive}
                 index={index}
+                tier={niveles.get(plan.id) ?? 'entrada'}
               />
             ))}
           </div>

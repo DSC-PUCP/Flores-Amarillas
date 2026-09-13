@@ -1,8 +1,11 @@
 import { Link } from '@tanstack/react-router';
-import { ArrowUpRight, Check, Flower2 } from 'lucide-react';
+import { ArrowUpRight, Check, Flower2, Sparkles } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import type { Plan } from '@/core/models';
 import { cn } from '@/lib/utils';
+
+/** Nivel dentro del catálogo; lo calcula `PlansSection` ordenando por precio. */
+export type PlanTier = 'entrada' | 'intermedio' | 'tope';
 
 interface PlanCardProps {
   plan: Plan;
@@ -10,6 +13,12 @@ interface PlanCardProps {
   interactive?: boolean;
   /** Posición en la grilla: escalona la entrada de las tarjetas. */
   index?: number;
+  /**
+   * Se recibe desde fuera en vez de deducirlo aquí del nombre o del precio:
+   * los nombres cambian y un precio suelto no dice si es el plan del medio o
+   * el más caro cuando hay tres o más.
+   */
+  tier?: PlanTier;
 }
 
 const priceFormatter = new Intl.NumberFormat('es-PE', {
@@ -17,17 +26,98 @@ const priceFormatter = new Intl.NumberFormat('es-PE', {
   maximumFractionDigits: 2,
 });
 
+/**
+ * Precio anterior escondido en la descripción.
+ *
+ * En los datos actuales el campo `description` de los planes de pago trae
+ * «Antes s/ 14» en lugar de una descripción. Eso es una oferta, no una
+ * descripción, así que se detecta y se muestra como precio tachado, que es lo
+ * que el negocio quiere decir. Si algún día la descripción vuelve a ser una
+ * descripción, el patrón no coincide y el texto se muestra tal cual.
+ */
+function leerPrecioAnterior(description: string | null | undefined) {
+  if (!description) return null;
+  const m = description.match(/antes\s*s\/?\.?\s*([\d.,]+)/i);
+  if (!m) return null;
+  const valor = Number.parseFloat(m[1].replace(',', '.'));
+  return Number.isFinite(valor) ? valor : null;
+}
+
+/**
+ * Paleta por nivel.
+ *
+ * Antes la tarjeta solo distinguía gratis o de pago, así que Clásico y Premium
+ * salían idénticas y nada decía qué separaba a una de otra. Ahora cada nivel
+ * tiene su propio fondo, color de texto y acento: papel blanco el de entrada,
+ * amarillo girasol el intermedio y verde profundo el tope.
+ */
+const ESTILOS: Record<
+  PlanTier,
+  {
+    tarjeta: string;
+    texto: string;
+    etiqueta: string;
+    flor: string;
+    separador: string;
+    marca: string;
+    apagado: string;
+    boton: string;
+  }
+> = {
+  entrada: {
+    tarjeta:
+      'border-[#183E32]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.4)]',
+    texto: 'text-[#183E32]',
+    etiqueta: 'bg-[#EEF3E9] text-[#183E32]',
+    flor: 'text-[#9FB48F]',
+    separador: 'bg-[#183E32]/12',
+    marca: 'bg-[#EEF3E9] text-[#183E32]',
+    apagado: 'text-[#183E32]/70',
+    boton:
+      'border border-[#183E32]/25 bg-white text-[#183E32] hover:bg-[#EEF3E9]',
+  },
+  intermedio: {
+    tarjeta:
+      'border-[#E8BB12] bg-[#FFD329] hover:shadow-[0_32px_56px_-26px_rgba(190,140,10,0.8)]',
+    texto: 'text-[#183E32]',
+    etiqueta: 'bg-white/60 text-[#183E32]',
+    flor: 'text-[#183E32]',
+    separador: 'bg-[#183E32]/20',
+    marca: 'bg-white/65 text-[#183E32]',
+    apagado: 'text-[#183E32]/75',
+    boton: 'border border-[#183E32] bg-[#183E32] text-white hover:bg-[#27583E]',
+  },
+  tope: {
+    tarjeta:
+      'border-[#2C5545] bg-[#183E32] hover:shadow-[0_34px_60px_-24px_rgba(10,30,22,0.85)]',
+    texto: 'text-[#FFF9E9]',
+    etiqueta: 'bg-[#FFD329] text-[#183E32]',
+    flor: 'text-[#FFD329]',
+    separador: 'bg-[#FFF9E9]/20',
+    marca: 'bg-[#FFD329] text-[#183E32]',
+    apagado: 'text-[#D6DFCF]',
+    boton:
+      'border border-[#FFD329] bg-[#FFD329] text-[#183E32] hover:bg-[#FFDF5C]',
+  },
+};
+
 export function PlanCard({
   plan,
   interactive = true,
   index = 0,
+  tier = 'entrada',
 }: PlanCardProps) {
   const isFree = plan.price === 0;
+  const s = ESTILOS[tier];
+  const precioAnterior = leerPrecioAnterior(plan.description);
+  const descripcion = precioAnterior ? null : plan.description;
+
   const buttonClass = cn(
-    'group flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-6 py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]',
-    isFree
-      ? 'border border-[#183E32]/25 bg-white text-[#183E32] hover:bg-[#E9EFE6]'
-      : 'border border-[#183E32] bg-[#183E32] text-white hover:bg-[#275443]'
+    'group flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-6 py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4',
+    tier === 'tope'
+      ? 'focus-visible:outline-[#FFD329]'
+      : 'focus-visible:outline-[#183E32]',
+    s.boton
   );
 
   return (
@@ -35,34 +125,54 @@ export function PlanCard({
       data-reveal="grow"
       style={{ '--reveal-i': index } as CSSProperties}
       className={cn(
-        'group/plan relative flex w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border p-7 text-[#183E32] transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:-translate-y-1.5 sm:p-9',
-        isFree
-          ? 'border-[#183E32]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.45)]'
-          : 'border-[#E8BB12] bg-[#FFD329] hover:shadow-[0_26px_50px_-26px_rgba(190,140,10,0.75)]'
+        'group/plan relative flex w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] border p-7 transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:-translate-y-1.5 sm:p-9',
+        s.tarjeta,
+        s.texto,
+        // El plan del medio es el que conviene mirar primero: se levanta sobre
+        // los otros dos donde caben los tres en fila.
+        tier === 'intermedio' &&
+          'lg:-translate-y-3 lg:shadow-[0_22px_44px_-28px_rgba(190,140,10,0.7)]'
       )}
     >
-      <div className="mb-9 flex items-start justify-between gap-4">
+      {/* Flor grande y muy tenue al fondo: da profundidad sin competir con
+          el texto. */}
+      <Flower2
+        aria-hidden="true"
+        className={cn(
+          'pointer-events-none absolute -top-10 -right-8 size-44 rotate-12 stroke-[0.75] opacity-[0.14] transition-transform duration-700 ease-out motion-safe:group-hover/plan:rotate-[26deg]',
+          s.flor
+        )}
+      />
+
+      <div className="relative mb-8 flex items-start justify-between gap-4">
         <div>
           <span
             className={cn(
-              'mb-4 inline-flex rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
-              isFree ? 'bg-[#EEF3E9]' : 'bg-white/55'
+              'mb-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold tracking-[0.12em] uppercase',
+              s.etiqueta
             )}
           >
+            {tier === 'tope' && (
+              <Sparkles aria-hidden="true" className="size-3" />
+            )}
             {isFree ? 'Sin costo' : 'Pago único'}
           </span>
           <h3 className="text-2xl font-bold tracking-tight">{plan.name}</h3>
         </div>
-        <Flower2
-          aria-hidden="true"
-          className={cn(
-            'size-12 shrink-0 rotate-12 stroke-[1.25] transition-transform duration-500 ease-out motion-safe:group-hover/plan:rotate-[24deg] motion-safe:group-hover/plan:scale-110',
-            isFree ? 'text-[#F17B62]' : 'text-[#183E32]'
-          )}
-        />
+
+        {tier === 'intermedio' && (
+          <span
+            className={cn(
+              'shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase',
+              s.marca
+            )}
+          >
+            El más elegido
+          </span>
+        )}
       </div>
 
-      <div className="mb-2 flex flex-wrap items-baseline gap-2">
+      <div className="relative mb-2 flex flex-wrap items-baseline gap-2">
         {isFree ? (
           <span className="font-display text-5xl leading-none tracking-tight">
             Gratis
@@ -73,19 +183,29 @@ export function PlanCard({
             <span className="text-5xl leading-none font-bold tracking-[-0.05em] tabular-nums">
               {priceFormatter.format(plan.price)}
             </span>
+            {precioAnterior !== null && (
+              <span
+                className={cn(
+                  'text-base font-medium line-through decoration-2 decoration-[#C0512F]',
+                  tier === 'tope' ? 'text-[#E8EFE2]' : 'text-[#183E32]/85'
+                )}
+              >
+                S/ {priceFormatter.format(precioAnterior)}
+              </span>
+            )}
           </>
         )}
       </div>
-      <p className="mb-6 text-xs text-[#183E32]/75">
+      <p className={cn('mb-6 text-xs', s.apagado)}>
         {isFree ? 'Una dedicatoria para compartir' : 'Por dedicatoria'}
       </p>
 
-      <p className="mb-7 text-sm leading-6 text-[#183E32]/85">
-        {plan.description}
-      </p>
+      {descripcion && (
+        <p className={cn('mb-7 text-sm leading-6', s.apagado)}>{descripcion}</p>
+      )}
 
-      <div className="mb-6 h-px bg-[#183E32]/15" />
-      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.16em]">
+      <div className={cn('mb-6 h-px', s.separador)} />
+      <p className="mb-4 text-[10px] font-bold tracking-[0.16em] uppercase">
         Incluye
       </p>
       <ul className="mb-9 space-y-3.5">
@@ -98,7 +218,7 @@ export function PlanCard({
             <span
               className={cn(
                 'mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full',
-                isFree ? 'bg-[#EEF3E9]' : 'bg-white/55'
+                s.marca
               )}
             >
               <Check aria-hidden="true" className="size-3 stroke-[2.5]" />
@@ -108,13 +228,13 @@ export function PlanCard({
         ))}
       </ul>
 
-      <div className="mt-auto">
+      <div className="relative mt-auto">
         {interactive ? (
           <Link to="/template" className={buttonClass}>
             Ver diseños
             <ArrowUpRight
               aria-hidden="true"
-              className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+              className="size-4 transition-transform motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
             />
           </Link>
         ) : (
@@ -127,7 +247,7 @@ export function PlanCard({
             <ArrowUpRight aria-hidden="true" className="size-4" />
           </button>
         )}
-        <p className="mt-3 text-center text-[11px] leading-5 text-[#183E32]/75">
+        <p className={cn('mt-3 text-center text-[11px] leading-5', s.apagado)}>
           {isFree
             ? 'Elige un diseño y hazlo tuyo.'
             : 'Activación después de validar tu pago.'}
