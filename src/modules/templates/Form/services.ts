@@ -3,6 +3,7 @@ import { PlanService } from '@/modules/plan/services';
 import { TemplateService } from '@/modules/templates/services';
 import { lovepageRepository } from '@/repository/lovepage';
 import { storageRepository } from '@/repository/storage';
+import { uuid } from '@/lib/uuid';
 
 // Tiempo que vive el preview de un plan pagado antes de expirar.
 // El usuario necesita abrir WhatsApp, escribir, yapear y mandar el comprobante:
@@ -63,7 +64,7 @@ export namespace LovepageService {
 
     //Proceso de subida de ARchivos
     // Page ID para storage path
-    const pageId = crypto.randomUUID();
+    const pageId = uuid();
     // Clone configJson
     const updatedConfig = { ...configJson } as Record<string, unknown>;
     // Subir files y reemplzar URLs
@@ -72,7 +73,7 @@ export namespace LovepageService {
       const uploadedUrls: string[] = [];
 
       for (const singleFile of filesToProcess) {
-        const fileId = crypto.randomUUID();
+        const fileId = uuid();
         //Subidaaaa
         const uploadResult = await storageRepository.uploadImage({
           file: singleFile,
