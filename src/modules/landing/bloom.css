@@ -8,6 +8,33 @@
   color: var(--bloom-green);
   background: var(--bloom-paper);
 }
+/**
+ * Color al seleccionar texto.
+ *
+ * Sin esta regla el navegador pinta su gris azulado por defecto, que sobre el
+ * papel crema se ve sucio y apagado: es lo primero que rompe el ambiente
+ * cuando alguien arrastra el cursor por encima de un titular.
+ *
+ * El amarillo girasol va con tinta verde encima, no con blanco, porque el
+ * contraste tiene que aguantar igual con el texto resaltado.
+ */
+.bloom-site ::selection,
+.bloom-shell ::selection {
+  background: #ffd329;
+  color: #123a2c;
+}
+.bloom-site ::-moz-selection,
+.bloom-shell ::-moz-selection {
+  background: #ffd329;
+  color: #123a2c;
+}
+/* En las zonas oscuras el amarillo quema: ahi se invierte. */
+.bloom-how ::selection,
+.bloom-footer ::selection {
+  background: #ffd329;
+  color: #123a2c;
+}
+
 .bloom-shell {
   min-height: 100svh;
   display: flex;
