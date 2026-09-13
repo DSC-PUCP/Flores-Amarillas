@@ -70,12 +70,10 @@ export function FaqSection() {
           />
         </div>
 
-        <Accordion
-          type="single"
-          collapsible
-          defaultValue="gift"
-          data-reveal="right"
-        >
+        {/* Sin `defaultValue`: arranca con todo cerrado para que se vean las
+            cinco preguntas de un vistazo. Con una abierta, las de abajo
+            quedaban empujadas fuera de pantalla y parecia que habia menos. */}
+        <Accordion type="single" collapsible data-reveal="right">
           {QUESTIONS.map(({ id, question, answer }) => (
             <AccordionItem key={id} value={id} className="border-[#183E32]/15">
               <AccordionTrigger className="items-center rounded-lg py-6 text-base leading-6 font-semibold text-[#183E32] hover:no-underline focus-visible:ring-[#183E32]/30 [&>svg]:size-5 [&>svg]:text-[#183E32]">
