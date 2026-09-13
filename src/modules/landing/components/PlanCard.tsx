@@ -88,8 +88,11 @@ const ESTILOS: Record<
     boton: 'border border-[#183E32] bg-[#183E32] text-white hover:bg-[#27583E]',
   },
   tope: {
+    // Degradado en vez de verde plano, y un halo dorado arriba a la derecha:
+    // el color liso es lo que hacia que el plan mas caro se viera igual de
+    // barato que los otros.
     tarjeta:
-      'border-[#2C5545] bg-[#183E32] hover:shadow-[0_34px_60px_-24px_rgba(10,30,22,0.85)]',
+      'border-[#C9A227] bg-[#15352B] bg-[radial-gradient(ellipse_at_top_right,rgba(255,211,41,0.16),transparent_58%),linear-gradient(160deg,#1D453A_0%,#132E25_100%)] shadow-[0_20px_44px_-28px_rgba(10,30,22,0.9)] hover:shadow-[0_38px_66px_-22px_rgba(10,30,22,0.95)]',
     texto: 'text-[#FFF9E9]',
     etiqueta: 'bg-[#FFD329] text-[#183E32]',
     flor: 'text-[#FFD329]',
@@ -134,6 +137,15 @@ export function PlanCard({
           'lg:-translate-y-3 lg:shadow-[0_22px_44px_-28px_rgba(190,140,10,0.7)]'
       )}
     >
+      {/* Filete dorado por dentro del borde: el detalle que separa una
+          tarjeta oscura de una tarjeta cara. */}
+      {tier === 'tope' && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-[5px] rounded-[23px] border border-[#FFD329]/25"
+        />
+      )}
+
       {/* Flor grande y muy tenue al fondo: da profundidad sin competir con
           el texto. */}
       <Flower2
@@ -157,7 +169,21 @@ export function PlanCard({
             )}
             {isFree ? 'Sin costo' : 'Pago único'}
           </span>
-          <h3 className="text-2xl font-bold tracking-tight">{plan.name}</h3>
+          {/*
+            El color va con `!` a proposito. `bloom.css` fija
+            `.bloom-site h3 { color: var(--bloom-green) }`, que tiene mas
+            especificidad que una clase de Tailwind, asi que en la tarjeta
+            verde el titulo salia exactamente del color del fondo: contraste
+            1.00, invisible. Heredar no alcanza aqui.
+          */}
+          <h3
+            className={cn(
+              'text-2xl font-bold tracking-tight',
+              tier === 'tope' ? '!text-[#FFF9E9]' : '!text-[#183E32]'
+            )}
+          >
+            {plan.name}
+          </h3>
         </div>
 
         {tier === 'intermedio' && (
@@ -179,8 +205,20 @@ export function PlanCard({
           </span>
         ) : (
           <>
-            <span className="text-xl font-medium">S/</span>
-            <span className="text-5xl leading-none font-bold tracking-[-0.05em] tabular-nums">
+            <span
+              className={cn(
+                'text-xl font-medium',
+                tier === 'tope' && 'text-[#FFD329]'
+              )}
+            >
+              S/
+            </span>
+            <span
+              className={cn(
+                'text-5xl leading-none font-bold tracking-[-0.05em] tabular-nums',
+                tier === 'tope' && 'text-[#FFD329]'
+              )}
+            >
               {priceFormatter.format(plan.price)}
             </span>
             {precioAnterior !== null && (
