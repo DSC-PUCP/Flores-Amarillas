@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --host",
+    "local:up": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/local-up.ps1",
+    "dev": "vite dev --host --strictPort",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -106,7 +107,7 @@
     "@vitejs/plugin-react": "5.1.2",
     "babel-plugin-react-compiler": "1.0.0",
     "jsdom": "27.4.0",
-    "supabase": "2.72.6",
+    "supabase": "2.117.0",
     "typescript": "5.9.3",
     "vite": "7.3.1",
     "vitest": "4.0.17",

@@ -113,6 +113,9 @@ export type Database = {
           config_json: Json;
           is_paid: boolean | null;
           expires_at: string | null;
+          flow_checkout_url: string | null;
+          flow_order: number | null;
+          flow_amount: number | null;
         };
         Insert: {
           id?: string;
@@ -120,6 +123,9 @@ export type Database = {
           config_json: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
+          flow_checkout_url?: string | null;
+          flow_order?: number | null;
+          flow_amount?: number | null;
         };
         Update: {
           id?: string;
@@ -127,6 +133,9 @@ export type Database = {
           config_json?: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
+          flow_checkout_url?: string | null;
+          flow_order?: number | null;
+          flow_amount?: number | null;
         };
         Relationships: [
           {
@@ -170,12 +179,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      activate_love_page: {
-        Args: {
-          target_page_id: string;
-        };
-        Returns: void;
-      };
+      [_ in never]: never;
     };
     Enums: {
       item_status: 'draft' | 'published' | 'archived';

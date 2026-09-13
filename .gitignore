@@ -8,5 +8,8 @@ count.txt
 .nitro
 .tanstack
 .wrangler
+.supabase
+supabase/.temp
+supabase/.branches
 .output
 .vinxi

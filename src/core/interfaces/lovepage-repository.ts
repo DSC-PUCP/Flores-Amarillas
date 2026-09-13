@@ -13,5 +13,4 @@ export type LovepageRepository = {
   createLovepage: (
     input: CreateLovepageInput
   ) => Promise<Result<string | null>>;
-  activate: (id: string) => Promise<Result<void>>;
 };
