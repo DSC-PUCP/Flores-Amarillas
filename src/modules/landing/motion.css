@@ -575,9 +575,22 @@
     border-color var(--bloom-fast) var(--bloom-ease),
     transform var(--bloom-fast) var(--bloom-spring);
 }
-.bloom-audience button:hover {
+/**
+ * El hover solo aplica al chip que NO esta elegido.
+ *
+ * Sin el `:not(...)` esta regla tenia la misma especificidad que la del chip
+ * seleccionado en bloom.css, pero carga despues, asi que le pisaba el fondo
+ * verde y lo dejaba blanco... con el texto crema encima. Contraste 1.02:
+ * el chip elegido desaparecia justo al pasarle el cursor.
+ */
+.bloom-audience button:not([aria-pressed="true"]):hover {
   border-color: #183e3266;
   background: #ffffff80;
+}
+/* El elegido tambien responde, pero aclarando su propio verde. */
+.bloom-audience button[aria-pressed="true"]:hover {
+  background: #27583e;
+  border-color: #27583e;
 }
 .bloom-audience button[aria-pressed="true"] {
   transform: translateY(-2px);
