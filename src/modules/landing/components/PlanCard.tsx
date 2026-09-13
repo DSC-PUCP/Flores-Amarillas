@@ -66,26 +66,26 @@ const ESTILOS: Record<
 > = {
   entrada: {
     tarjeta:
-      'border-[#183E32]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.4)]',
-    texto: 'text-[#183E32]',
-    etiqueta: 'bg-[#EEF3E9] text-[#183E32]',
+      'border-[#123A2C]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.4)]',
+    texto: 'text-[#123A2C]',
+    etiqueta: 'bg-[#EEF3E9] text-[#123A2C]',
     flor: 'text-[#9FB48F]',
-    separador: 'bg-[#183E32]/12',
-    marca: 'bg-[#EEF3E9] text-[#183E32]',
-    apagado: 'text-[#183E32]/70',
+    separador: 'bg-[#123A2C]/12',
+    marca: 'bg-[#EEF3E9] text-[#123A2C]',
+    apagado: 'text-[#123A2C]/70',
     boton:
-      'border border-[#183E32]/25 bg-white text-[#183E32] hover:bg-[#EEF3E9]',
+      'border border-[#123A2C]/25 bg-white text-[#123A2C] hover:bg-[#EEF3E9]',
   },
   intermedio: {
     tarjeta:
       'border-[#E8BB12] bg-[#FFD329] hover:shadow-[0_32px_56px_-26px_rgba(190,140,10,0.8)]',
-    texto: 'text-[#183E32]',
-    etiqueta: 'bg-white/60 text-[#183E32]',
-    flor: 'text-[#183E32]',
-    separador: 'bg-[#183E32]/20',
-    marca: 'bg-white/65 text-[#183E32]',
-    apagado: 'text-[#183E32]/75',
-    boton: 'border border-[#183E32] bg-[#183E32] text-white hover:bg-[#27583E]',
+    texto: 'text-[#123A2C]',
+    etiqueta: 'bg-white/60 text-[#123A2C]',
+    flor: 'text-[#123A2C]',
+    separador: 'bg-[#123A2C]/20',
+    marca: 'bg-white/65 text-[#123A2C]',
+    apagado: 'text-[#123A2C]/75',
+    boton: 'border border-[#123A2C] bg-[#123A2C] text-white hover:bg-[#27583E]',
   },
   tope: {
     // Degradado en vez de verde plano, y un halo dorado arriba a la derecha:
@@ -94,13 +94,13 @@ const ESTILOS: Record<
     tarjeta:
       'border-[#C9A227] bg-[#15352B] bg-[radial-gradient(ellipse_at_top_right,rgba(255,211,41,0.16),transparent_58%),linear-gradient(160deg,#1D453A_0%,#132E25_100%)] shadow-[0_20px_44px_-28px_rgba(10,30,22,0.9)] hover:shadow-[0_38px_66px_-22px_rgba(10,30,22,0.95)]',
     texto: 'text-[#FFF9E9]',
-    etiqueta: 'bg-[#FFD329] text-[#183E32]',
+    etiqueta: 'bg-[#FFD329] text-[#123A2C]',
     flor: 'text-[#FFD329]',
     separador: 'bg-[#FFF9E9]/20',
-    marca: 'bg-[#FFD329] text-[#183E32]',
+    marca: 'bg-[#FFD329] text-[#123A2C]',
     apagado: 'text-[#D6DFCF]',
     boton:
-      'border border-[#FFD329] bg-[#FFD329] text-[#183E32] hover:bg-[#FFDF5C]',
+      'border border-[#FFD329] bg-[#FFD329] text-[#123A2C] hover:bg-[#FFDF5C]',
   },
 };
 
@@ -119,7 +119,7 @@ export function PlanCard({
     'group flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-6 py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4',
     tier === 'tope'
       ? 'focus-visible:outline-[#FFD329]'
-      : 'focus-visible:outline-[#183E32]',
+      : 'focus-visible:outline-[#123A2C]',
     s.boton
   );
 
@@ -179,7 +179,7 @@ export function PlanCard({
           <h3
             className={cn(
               'text-2xl font-bold tracking-tight',
-              tier === 'tope' ? '!text-[#FFF9E9]' : '!text-[#183E32]'
+              tier === 'tope' ? '!text-[#FFF9E9]' : '!text-[#123A2C]'
             )}
           >
             {plan.name}
@@ -225,7 +225,7 @@ export function PlanCard({
               <span
                 className={cn(
                   'text-base font-medium line-through decoration-2 decoration-[#C0512F]',
-                  tier === 'tope' ? 'text-[#E8EFE2]' : 'text-[#183E32]/85'
+                  tier === 'tope' ? 'text-[#E8EFE2]' : 'text-[#123A2C]/85'
                 )}
               >
                 S/ {priceFormatter.format(precioAnterior)}

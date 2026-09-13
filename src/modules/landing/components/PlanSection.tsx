@@ -54,7 +54,7 @@ export function PlansSection({
     <section
       id="plans"
       aria-labelledby="plans-title"
-      className="scroll-mt-24 bg-[#FFFCF4] px-5 py-20 text-[#183E32] sm:px-8 lg:py-28"
+      className="scroll-mt-24 bg-[#FFFCF4] px-5 py-20 text-[#123A2C] sm:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -74,7 +74,7 @@ export function PlansSection({
           </div>
           <p
             data-reveal="right"
-            className="max-w-sm text-sm leading-6 text-[#183E32]/75"
+            className="max-w-sm text-sm leading-6 text-[#123A2C]/75"
           >
             Compara lo que incluye cada opción. Después, elige tu diseño y
             personalízalo con las palabras y los recuerdos que lo hacen suyo.
@@ -97,7 +97,7 @@ export function PlansSection({
               {['first', 'second'].map((id) => (
                 <div
                   key={id}
-                  className="h-80 rounded-[28px] border border-[#183E32]/10 bg-[#EAF0E4]/60 motion-safe:animate-pulse"
+                  className="h-80 rounded-[28px] border border-[#123A2C]/10 bg-[#EAF0E4]/60 motion-safe:animate-pulse"
                 />
               ))}
             </div>
@@ -105,7 +105,7 @@ export function PlansSection({
         ) : showError || showEmpty ? (
           <div
             aria-live="polite"
-            className="mx-auto flex max-w-xl flex-col items-center rounded-[28px] border border-[#183E32]/15 bg-white px-6 py-12 text-center"
+            className="mx-auto flex max-w-xl flex-col items-center rounded-[28px] border border-[#123A2C]/15 bg-white px-6 py-12 text-center"
           >
             <Flower2
               aria-hidden="true"
@@ -116,7 +116,7 @@ export function PlansSection({
                 ? 'No pudimos cargar los precios'
                 : 'Estamos preparando los próximos detalles'}
             </h3>
-            <p className="max-w-sm text-sm leading-6 text-[#183E32]/75">
+            <p className="max-w-sm text-sm leading-6 text-[#123A2C]/75">
               {showError
                 ? 'Vuelve a intentarlo para consultar los planes disponibles. Mientras tanto, puedes seguir explorando la experiencia de arriba.'
                 : 'Por ahora no hay planes disponibles. Puedes volver a consultar en un momento.'}
@@ -126,7 +126,7 @@ export function PlansSection({
                 type="button"
                 onClick={() => void refetch()}
                 disabled={isFetching}
-                className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#FFD329] px-6 py-3 text-sm font-bold transition-colors hover:bg-[#F2C21A] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32] disabled:cursor-wait disabled:opacity-60"
+                className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#FFD329] px-6 py-3 text-sm font-bold transition-colors hover:bg-[#F2C21A] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#123A2C] disabled:cursor-wait disabled:opacity-60"
               >
                 <RefreshCw
                   aria-hidden="true"
@@ -156,7 +156,7 @@ export function PlansSection({
           <p
             data-reveal
             style={{ '--reveal-i': 3 } as CSSProperties}
-            className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#183E32]/70"
+            className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#123A2C]/70"
           >
             En los diseños de pago, primero revisas tu dedicatoria y después
             coordinas la activación por WhatsApp. El pago se valida manualmente.

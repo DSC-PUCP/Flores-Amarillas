@@ -1,10 +1,10 @@
 /* Campaign styles are scoped so the editor and existing templates keep their own UI. */
 .bloom-shell,
 .bloom-site {
-  --bloom-green: #183e32;
+  --bloom-green: #123a2c;
   --bloom-yellow: #ffd329;
   --bloom-paper: #fffcf4;
-  --bloom-muted: #5b685d;
+  --bloom-muted: #46725c;
   color: var(--bloom-green);
   background: var(--bloom-paper);
 }
@@ -107,18 +107,18 @@
   transform: translateX(3px);
 }
 .bloom-button-green {
-  background: #183e32;
+  background: #123a2c;
   color: #fffdf4;
-  border: 1px solid #183e32;
+  border: 1px solid #123a2c;
   box-shadow: 0 5px 0 #122e2320;
 }
 .bloom-button-green:hover {
-  background: #27583e;
+  background: #1d5140;
   box-shadow: 0 7px 0 #122e2320;
 }
 .bloom-button-outline {
-  border: 1px solid #183e3245;
-  color: #183e32;
+  border: 1px solid #123a2c45;
+  color: #123a2c;
   background: transparent;
 }
 .bloom-button-outline:hover {
@@ -140,7 +140,7 @@
   inset: 0 0 auto;
   z-index: 40;
   background: #fffcf4f2;
-  border-bottom: 1px solid #183e3217;
+  border-bottom: 1px solid #123a2c17;
   backdrop-filter: blur(16px);
 }
 .bloom-nav-inner {
@@ -187,12 +187,12 @@
 }
 .bloom-nav-links a {
   position: relative;
-  color: #516353;
+  color: #426755;
   transition: color 0.2s;
 }
 .bloom-nav-links a:hover,
 .bloom-nav-links a[aria-current="location"] {
-  color: #183e32;
+  color: #123a2c;
 }
 .bloom-nav-links a[aria-current="location"]::after {
   content: "";
@@ -214,7 +214,7 @@
   padding: 11px 19px;
   font-size: 12px;
   background: #ffd329;
-  color: #183e32;
+  color: #123a2c;
   border: 0;
 }
 .bloom-menu-toggle {
@@ -233,7 +233,7 @@
   top: -80px;
   left: 18px;
   z-index: 100;
-  background: #183e32;
+  background: #123a2c;
   color: white;
   padding: 12px 18px;
   border-radius: 8px;
@@ -253,7 +253,7 @@
 }
 .bloom-footer {
   padding: 34px 0;
-  background: #183e32;
+  background: #123a2c;
   color: #f7efd5;
 }
 .bloom-footer > .bloom-container {
@@ -263,11 +263,11 @@
   gap: 24px;
 }
 .bloom-footer .bloom-logo-mark {
-  color: #183e32;
+  color: #123a2c;
 }
 .bloom-footer p {
   font-size: 11px;
-  color: #d4dfcc;
+  color: #cbded1;
 }
 .bloom-footer-links {
   display: flex;
@@ -329,7 +329,7 @@
   font-size: 16px;
   line-height: 1.85;
   max-width: 435px;
-  color: #53614d;
+  color: #426755;
   margin-bottom: 27px;
 }
 .bloom-actions {
@@ -343,7 +343,7 @@
   flex-wrap: wrap;
   margin-top: 22px;
   font-size: 11px;
-  color: #5f6b56;
+  color: #426755;
 }
 .bloom-hero-assurances > span {
   display: flex;
@@ -413,7 +413,7 @@
   flex-direction: column;
   gap: 23px;
   background: #fffdf5;
-  color: #183e32;
+  color: #123a2c;
   border: 1px solid #dddece;
   border-radius: 4px;
   box-shadow: 0 17px 34px #58481225;
@@ -476,7 +476,7 @@
   background: #fffef9;
   padding: 14px 18px;
   border-radius: 14px;
-  box-shadow: 0 12px 35px #183e3215;
+  box-shadow: 0 12px 35px #123a2c15;
   transform: rotate(3deg);
 }
 .bloom-delivery-note strong {
@@ -487,7 +487,7 @@
   display: block;
   margin-top: 3px;
   font-size: 9px;
-  color: #6b7468;
+  color: #46725c;
 }
 .bloom-delivery-icon {
   width: 36px;
@@ -512,7 +512,7 @@
 .bloom-art-spark {
   position: absolute;
   font-size: 45px;
-  color: #b1c77c;
+  color: #a8c878;
 }
 .bloom-art-spark-one {
   top: 4px;
@@ -551,12 +551,12 @@
 .bloom-section-heading > p {
   max-width: 530px;
   margin-inline: auto;
-  color: #687260;
+  color: #46725c;
   font-size: 15px;
   line-height: 1.8;
 }
 .bloom-demo {
-  background: #f8f9ed;
+  background: #f6f8ec;
 }
 .bloom-demo-grid {
   display: grid;
@@ -584,7 +584,7 @@
 .bloom-demo-editor > p {
   font-size: 13px;
   line-height: 1.85;
-  color: #687260;
+  color: #46725c;
   max-width: 380px;
   margin-bottom: 21px;
 }
@@ -604,9 +604,9 @@
   transition: background 0.2s;
 }
 .bloom-audience button[aria-pressed="true"] {
-  background: #183e32;
+  background: #123a2c;
   color: #fffdf4;
-  border-color: #183e32;
+  border-color: #123a2c;
 }
 .bloom-field {
   display: flex;
@@ -625,7 +625,7 @@
   padding: 13px 15px;
   font-size: 13px;
   font-weight: 400;
-  color: #183e32;
+  color: #123a2c;
   line-height: 1.7;
   transition: border-color 0.2s;
 }
@@ -638,7 +638,7 @@
   justify-content: space-between;
   gap: 8px;
   font-size: 9px;
-  color: #6c7763;
+  color: #46725c;
   margin-top: 7px;
 }
 .bloom-demo-tip {
@@ -647,7 +647,7 @@
   gap: 12px;
   margin: 24px 0;
   padding: 13px 14px;
-  background: #eef0d8;
+  background: #edf2da;
   border-radius: 10px;
 }
 .bloom-demo-tip > svg {
@@ -665,12 +665,12 @@
   text-align: center;
   margin-top: 13px;
   font-size: 10px;
-  color: #6c7763;
+  color: #46725c;
 }
 .bloom-preview-stage {
   position: relative;
   padding: 25px 28px 22px;
-  background: #e8edce;
+  background: #e7edd4;
   border: 1px solid #d3dbb7;
   border-radius: 30px;
 }
@@ -764,7 +764,7 @@
   font-size: 9px;
   line-height: 1.7;
   text-align: center;
-  color: #63714d;
+  color: #426755;
   margin-top: 10px;
 }
 .bloom-includes-heading {
@@ -777,7 +777,7 @@
 .bloom-includes-heading > p {
   max-width: 300px;
   font-size: 14px;
-  color: #6b7563;
+  color: #46725c;
   line-height: 1.85;
   padding-bottom: 7px;
 }
@@ -797,15 +797,15 @@
   background: #fff0ad;
 }
 .bloom-feature-photos {
-  background: #eddedd;
+  background: #f6eadf;
 }
 .bloom-feature-link {
-  background: #e8edda;
+  background: #e9f1df;
 }
 .bloom-feature-icon {
   width: 40px;
   height: 40px;
-  border: 1px solid #183e3226;
+  border: 1px solid #123a2c26;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -822,7 +822,7 @@
   font-size: 12px;
   line-height: 1.8;
   max-width: 280px;
-  color: #57624d;
+  color: #426755;
 }
 .bloom-mini-letter {
   background: #fffdf4;
@@ -882,7 +882,7 @@
   width: 100%;
   height: 142px;
   padding: 35px;
-  background: #adc0a2;
+  background: #9fbfa8;
   color: #fff5bb;
 }
 .bloom-mini-photos span {
@@ -932,11 +932,11 @@
 }
 .bloom-chat small {
   font-size: 8px;
-  color: #697459;
+  color: #46725c;
 }
 .bloom-chat > .bloom-chat-reply {
   align-self: start;
-  background: #cedcbb;
+  background: #cbe0c4;
   border-radius: 12px 12px 12px 0;
   margin-top: 6px;
 }
@@ -944,12 +944,12 @@
   display: block;
   font-size: 8px;
   text-align: right;
-  color: #657451;
+  color: #46725c;
   margin-top: 14px;
   margin-bottom: 20px;
 }
 .bloom-how {
-  background: #183e32;
+  background: #123a2c;
   color: #faf5d8;
 }
 .bloom-how h2,
@@ -1004,7 +1004,7 @@
 }
 .bloom-steps p {
   font-size: 12px;
-  color: #c3d3ba;
+  color: #bbd6c2;
   line-height: 1.85;
 }
 .bloom-how-bottom {
@@ -1018,7 +1018,7 @@
 }
 .bloom-how-bottom p {
   font-size: 11px;
-  color: #c3d3ba;
+  color: #bbd6c2;
   max-width: 430px;
   line-height: 1.75;
 }
@@ -1055,7 +1055,7 @@
   top: 30px;
   width: 300px;
   height: 300px;
-  color: #183e3217;
+  color: #123a2c17;
   z-index: -1;
   transform: rotate(-18deg);
   stroke-width: 1;
@@ -1306,7 +1306,7 @@
     flex-direction: column;
     padding: 15px 24px 23px;
     gap: 2px;
-    border-top: 1px solid #183e3217;
+    border-top: 1px solid #123a2c17;
   }
   .bloom-mobile-menu a {
     font-size: 14px;
