@@ -44,12 +44,12 @@ export function FaqSection() {
     <section
       id="faq"
       aria-labelledby="faq-title"
-      className="scroll-mt-24 border-t border-[#123A2C]/10 bg-[#FFFCF4] px-5 py-20 text-[#123A2C] sm:px-8 lg:py-24"
+      className="scroll-mt-24 border-t border-[#1E3B2A]/10 bg-[#FFFBF2] px-5 py-20 text-[#1E3B2A] sm:px-8 lg:py-24"
     >
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <div data-reveal="left">
           <p className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
-            <span className="size-2 rounded-full bg-[#F17B62]" />
+            <span className="size-2 rounded-full bg-[#EF7A5E]" />
             Antes de regalar
           </p>
           <h2
@@ -60,13 +60,13 @@ export function FaqSection() {
             <br />
             sea <span className="italic">qué escribirle.</span>
           </h2>
-          <p className="mt-5 max-w-xs text-sm leading-6 text-[#123A2C]/75">
+          <p className="mt-5 max-w-xs text-sm leading-6 text-[#1E3B2A]/75">
             Así funciona tu regalo, desde la primera palabra hasta el momento de
             compartirlo.
           </p>
           <Flower2
             aria-hidden="true"
-            className="bloom-faq-flower mt-8 hidden size-20 rotate-12 fill-[#FFD329] stroke-[#123A2C] stroke-[1] md:block"
+            className="bloom-faq-flower mt-8 hidden size-20 rotate-12 fill-[#F7C325] stroke-[#1E3B2A] stroke-[1] md:block"
           />
         </div>
 
@@ -75,11 +75,11 @@ export function FaqSection() {
             quedaban empujadas fuera de pantalla y parecia que habia menos. */}
         <Accordion type="single" collapsible data-reveal="right">
           {QUESTIONS.map(({ id, question, answer }) => (
-            <AccordionItem key={id} value={id} className="border-[#123A2C]/15">
-              <AccordionTrigger className="items-center rounded-lg py-6 text-base leading-6 font-semibold text-[#123A2C] hover:no-underline focus-visible:ring-[#123A2C]/30 [&>svg]:size-5 [&>svg]:text-[#123A2C]">
+            <AccordionItem key={id} value={id} className="border-[#1E3B2A]/15">
+              <AccordionTrigger className="items-center rounded-lg py-6 text-base leading-6 font-semibold text-[#1E3B2A] hover:no-underline focus-visible:ring-[#1E3B2A]/30 [&>svg]:size-5 [&>svg]:text-[#1E3B2A]">
                 {question}
               </AccordionTrigger>
-              <AccordionContent className="max-w-xl pr-7 pb-6 text-sm leading-7 text-[#123A2C]/75">
+              <AccordionContent className="max-w-xl pr-7 pb-6 text-sm leading-7 text-[#1E3B2A]/75">
                 {answer}
               </AccordionContent>
             </AccordionItem>

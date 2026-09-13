@@ -1,9 +1,9 @@
 /* Campaign styles are scoped so the editor and existing templates keep their own UI. */
 .bloom-shell,
 .bloom-site {
-  --bloom-green: #123a2c;
-  --bloom-yellow: #ffd329;
-  --bloom-paper: #fffcf4;
+  --bloom-green: #1e3b2a;
+  --bloom-yellow: #f7c325;
+  --bloom-paper: #fffbf2;
   --bloom-muted: #46725c;
   color: var(--bloom-green);
   background: var(--bloom-paper);
@@ -20,19 +20,19 @@
  */
 .bloom-site ::selection,
 .bloom-shell ::selection {
-  background: #ffd329;
-  color: #123a2c;
+  background: #f7c325;
+  color: #1e3b2a;
 }
 .bloom-site ::-moz-selection,
 .bloom-shell ::-moz-selection {
-  background: #ffd329;
-  color: #123a2c;
+  background: #f7c325;
+  color: #1e3b2a;
 }
 /* En las zonas oscuras el amarillo quema: ahi se invierte. */
 .bloom-how ::selection,
 .bloom-footer ::selection {
-  background: #ffd329;
-  color: #123a2c;
+  background: #f7c325;
+  color: #1e3b2a;
 }
 
 .bloom-shell {
@@ -65,7 +65,7 @@
 }
 .bloom-site :is(button, a, input, textarea):focus-visible,
 .bloom-shell :is(a, button):focus-visible {
-  outline: 3px solid #d46540;
+  outline: 3px solid #e8863a;
   outline-offset: 5px;
 }
 .bloom-site h1,
@@ -102,7 +102,7 @@
 .bloom-eyebrow > span {
   width: 7px;
   height: 7px;
-  background: #e6961a;
+  background: #d89a1f;
   border-radius: 50%;
 }
 .bloom-button {
@@ -134,22 +134,22 @@
   transform: translateX(3px);
 }
 .bloom-button-green {
-  background: #123a2c;
-  color: #fffdf4;
-  border: 1px solid #123a2c;
+  background: #1e3b2a;
+  color: #fffbf2;
+  border: 1px solid #1e3b2a;
   box-shadow: 0 5px 0 #122e2320;
 }
 .bloom-button-green:hover {
-  background: #1d5140;
+  background: #2c5640;
   box-shadow: 0 7px 0 #122e2320;
 }
 .bloom-button-outline {
-  border: 1px solid #123a2c45;
-  color: #123a2c;
+  border: 1px solid #1e3b2a45;
+  color: #1e3b2a;
   background: transparent;
 }
 .bloom-button-outline:hover {
-  background: #fff6cf;
+  background: #fff0c4;
 }
 .bloom-text-link {
   display: inline-flex;
@@ -166,8 +166,8 @@
   position: fixed;
   inset: 0 0 auto;
   z-index: 40;
-  background: #fffcf4f2;
-  border-bottom: 1px solid #123a2c17;
+  background: #fffbf2f2;
+  border-bottom: 1px solid #1e3b2a17;
   backdrop-filter: blur(16px);
 }
 .bloom-nav-inner {
@@ -191,7 +191,7 @@
 .bloom-logo-mark {
   display: grid;
   place-items: center;
-  background: #ffd329;
+  background: #f7c325;
   width: 38px;
   height: 38px;
   border-radius: 12px;
@@ -214,18 +214,18 @@
 }
 .bloom-nav-links a {
   position: relative;
-  color: #426755;
+  color: #6c5537;
   transition: color 0.2s;
 }
 .bloom-nav-links a:hover,
 .bloom-nav-links a[aria-current="location"] {
-  color: #123a2c;
+  color: #1e3b2a;
 }
 .bloom-nav-links a[aria-current="location"]::after {
   content: "";
   position: absolute;
   height: 3px;
-  background: #efb823;
+  background: #e8b84b;
   left: 0;
   right: 0;
   bottom: -12px;
@@ -240,8 +240,8 @@
   min-height: 41px;
   padding: 11px 19px;
   font-size: 12px;
-  background: #ffd329;
-  color: #123a2c;
+  background: #f7c325;
+  color: #1e3b2a;
   border: 0;
 }
 .bloom-menu-toggle {
@@ -260,7 +260,7 @@
   top: -80px;
   left: 18px;
   z-index: 100;
-  background: #123a2c;
+  background: #1e3b2a;
   color: white;
   padding: 12px 18px;
   border-radius: 8px;
@@ -273,15 +273,15 @@
   left: 0;
   bottom: -1px;
   height: 2px;
-  background: #edac17;
+  background: #d89a1f;
   transform-origin: left;
   width: 100%;
   scale: var(--scroll-progress, 0) 1;
 }
 .bloom-footer {
   padding: 34px 0;
-  background: #123a2c;
-  color: #f7efd5;
+  background: #1e3b2a;
+  color: #fbf2df;
 }
 .bloom-footer > .bloom-container {
   display: flex;
@@ -290,11 +290,11 @@
   gap: 24px;
 }
 .bloom-footer .bloom-logo-mark {
-  color: #123a2c;
+  color: #1e3b2a;
 }
 .bloom-footer p {
   font-size: 11px;
-  color: #cbded1;
+  color: #c7d8ae;
 }
 .bloom-footer-links {
   display: flex;
@@ -303,7 +303,7 @@
 }
 .bloom-hero {
   padding-top: 45px;
-  background: #fffcf4;
+  background: #fffbf2;
 }
 .bloom-hero-grid {
   display: grid;
@@ -320,14 +320,14 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.09em;
-  border: 1px solid #e8d887;
-  background: #fff8d3;
+  border: 1px solid #e8b84b;
+  background: #fff0c4;
   border-radius: 100px;
   padding: 8px 12px;
   margin-bottom: 30px;
 }
 .bloom-event svg {
-  color: #876717;
+  color: #8a6410;
 }
 .bloom-hero h1 {
   font-size: clamp(3.25rem, 5.7vw, 5.1rem);
@@ -349,14 +349,14 @@
   bottom: 0.02em;
   height: 0.31em;
   z-index: -1;
-  background: #ffd329;
+  background: #f7c325;
   transform: rotate(-2deg);
 }
 .bloom-hero-copy > p {
   font-size: 16px;
   line-height: 1.85;
   max-width: 435px;
-  color: #426755;
+  color: #6c5537;
   margin-bottom: 27px;
 }
 .bloom-actions {
@@ -370,7 +370,7 @@
   flex-wrap: wrap;
   margin-top: 22px;
   font-size: 11px;
-  color: #426755;
+  color: #6c5537;
 }
 .bloom-hero-assurances > span {
   display: flex;
@@ -417,7 +417,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background: #f17b62;
+  background: #ef7a5e;
   width: 101px;
   height: 101px;
   border-radius: 50%;
@@ -426,7 +426,7 @@
   letter-spacing: 0.1em;
   transform: rotate(-14deg);
   border: 1px dashed #753b2880;
-  outline: 6px solid #f17b62;
+  outline: 6px solid #ef7a5e;
 }
 .bloom-hero-letter {
   position: absolute;
@@ -439,8 +439,8 @@
   display: flex;
   flex-direction: column;
   gap: 23px;
-  background: #fffdf5;
-  color: #123a2c;
+  background: #fffcf4;
+  color: #1e3b2a;
   border: 1px solid #dddece;
   border-radius: 4px;
   box-shadow: 0 17px 34px #58481225;
@@ -488,7 +488,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #ffd329;
+  background: #f7c325;
   display: grid;
   place-items: center;
   border: 4px double #d9a621;
@@ -500,10 +500,10 @@
   display: flex;
   align-items: center;
   gap: 13px;
-  background: #fffef9;
+  background: #fffcf4;
   padding: 14px 18px;
   border-radius: 14px;
-  box-shadow: 0 12px 35px #123a2c15;
+  box-shadow: 0 12px 35px #1e3b2a15;
   transform: rotate(3deg);
 }
 .bloom-delivery-note strong {
@@ -521,7 +521,7 @@
   height: 36px;
   display: grid;
   place-items: center;
-  background: #edf2dd;
+  background: #f7ead0;
   border-radius: 10px;
 }
 .bloom-art-hint {
@@ -539,7 +539,7 @@
 .bloom-art-spark {
   position: absolute;
   font-size: 45px;
-  color: #a8c878;
+  color: #8ba84c;
 }
 .bloom-art-spark-one {
   top: 4px;
@@ -548,7 +548,7 @@
 .bloom-art-spark-two {
   right: -8px;
   bottom: 174px;
-  color: #df8264;
+  color: #ef7a5e;
   font-size: 30px;
 }
 .bloom-ribbon {
@@ -558,7 +558,7 @@
   gap: 42px;
   flex-wrap: wrap;
   padding: 22px 25px;
-  background: #ffd329;
+  background: #f7c325;
   color: #244433;
   font-size: 13px;
   font-weight: 500;
@@ -583,7 +583,7 @@
   line-height: 1.8;
 }
 .bloom-demo {
-  background: #f6f8ec;
+  background: #fbf2df;
 }
 .bloom-demo-grid {
   display: grid;
@@ -631,9 +631,9 @@
   transition: background 0.2s;
 }
 .bloom-audience button[aria-pressed="true"] {
-  background: #123a2c;
-  color: #fffdf4;
-  border-color: #123a2c;
+  background: #1e3b2a;
+  color: #fffbf2;
+  border-color: #1e3b2a;
 }
 .bloom-field {
   display: flex;
@@ -652,7 +652,7 @@
   padding: 13px 15px;
   font-size: 13px;
   font-weight: 400;
-  color: #123a2c;
+  color: #1e3b2a;
   line-height: 1.7;
   transition: border-color 0.2s;
 }
@@ -674,7 +674,7 @@
   gap: 12px;
   margin: 24px 0;
   padding: 13px 14px;
-  background: #edf2da;
+  background: #f7ead0;
   border-radius: 10px;
 }
 .bloom-demo-tip > svg {
@@ -697,7 +697,7 @@
 .bloom-preview-stage {
   position: relative;
   padding: 25px 28px 22px;
-  background: #e7edd4;
+  background: #f4e8d2;
   border: 1px solid #d3dbb7;
   border-radius: 30px;
 }
@@ -712,7 +712,7 @@
 }
 .bloom-preview-label > span:last-child {
   margin-left: auto;
-  background: #fffdf580;
+  background: #fffcf480;
   padding: 4px 7px;
   border-radius: 5px;
   font-weight: 400;
@@ -726,8 +726,8 @@
 }
 .bloom-preview-window {
   position: relative;
-  background: #fffcf4;
-  border: 5px solid #fffcf4;
+  background: #fffbf2;
+  border: 5px solid #fffbf2;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 15px 30px #31491d15;
@@ -739,7 +739,7 @@
   gap: 10px;
   padding: 7px 11px;
   border-bottom: 1px solid #e5e4ce;
-  background: #fffefa;
+  background: #fffcf4;
 }
 .bloom-preview-toolbar > span {
   display: flex;
@@ -763,7 +763,7 @@
   width: 100%;
   height: 475px;
   border: 0;
-  background: #fff8d7;
+  background: #fff4da;
 }
 .bloom-preview-loading {
   position: absolute;
@@ -772,7 +772,7 @@
   padding: 15px;
   font-size: 11px;
   pointer-events: none;
-  background: #fff8d7;
+  background: #fff4da;
   z-index: 1;
 }
 .bloom-expand {
@@ -791,7 +791,7 @@
   font-size: 9px;
   line-height: 1.7;
   text-align: center;
-  color: #426755;
+  color: #6c5537;
   margin-top: 10px;
 }
 .bloom-includes-heading {
@@ -821,18 +821,21 @@
   min-height: 425px;
 }
 .bloom-feature-letter {
-  background: #fff0ad;
+  background: #ffe9a8;
 }
 .bloom-feature-photos {
-  background: #f6eadf;
+  /* Durazno, no amarillo: la tarjeta de al lado ya es amarilla y con el
+     mismo tono las tres se leian como una sola pieza. Conecta con el
+     naranja amancay de la paleta. */
+  background: #fde6ce;
 }
 .bloom-feature-link {
-  background: #e9f1df;
+  background: #dceef7;
 }
 .bloom-feature-icon {
   width: 40px;
   height: 40px;
-  border: 1px solid #123a2c26;
+  border: 1px solid #1e3b2a26;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -849,10 +852,10 @@
   font-size: 12px;
   line-height: 1.8;
   max-width: 280px;
-  color: #426755;
+  color: #6c5537;
 }
 .bloom-mini-letter {
-  background: #fffdf4;
+  background: #fffbf2;
   border: 1px solid #e2dbba;
   border-bottom: 0;
   padding: 22px 24px 13px;
@@ -874,7 +877,7 @@
 }
 .bloom-mini-letter > svg {
   margin-left: auto;
-  color: #ca684a;
+  color: #e8863a;
 }
 .bloom-mini-photos {
   height: 204px;
@@ -903,13 +906,13 @@
   width: 100%;
   height: 142px;
   object-fit: cover;
-  background: #ffd329;
+  background: #f7c325;
 }
 .bloom-photo-two > svg {
   width: 100%;
   height: 142px;
   padding: 35px;
-  background: #9fbfa8;
+  background: #a8bf8e;
   color: #fff5bb;
 }
 .bloom-mini-photos span {
@@ -929,7 +932,7 @@
   gap: 7px;
 }
 .bloom-chat > span {
-  background: #fffdf5;
+  background: #fffcf4;
   border-radius: 12px 12px 0 12px;
   padding: 11px 14px;
 }
@@ -937,7 +940,7 @@
   align-self: stretch;
   position: relative;
   margin-left: 20px;
-  background: #fffdf5;
+  background: #fffcf4;
   border-radius: 12px 0 12px 12px;
   padding: 15px 15px 15px 57px;
 }
@@ -945,7 +948,7 @@
   position: absolute;
   left: 14px;
   top: 20px;
-  color: #927317;
+  color: #8a6410;
 }
 .bloom-chat > div > svg:last-child {
   position: absolute;
@@ -963,7 +966,7 @@
 }
 .bloom-chat > .bloom-chat-reply {
   align-self: start;
-  background: #cbe0c4;
+  background: #c7d8ae;
   border-radius: 12px 12px 12px 0;
   margin-top: 6px;
 }
@@ -976,15 +979,15 @@
   margin-bottom: 20px;
 }
 .bloom-how {
-  background: #123a2c;
-  color: #faf5d8;
+  background: #1e3b2a;
+  color: #fbf2df;
 }
 .bloom-how h2,
 .bloom-how h3 {
-  color: #faf5d8;
+  color: #fbf2df;
 }
 .bloom-how em {
-  color: #ffd329;
+  color: #f7c325;
 }
 .bloom-how-top {
   display: flex;
@@ -994,12 +997,12 @@
 .bloom-how-flower {
   width: 130px;
   height: 130px;
-  color: #ffd329;
+  color: #f7c325;
   transform: rotate(12deg);
   margin-right: 30px;
 }
 .bloom-how .bloom-eyebrow > span {
-  background: #ffd329;
+  background: #f7c325;
 }
 .bloom-steps {
   display: grid;
@@ -1021,7 +1024,7 @@
 .bloom-step-top > span {
   font-family: Fraunces, Georgia, serif;
   font-size: 36px;
-  color: #ffd329;
+  color: #f7c325;
   font-style: italic;
 }
 .bloom-steps h3 {
@@ -1031,7 +1034,7 @@
 }
 .bloom-steps p {
   font-size: 12px;
-  color: #bbd6c2;
+  color: #c7d8ae;
   line-height: 1.85;
 }
 .bloom-how-bottom {
@@ -1045,19 +1048,19 @@
 }
 .bloom-how-bottom p {
   font-size: 11px;
-  color: #bbd6c2;
+  color: #c7d8ae;
   max-width: 430px;
   line-height: 1.75;
 }
 .bloom-how-bottom a {
-  color: #ffd329;
+  color: #f7c325;
   font-size: 12px;
 }
 .bloom-final {
   position: relative;
   padding: 84px 0 78px;
   text-align: center;
-  background: #ffd329;
+  background: #f7c325;
   isolation: isolate;
   overflow: hidden;
 }
@@ -1082,7 +1085,7 @@
   top: 30px;
   width: 300px;
   height: 300px;
-  color: #123a2c17;
+  color: #1e3b2a17;
   z-index: -1;
   transform: rotate(-18deg);
   stroke-width: 1;
@@ -1333,7 +1336,7 @@
     flex-direction: column;
     padding: 15px 24px 23px;
     gap: 2px;
-    border-top: 1px solid #123a2c17;
+    border-top: 1px solid #1e3b2a17;
   }
   .bloom-mobile-menu a {
     font-size: 14px;

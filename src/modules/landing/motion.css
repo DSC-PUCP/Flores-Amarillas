@@ -71,8 +71,8 @@
     background var(--bloom-mid) var(--bloom-ease);
 }
 .bloom-nav[data-scrolled="true"] {
-  background: #fffcf4f7;
-  box-shadow: 0 10px 30px -18px #123a2c55;
+  background: #fffbf2f7;
+  box-shadow: 0 10px 30px -18px #1e3b2a55;
 }
 .bloom-nav-inner {
   transition: height var(--bloom-mid) var(--bloom-ease);
@@ -92,7 +92,7 @@
   content: "";
   position: absolute;
   height: 3px;
-  background: #efb823;
+  background: #e8b84b;
   left: 0;
   right: 0;
   bottom: -12px;
@@ -194,8 +194,8 @@
   background: linear-gradient(
     100deg,
     transparent,
-    #fff6cf38 45%,
-    #fff6cf55 55%,
+    #fff0c438 45%,
+    #fff0c455 55%,
     transparent
   );
   transform: translateX(-160%) skewX(-18deg);
@@ -309,10 +309,10 @@
 @keyframes bloom-sticker-pulse {
   0%,
   100% {
-    outline-color: #f17b62;
+    outline-color: #ef7a5e;
   }
   50% {
-    outline-color: #f17b6266;
+    outline-color: #ef7a5e66;
   }
 }
 .bloom-round-sticker svg {
@@ -600,17 +600,17 @@
  * el chip elegido desaparecia justo al pasarle el cursor.
  */
 .bloom-audience button:not([aria-pressed="true"]):hover {
-  border-color: #123a2c66;
+  border-color: #1e3b2a66;
   background: #ffffff80;
 }
 /* El elegido tambien responde, pero aclarando su propio verde. */
 .bloom-audience button[aria-pressed="true"]:hover {
-  background: #1d5140;
-  border-color: #1d5140;
+  background: #2c5640;
+  border-color: #2c5640;
 }
 .bloom-audience button[aria-pressed="true"] {
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px -6px #123a2c88;
+  box-shadow: 0 6px 14px -6px #1e3b2a88;
 }
 .bloom-audience button:active {
   transform: scale(0.96);
@@ -631,7 +631,7 @@
 .bloom-field textarea:focus {
   border-color: #e0a81c;
   background: #fffdf2;
-  box-shadow: 0 0 0 4px #ffd3293d;
+  box-shadow: 0 0 0 4px #f7c3253d;
 }
 
 /* Estado del contador de caracteres. */
@@ -841,7 +841,7 @@
   left: 0;
   height: 2px;
   width: 100%;
-  background: #ffd329;
+  background: #f7c325;
   transform-origin: left center;
   transform: scaleX(0);
   transition: transform 0.9s var(--bloom-ease);
@@ -867,7 +867,7 @@
 }
 .bloom-steps > article:hover .bloom-step-top > svg {
   transform: rotate(-8deg) scale(1.14);
-  color: #ffd329;
+  color: #f7c325;
 }
 
 /* ------------------------------------------------------------------ */
@@ -948,7 +948,7 @@
     color var(--bloom-fast) var(--bloom-ease);
 }
 .bloom-footer-links a:hover {
-  color: #ffd329;
+  color: #f7c325;
 }
 
 /* ------------------------------------------------------------------ */
@@ -965,10 +965,10 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid #123a2c26;
-  background: #fffcf4;
-  color: #123a2c;
-  box-shadow: 0 12px 28px -14px #123a2c77;
+  border: 1px solid #1e3b2a26;
+  background: #fffbf2;
+  color: #1e3b2a;
+  box-shadow: 0 12px 28px -14px #1e3b2a77;
   cursor: pointer;
   opacity: 0;
   transform: translateY(14px) scale(0.9);
@@ -984,7 +984,7 @@
   pointer-events: auto;
 }
 .bloom-to-top:hover {
-  background: #ffd329;
+  background: #f7c325;
 }
 .bloom-to-top:active {
   transform: scale(0.93);

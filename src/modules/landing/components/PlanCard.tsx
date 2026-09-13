@@ -66,26 +66,26 @@ const ESTILOS: Record<
 > = {
   entrada: {
     tarjeta:
-      'border-[#123A2C]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.4)]',
-    texto: 'text-[#123A2C]',
-    etiqueta: 'bg-[#EEF3E9] text-[#123A2C]',
+      'border-[#1E3B2A]/15 bg-white hover:shadow-[0_26px_44px_-28px_rgba(24,62,50,0.4)]',
+    texto: 'text-[#1E3B2A]',
+    etiqueta: 'bg-[#EEF3E9] text-[#1E3B2A]',
     flor: 'text-[#9FB48F]',
-    separador: 'bg-[#123A2C]/12',
-    marca: 'bg-[#EEF3E9] text-[#123A2C]',
-    apagado: 'text-[#123A2C]/70',
+    separador: 'bg-[#1E3B2A]/12',
+    marca: 'bg-[#EEF3E9] text-[#1E3B2A]',
+    apagado: 'text-[#1E3B2A]/70',
     boton:
-      'border border-[#123A2C]/25 bg-white text-[#123A2C] hover:bg-[#EEF3E9]',
+      'border border-[#1E3B2A]/25 bg-white text-[#1E3B2A] hover:bg-[#EEF3E9]',
   },
   intermedio: {
     tarjeta:
-      'border-[#E8BB12] bg-[#FFD329] hover:shadow-[0_32px_56px_-26px_rgba(190,140,10,0.8)]',
-    texto: 'text-[#123A2C]',
-    etiqueta: 'bg-white/60 text-[#123A2C]',
-    flor: 'text-[#123A2C]',
-    separador: 'bg-[#123A2C]/20',
-    marca: 'bg-white/65 text-[#123A2C]',
-    apagado: 'text-[#123A2C]/75',
-    boton: 'border border-[#123A2C] bg-[#123A2C] text-white hover:bg-[#27583E]',
+      'border-[#E8BB12] bg-[#F7C325] hover:shadow-[0_32px_56px_-26px_rgba(190,140,10,0.8)]',
+    texto: 'text-[#1E3B2A]',
+    etiqueta: 'bg-white/60 text-[#1E3B2A]',
+    flor: 'text-[#1E3B2A]',
+    separador: 'bg-[#1E3B2A]/20',
+    marca: 'bg-white/65 text-[#1E3B2A]',
+    apagado: 'text-[#1E3B2A]/75',
+    boton: 'border border-[#1E3B2A] bg-[#1E3B2A] text-white hover:bg-[#27583E]',
   },
   tope: {
     // Degradado en vez de verde plano, y un halo dorado arriba a la derecha:
@@ -94,13 +94,13 @@ const ESTILOS: Record<
     tarjeta:
       'border-[#C9A227] bg-[#15352B] bg-[radial-gradient(ellipse_at_top_right,rgba(255,211,41,0.16),transparent_58%),linear-gradient(160deg,#1D453A_0%,#132E25_100%)] shadow-[0_20px_44px_-28px_rgba(10,30,22,0.9)] hover:shadow-[0_38px_66px_-22px_rgba(10,30,22,0.95)]',
     texto: 'text-[#FFF9E9]',
-    etiqueta: 'bg-[#FFD329] text-[#123A2C]',
-    flor: 'text-[#FFD329]',
+    etiqueta: 'bg-[#F7C325] text-[#1E3B2A]',
+    flor: 'text-[#F7C325]',
     separador: 'bg-[#FFF9E9]/20',
-    marca: 'bg-[#FFD329] text-[#123A2C]',
+    marca: 'bg-[#F7C325] text-[#1E3B2A]',
     apagado: 'text-[#D6DFCF]',
     boton:
-      'border border-[#FFD329] bg-[#FFD329] text-[#123A2C] hover:bg-[#FFDF5C]',
+      'border border-[#F7C325] bg-[#F7C325] text-[#1E3B2A] hover:bg-[#FFDF5C]',
   },
 };
 
@@ -118,8 +118,8 @@ export function PlanCard({
   const buttonClass = cn(
     'group flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-6 py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4',
     tier === 'tope'
-      ? 'focus-visible:outline-[#FFD329]'
-      : 'focus-visible:outline-[#123A2C]',
+      ? 'focus-visible:outline-[#F7C325]'
+      : 'focus-visible:outline-[#1E3B2A]',
     s.boton
   );
 
@@ -142,7 +142,7 @@ export function PlanCard({
       {tier === 'tope' && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-[5px] rounded-[23px] border border-[#FFD329]/25"
+          className="pointer-events-none absolute inset-[5px] rounded-[23px] border border-[#F7C325]/25"
         />
       )}
 
@@ -179,7 +179,7 @@ export function PlanCard({
           <h3
             className={cn(
               'text-2xl font-bold tracking-tight',
-              tier === 'tope' ? '!text-[#FFF9E9]' : '!text-[#123A2C]'
+              tier === 'tope' ? '!text-[#FFF9E9]' : '!text-[#1E3B2A]'
             )}
           >
             {plan.name}
@@ -208,7 +208,7 @@ export function PlanCard({
             <span
               className={cn(
                 'text-xl font-medium',
-                tier === 'tope' && 'text-[#FFD329]'
+                tier === 'tope' && 'text-[#F7C325]'
               )}
             >
               S/
@@ -216,7 +216,7 @@ export function PlanCard({
             <span
               className={cn(
                 'text-5xl leading-none font-bold tracking-[-0.05em] tabular-nums',
-                tier === 'tope' && 'text-[#FFD329]'
+                tier === 'tope' && 'text-[#F7C325]'
               )}
             >
               {priceFormatter.format(plan.price)}
@@ -225,7 +225,7 @@ export function PlanCard({
               <span
                 className={cn(
                   'text-base font-medium line-through decoration-2 decoration-[#C0512F]',
-                  tier === 'tope' ? 'text-[#E8EFE2]' : 'text-[#123A2C]/85'
+                  tier === 'tope' ? 'text-[#E8EFE2]' : 'text-[#1E3B2A]/85'
                 )}
               >
                 S/ {priceFormatter.format(precioAnterior)}
