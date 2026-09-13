@@ -6,6 +6,9 @@ export const env = createEnv({
     SERVER_URL: z.url().optional(),
 
     API_SECRET: z.string().min(1).optional(),
+
+    // YouTube Data API v3. Sin clave, el formulario pide pegar el link.
+    YOUTUBE_API_KEY: z.string().min(1).optional(),
   },
 
   clientPrefix: 'VITE_',
@@ -24,6 +27,7 @@ export const env = createEnv({
     ...import.meta.env,
     API_SECRET: process.env.API_SECRET,
     SERVER_URL: process.env.SERVER_URL,
+    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
   },
 
   emptyStringAsUndefined: true,
