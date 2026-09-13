@@ -47,25 +47,19 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
       <Ambient />
       <div className="bloom-container bloom-hero-grid">
         <div className="bloom-hero-copy">
-          <span
-            className="bloom-event"
-            style={{ '--enter-i': 0 } as CSSProperties}
-          >
-            <Flower2 size={16} /> 21 DE SEPTIEMBRE · FLORES AMARILLAS
-          </span>
-          <h1 id="hero-title" style={{ '--enter-i': 1 } as CSSProperties}>
+          <h1 id="hero-title" style={{ '--enter-i': 0 } as CSSProperties}>
             Flores amarillas.
             <br />Y todo eso
             <br />
             <em>que sientes.</em>
           </h1>
-          <p style={{ '--enter-i': 2 } as CSSProperties}>
+          <p style={{ '--enter-i': 1 } as CSSProperties}>
             Hay personas que te hacen florecer. Regálales una página con tus
             fotos, tus palabras y una sorpresa que se abre con un enlace.
           </p>
           <div
             className="bloom-actions"
-            style={{ '--enter-i': 3 } as CSSProperties}
+            style={{ '--enter-i': 2 } as CSSProperties}
           >
             <button
               type="button"
@@ -84,7 +78,7 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
           </div>
           <div
             className="bloom-hero-assurances"
-            style={{ '--enter-i': 4 } as CSSProperties}
+            style={{ '--enter-i': 3 } as CSSProperties}
           >
             <span>
               <Check size={15} /> Sin crear una cuenta
