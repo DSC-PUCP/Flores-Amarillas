@@ -1,9 +1,9 @@
 import type { FileUploadRef, TemplateData } from '@/core/models';
+import { uuid } from '@/lib/uuid';
 import { PlanService } from '@/modules/plan/services';
 import { TemplateService } from '@/modules/templates/services';
 import { lovepageRepository } from '@/repository/lovepage';
 import { storageRepository } from '@/repository/storage';
-import { uuid } from '@/lib/uuid';
 
 // Tiempo que vive el preview de un plan pagado antes de expirar.
 // El usuario necesita abrir WhatsApp, escribir, yapear y mandar el comprobante:
@@ -91,7 +91,7 @@ export namespace LovepageService {
       }
 
       // Si es un array de archivos, guardar array de URLs, si no, guardar URL única
-      if (Array.isArray(file)) {
+      if (Array.isArray(file) || Array.isArray(configJson[key])) {
         setValueByPath(updatedConfig, key, uploadedUrls);
       } else {
         setValueByPath(updatedConfig, key, uploadedUrls[0]);

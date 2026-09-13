@@ -2,9 +2,21 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight, Flower2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
+import { TEMPLATE_COMPONENTS } from '@/modules/templates/components/config/template-components';
 import { TemplateRenderer } from '@/modules/templates/components/TemplateRenderer';
+import {
+  type GiftMascot,
+  MASCOT_IDS,
+} from '@/modules/templates/components/templates/plantilla_giano_feat_leo/mascots';
+import {
+  type EditorUpdate,
+  editorUpdateSchema,
+} from '@/modules/templates/Form/editor-preview-protocol';
 
 const previewSearchSchema = z.object({
+  editorTemplate: z.string().max(80).optional(),
+  template: z.enum(['free', 'premium']).optional().catch('free'),
+  mascot: z.enum(MASCOT_IDS).optional().catch('rabbit'),
   recipient: z.string().max(25).catch('Sofía'),
   message: z
     .string()
@@ -29,12 +41,14 @@ export const Route = createFileRoute('/preview')({
   component: PreviewPage,
 });
 
-function PreviewPage() {
+export function PreviewPage() {
   const search = Route.useSearch();
   const { embed } = search;
+  const [editor, setEditor] = useState<EditorUpdate | null>(null);
   const [livePreview, setLivePreview] = useState<null | {
     recipient: string;
     message: string;
+    mascot?: GiftMascot;
   }>(null);
   const { recipient, message } = livePreview ?? search;
 
@@ -46,11 +60,22 @@ function PreviewPage() {
         event.source !== window.parent
       )
         return;
+      if (search.editorTemplate) {
+        const update = editorUpdateSchema.safeParse(event.data);
+        if (
+          update.success &&
+          update.data.templateKey === search.editorTemplate &&
+          Object.hasOwn(TEMPLATE_COMPONENTS, update.data.templateKey)
+        )
+          setEditor(update.data);
+        return;
+      }
       const update = z
         .object({
           type: z.literal('flower-demo:update'),
           recipient: z.string().max(25),
           message: z.string().max(250),
+          mascot: z.enum(MASCOT_IDS).optional(),
         })
         .safeParse(event.data);
       if (update.success) setLivePreview(update.data);
@@ -61,7 +86,7 @@ function PreviewPage() {
       window.location.origin
     );
     return () => window.removeEventListener('message', receiveUpdate);
-  }, [embed]);
+  }, [embed, search.editorTemplate]);
   return (
     <div className="min-h-svh bg-[#FFF8D7] text-[#183E32]">
       {!embed && (
@@ -84,21 +109,71 @@ function PreviewPage() {
           </Link>
         </header>
       )}
-      <TemplateRenderer
-        templateKey="plantilla_gratuita"
-        isPreview={true}
-        templateData={{
-          personA: 'Alguien que te quiere',
-          personB: recipient.trim() || 'Sofía',
-          message:
-            message.trim() ||
-            'Gracias por hacer mis días un poquito más bonitos.',
-          startDate: '2024-09-21T12:00:00',
-          image: '/images/memory-together.jpg',
-          timelinePhotos: ['/images/memory-day.jpg'],
-          compactPreview: embed,
-        }}
-      />
+      {search.editorTemplate ? (
+        editor ? (
+          <TemplateRenderer
+            templateKey={editor.templateKey}
+            isPreview
+            templateData={{
+              ...editor.data,
+              compactPreview: true,
+              editorPreview: true,
+              editorScene: editor.scene,
+              editorRevision: editor.revision,
+            }}
+          />
+        ) : (
+          <output className="grid min-h-svh place-items-center px-6 text-center text-sm">
+            Preparando tu regalo…
+          </output>
+        )
+      ) : (
+        <TemplateRenderer
+          templateKey={
+            search.template === 'premium'
+              ? 'plantilla_giano_feat_leo'
+              : 'plantilla_gratuita'
+          }
+          isPreview={true}
+          templateData={{
+            mascot: livePreview?.mascot ?? search.mascot,
+            personA: 'Alguien que te quiere',
+            personB: recipient.trim() || 'Sofía',
+            message:
+              message.trim() ||
+              'Gracias por hacer mis días un poquito más bonitos.',
+            startDate: '2024-09-21T12:00:00',
+            image: '/images/memory-together.jpg',
+            ...(search.template === 'premium'
+              ? {
+                  timelinePhotos: ['/images/memory-day.jpg'],
+                  songs: [
+                    {
+                      videoId: 'yKNxeF4KMsY',
+                      title: 'Yellow',
+                      artist: 'Coldplay',
+                      start: 10,
+                      end: 40,
+                      lyrics: [],
+                    },
+                  ],
+                  reasonsToLove: [
+                    'Tu risa contagiosa',
+                    'Los pequeños detalles',
+                    'Cada aventura a tu lado',
+                    'Cómo haces florecer mis días',
+                  ],
+                  couponText: 'Un picnic entre flores amarillas',
+                  couponPhotos: [
+                    '/images/memory-day.jpg',
+                    '/images/memory-together.jpg',
+                  ],
+                }
+              : {}),
+            compactPreview: embed,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,14 +1,13 @@
-import { useLocation, useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
-  CloudUpload,
-  Image as ImageIcon,
+  Eye,
   Loader2,
+  Pencil,
   Plus,
   Trash2,
-  X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -27,9 +26,24 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import type { FileUploadRef } from '@/core/models';
+import type { TemplateData, TemplateField } from '@/core/models/template';
 import { cn } from '@/lib/utils';
+import { SongPicker } from '@/modules/music/components/SongPicker';
+import { MascotPicker } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/components/mascot-picker';
+import { readGiftMascot } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/mascots';
 import { useTemplateById } from '../hooks/useTemplate';
+import { EditorPreview } from './editor-preview';
+import {
+  type EditorScene,
+  fieldScene,
+  formDefaults,
+  stepScene,
+} from './editor-preview-protocol';
 import { useCreateLovepage } from './hooks/useLovePage';
+import { ImageUploadField } from './image-upload-field';
+import { useEditorData } from './use-editor-data';
+
+const EMPTY_STEPS: import('@/core/models/template').TemplateForm = [];
 
 export function TemplateForm() {
   const navigate = useNavigate();
@@ -40,13 +54,19 @@ export function TemplateForm() {
   const createLovepageMutation = useCreateLovepage();
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [files, setFiles] = useState<FileUploadRef[]>([]);
+  const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
+  const [scene, setScene] = useState<EditorScene | null>(null);
+  const [revision, setRevision] = useState(0);
+  const [reviewing, setReviewing] = useState(false);
+  const steps = template?.schemaJson ?? EMPTY_STEPS;
+  const previewData = useEditorData(formValues, steps);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="w-8 h-8 animate-spin text-[#e91e63]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#b7801a]" />
       </div>
     );
   }
@@ -70,36 +90,47 @@ export function TemplateForm() {
     );
   }
 
-  const steps = template.schemaJson || [];
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const progress = ((currentStep + 1) / steps.length) * 100;
 
-  const handleFileUpload = (fieldName: string, uploadedFiles: File[]) => {
-    if (uploadedFiles.length > 0) {
-      const newFileRef: FileUploadRef = {
+  const handleFileUpload = (
+    fieldName: string,
+    uploadedFiles: File[],
+    multiple: boolean
+  ) => {
+    setFiles((prev) => {
+      const filtered = prev.filter((item) => item.key !== fieldName);
+      if (!uploadedFiles.length) return filtered;
+      const ref: FileUploadRef = {
         key: fieldName,
-        file: uploadedFiles.length === 1 ? uploadedFiles[0] : uploadedFiles,
+        file: multiple ? uploadedFiles : uploadedFiles[0],
       };
-      setFiles((prev) => {
-        const filtered = prev.filter((item) => item.key !== fieldName);
-        return [...filtered, newFileRef];
-      });
-    }
+      return [...filtered, ref];
+    });
   };
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: unknown) => {
+    setScene(fieldScene(name));
+    setReviewing(false);
     setFormValues((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const validateCurrentStep = () => {
-    const missingFields = currentStepData.fields.filter((field) => {
+  const validateCurrentStep = (step = currentStepData) => {
+    const missingFields = step.fields.filter((field) => {
       if (!field.required) return false;
-      const val = formValues[field.name];
-      if (val === undefined || val === null || val === '') return true;
+      const val =
+        formValues[field.name] ??
+        ('default' in field ? field.default : undefined);
+      if (
+        val === undefined ||
+        val === null ||
+        (typeof val === 'string' && !val.trim())
+      )
+        return true;
       if (Array.isArray(val) && val.length === 0) return true;
       return false;
     });
@@ -115,21 +146,36 @@ export function TemplateForm() {
 
   const handleNext = () => {
     if (validateCurrentStep()) {
+      setScene(null);
       setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handlePrev = () => {
+    setScene(null);
     setCurrentStep((prev) => Math.max(prev - 1, 0));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubmit = async () => {
-    if (!validateCurrentStep()) return;
+  const validateAllSteps = () => {
+    const missingStep = steps.findIndex((step) => !validateCurrentStep(step));
+    if (missingStep < 0) return true;
+    editStep(missingStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  };
 
+  const handleSubmit = async () => {
+    if (!validateAllSteps()) return;
+
+    const defaults = formDefaults(steps);
     createLovepageMutation.mutate(
-      { templateId: id, configJson: formValues, files: files },
+      {
+        templateId: id,
+        configJson: { ...defaults, ...formValues } as TemplateData,
+        files: files,
+      },
       {
         onSuccess: (data) => {
           if (!data) {
@@ -139,109 +185,309 @@ export function TemplateForm() {
           toast.success('¡Dedicatoria creada con éxito!');
           navigate({ to: `/lovepage/${data}` });
         },
-        onError: (err: any) => {
+        onError: (err) => {
           toast.error(err.message || 'Error al crear la dedicatoria');
         },
       }
     );
   };
 
+  const review = () => {
+    if (!validateAllSteps()) return;
+    setReviewing(true);
+    setScene('review');
+    setRevision((value) => value + 1);
+    setMobileTab('preview');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const editStep = (index: number) => {
+    setReviewing(false);
+    setCurrentStep(index);
+    setScene(null);
+    setRevision((value) => value + 1);
+    setMobileTab('edit');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 flex justify-center items-start">
-      <div className="w-full max-w-3xl space-y-6">
-        {/* Header Section */}
-        <div className="text-center space-y-2 mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            {template.name}
+    <div className="min-h-screen bg-[#FFFCF4] px-4 py-8 text-[#183E32] sm:px-6">
+      <div className="mx-auto w-full max-w-7xl space-y-6">
+        <header className="space-y-3">
+          <button
+            type="button"
+            onClick={() => navigate({ to: '/template' })}
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-[#597157]"
+          >
+            <ChevronLeft size={16} /> Ver otros diseños
+          </button>
+          <h1 className="font-display text-3xl sm:text-4xl">
+            Haz suyo este regalo.
           </h1>
-          <p className="text-slate-500 max-w-lg mx-auto leading-relaxed">
-            {template.description}
+          <p className="max-w-xl text-sm leading-relaxed text-[#597157]">
+            {template.name} · Escribe, elige tus recuerdos y mira cómo quedan.
           </p>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs font-medium text-slate-500 uppercase tracking-wide">
-            <span>
-              Paso {currentStep + 1} de {steps.length}
-            </span>
-            <span>{Math.round(progress)}% Completado</span>
-          </div>
-          <Progress
-            value={progress}
-            className="h-2 bg-slate-200"
-            indicatorClassName="bg-[#e91e63]"
-          />
-        </div>
-
-        {/* Current Step Card */}
-        <Card className="border-slate-200 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white text-slate-900">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50 rounded-t-xl pb-6">
-            <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#e91e63]/10 text-[#e91e63] text-sm font-bold">
-                {currentStep + 1}
-              </span>
-              {currentStepData.title}
-            </CardTitle>
-            <CardDescription className="text-slate-500">
-              Completa la información para continuar.
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="pt-8 space-y-8 bg-white">
-            {currentStepData.fields.map((field: any) => (
-              <FieldRenderer
-                key={field.name}
-                field={field}
-                value={formValues[field.name]}
-                onChange={(val) => handleChange(field.name, val)}
-                onFileUpload={(files) => {
-                  // Update form value for preview/state logic
-                  if (field.type === 'array') handleChange(field.name, files);
-                  else handleChange(field.name, files[0]);
-
-                  // Update files state for submission
-                  handleFileUpload(field.name, files);
-                }}
-              />
+          <p className="text-xs text-[#597157]">
+            Completa las secciones en el orden del regalo. Los campos con * son
+            obligatorios.
+          </p>
+        </header>
+        <nav aria-label="Secciones de tu regalo">
+          <ol className="flex flex-wrap gap-2">
+            {steps.map((step, index) => (
+              <li key={step.title}>
+                <button
+                  type="button"
+                  onClick={() => editStep(index)}
+                  aria-current={
+                    !reviewing && currentStep === index ? 'step' : undefined
+                  }
+                  className={cn(
+                    'inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2',
+                    !reviewing && currentStep === index
+                      ? 'border-[#183E32] bg-[#183E32] text-white'
+                      : 'border-[#183E32]/15 bg-white text-[#597157] hover:bg-[#FFF8D7]'
+                  )}
+                >
+                  <span className="tabular-nums opacity-70">{index + 1}</span>
+                  {step.title}
+                </button>
+              </li>
             ))}
-          </CardContent>
-
-          <CardFooter className="flex justify-between border-t border-slate-100 bg-slate-50/50 rounded-b-xl py-6">
-            <Button
-              variant="ghost"
-              onClick={handlePrev}
-              disabled={currentStep === 0}
-              className="text-slate-500 hover:text-slate-900 hover:bg-slate-200/50"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Anterior
-            </Button>
-
-            {isLastStep ? (
+          </ol>
+        </nav>
+        {reviewing && (
+          <section
+            aria-label="Revisión final del regalo"
+            className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#183E32]/15 bg-[#FFF8D7] p-5"
+          >
+            <div>
+              <h2 className="font-display text-2xl">
+                Recorre tu regalo completo.
+              </h2>
+              <p className="mt-1 text-sm text-[#597157]">
+                Ábrelo como lo verá esa persona y revisa cada detalle antes de
+                crearlo.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={() => editStep(currentStep)}>
+                Seguir editando
+              </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={createLovepageMutation.isPending}
-                className="bg-[#e91e63] hover:bg-[#d81b60] text-white min-w-[140px] shadow-lg shadow-[#e91e63]/20"
+                className="bg-[#183E32] text-white hover:bg-[#285642]"
               >
                 {createLovepageMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 size={16} className="mr-2 animate-spin" />
                 ) : (
-                  <Check className="w-4 h-4 mr-2" />
-                )}
-                Finalizar
+                  <Check size={16} className="mr-2" />
+                )}{' '}
+                Crear mi regalo
               </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className="bg-slate-900 hover:bg-slate-800 text-white min-w-[140px] shadow-md"
-              >
-                Siguiente
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
+            </div>
+          </section>
+        )}
+        <div
+          role="tablist"
+          aria-label="Editor del regalo"
+          className="grid grid-cols-2 gap-2 rounded-2xl bg-[#183E32]/5 p-1.5 lg:hidden"
+        >
+          {(['edit', 'preview'] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              id={`editor-tab-${tab}`}
+              aria-controls={`editor-panel-${tab}`}
+              aria-selected={mobileTab === tab}
+              tabIndex={mobileTab === tab ? 0 : -1}
+              onKeyDown={(event) => {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                  event.preventDefault();
+                  const next = tab === 'edit' ? 'preview' : 'edit';
+                  setMobileTab(next);
+                  document.getElementById(`editor-tab-${next}`)?.focus();
+                }
+              }}
+              onClick={() => setMobileTab(tab)}
+              className={cn(
+                'flex min-h-12 items-center justify-center gap-2 rounded-xl text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2',
+                mobileTab === tab ? 'bg-white shadow-sm' : 'text-[#597157]'
+              )}
+            >
+              {tab === 'edit' ? <Pencil size={16} /> : <Eye size={16} />}
+              {tab === 'edit' ? 'Editar' : 'Vista previa'}
+            </button>
+          ))}
+        </div>
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+          <section
+            id="editor-panel-edit"
+            aria-label="Personalizar tu regalo"
+            className={cn(
+              'min-w-0 space-y-6',
+              mobileTab !== 'edit' && 'hidden lg:block'
             )}
-          </CardFooter>
-        </Card>
+          >
+            {reviewing ? (
+              <div className="rounded-2xl border border-[#183E32]/15 bg-white p-6">
+                <h2 className="font-display text-2xl">
+                  ¿Quieres ajustar algo?
+                </h2>
+                <div className="mt-4 grid gap-2">
+                  {steps.map((step, index) => (
+                    <button
+                      key={step.title}
+                      type="button"
+                      onClick={() => editStep(index)}
+                      className="flex min-h-12 items-center justify-between rounded-xl border border-[#183E32]/10 px-4 text-left text-sm hover:bg-[#FFF8D7]"
+                    >
+                      Editar {step.title}
+                      <Pencil size={14} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Progress Indicator */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-medium text-slate-500 uppercase tracking-wide">
+                    <span>
+                      Sección {currentStep + 1} de {steps.length}
+                    </span>
+                    <span>{Math.round(progress)}% del recorrido</span>
+                  </div>
+                  <Progress
+                    value={progress}
+                    className="h-2 bg-slate-200 [&_[data-slot=progress-indicator]]:bg-amber-600"
+                  />
+                </div>
+
+                {/* Current Step Card */}
+                <Card className="border-slate-200 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white text-slate-900">
+                  <CardHeader className="border-b border-slate-100 bg-slate-50/50 rounded-t-xl pb-6">
+                    <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#b7801a]/10 text-[#b7801a] text-sm font-bold">
+                        {currentStep + 1}
+                      </span>
+                      {currentStepData.title}
+                    </CardTitle>
+                    <CardDescription className="text-slate-500">
+                      {currentStepData.description ??
+                        'Completa la información para continuar.'}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="pt-8 space-y-8 bg-white">
+                    {currentStepData.fields.map((field) => (
+                      <div
+                        key={field.name}
+                        onFocusCapture={() => {
+                          setScene(fieldScene(field.name));
+                          setRevision((value) => value + 1);
+                        }}
+                      >
+                        <FieldRenderer
+                          field={field}
+                          value={formValues[field.name]}
+                          onChange={(val: unknown) =>
+                            handleChange(field.name, val)
+                          }
+                          onFileUpload={(files: File[]) => {
+                            // Update form value for preview/state logic
+                            if (field.type === 'array')
+                              handleChange(field.name, files);
+                            else handleChange(field.name, files[0]);
+
+                            // Update files state for submission
+                            handleFileUpload(
+                              field.name,
+                              files,
+                              field.type === 'array'
+                            );
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </CardContent>
+
+                  <CardFooter className="flex flex-wrap justify-between gap-3 border-t border-slate-100 bg-slate-50/50 rounded-b-xl py-6">
+                    <Button
+                      variant="ghost"
+                      onClick={handlePrev}
+                      disabled={currentStep === 0}
+                      className="text-slate-500 hover:text-slate-900 hover:bg-slate-200/50"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-2" />
+                      Anterior
+                    </Button>
+
+                    {isLastStep ? (
+                      <Button
+                        onClick={review}
+                        disabled={createLovepageMutation.isPending}
+                        className="bg-[#b7801a] hover:bg-[#8f611b] text-white min-w-[140px] shadow-lg shadow-[#b7801a]/20"
+                      >
+                        {createLovepageMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-2" />
+                        )}
+                        Revisar regalo completo
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleNext}
+                        className="bg-slate-900 hover:bg-slate-800 text-white min-w-[140px] shadow-md"
+                      >
+                        Siguiente
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </>
+            )}
+          </section>
+          <section
+            id="editor-panel-preview"
+            aria-label="Vista previa del regalo"
+            className={cn(
+              'min-w-0 lg:sticky lg:top-6',
+              mobileTab !== 'preview' && 'hidden lg:block'
+            )}
+          >
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="inline-flex items-center gap-2 text-sm font-semibold">
+                <span className="size-2 rounded-full bg-[#597157]" />{' '}
+                {reviewing ? 'El regalo completo' : 'Vista previa en vivo'}
+              </h2>
+              {!reviewing && (
+                <button
+                  type="button"
+                  onClick={review}
+                  className="min-h-11 text-xs font-semibold underline underline-offset-4"
+                >
+                  Revisar regalo completo
+                </button>
+              )}
+            </div>
+            <EditorPreview
+              templateKey={template.templateKey}
+              data={previewData}
+              scene={
+                reviewing ? 'review' : (scene ?? stepScene(currentStepData))
+              }
+              revision={revision}
+            />
+            <p className="mt-3 text-xs leading-relaxed text-[#597157]">
+              {reviewing
+                ? 'Tus textos y fotos, tal como los recibirá esa persona.'
+                : 'Los cambios se muestran aquí. Tu regalo se guarda cuando pulses “Crear mi regalo”.'}
+            </p>
+          </section>
+        </div>
       </div>
     </div>
   );
@@ -249,7 +495,54 @@ export function TemplateForm() {
 
 // --- Helper Component for Field Rendering ---
 
-function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
+type FieldRendererProps = {
+  field: TemplateField;
+  value: unknown;
+  onChange: (value: unknown) => void;
+  onFileUpload: (files: File[]) => void;
+};
+
+function FieldRenderer({
+  field,
+  value,
+  onChange,
+  onFileUpload,
+}: FieldRendererProps) {
+  const textValue = typeof value === 'string' ? value : '';
+
+  if (field.type === 'choice') {
+    const selected =
+      textValue || field.default || field.options[0]?.value || '';
+    if (field.appearance === 'mascot') {
+      return (
+        <MascotPicker
+          label={field.label}
+          value={readGiftMascot(selected)}
+          onChange={onChange}
+        />
+      );
+    }
+    return (
+      <fieldset className="space-y-3">
+        <legend className="text-base font-medium text-slate-700">
+          {field.label}
+        </legend>
+        {field.options.map((option) => (
+          <label key={option.value} className="flex items-center gap-2">
+            <input
+              type="radio"
+              name={field.name}
+              value={option.value}
+              checked={selected === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            {option.label}
+          </label>
+        ))}
+      </fieldset>
+    );
+  }
+
   // Date Fields
   if (field.type === 'date') {
     return (
@@ -259,14 +552,14 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
           className="text-base font-medium text-slate-700"
         >
           {field.label}{' '}
-          {field.required && <span className="text-[#e91e63]">*</span>}
+          {field.required && <span className="text-[#b7801a]">*</span>}
         </Label>
         <Input
           type="date"
           id={field.name}
-          value={value || ''}
+          value={textValue}
           onChange={(e) => onChange(e.target.value)}
-          className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+          className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
         />
       </div>
     );
@@ -292,30 +585,30 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
           className="text-base font-medium text-slate-700"
         >
           {field.label}{' '}
-          {field.required && <span className="text-[#e91e63]">*</span>}
+          {field.required && <span className="text-[#b7801a]">*</span>}
         </Label>
         {isLongText ? (
           <Textarea
             id={field.name}
             placeholder="Escribe aquí..."
-            value={value || ''}
+            value={textValue}
             onChange={(e) => onChange(e.target.value)}
             maxLength={field.max_length}
-            className="min-h-[120px] resize-y bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+            className="min-h-[120px] resize-y bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
           />
         ) : (
           <Input
             id={field.name}
             type={inputType}
-            value={value || ''}
+            value={textValue}
             onChange={(e) => onChange(e.target.value)}
             maxLength={field.max_length}
-            className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+            className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
           />
         )}
         {field.max_length && (
           <div className="text-right text-xs text-slate-400 font-medium">
-            {value?.length || 0} / {field.max_length}
+            {textValue.length} / {field.max_length}
           </div>
         )}
       </div>
@@ -331,14 +624,14 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
           className="text-base font-medium text-slate-700"
         >
           {field.label}{' '}
-          {field.required && <span className="text-[#e91e63]">*</span>}
+          {field.required && <span className="text-[#b7801a]">*</span>}
         </Label>
         <Input
           type="number"
           id={field.name}
-          value={value || ''}
+          value={textValue}
           onChange={(e) => onChange(e.target.valueAsNumber)}
-          className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+          className="h-11 bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
         />
       </div>
     );
@@ -347,15 +640,12 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
   // Boolean Fields
   if (field.type === 'boolean') {
     return (
-      <div
-        className="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 hover:border-[#e91e63]/50 hover:bg-[#e91e63]/5 transition-all cursor-pointer bg-white"
-        onClick={() => onChange(!value)}
-      >
+      <div className="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 hover:border-[#b7801a]/50 hover:bg-[#b7801a]/5 transition-all cursor-pointer bg-white">
         <Checkbox
           id={field.name}
-          checked={!!value}
+          checked={value === true}
           onCheckedChange={(checked) => onChange(checked)}
-          className="data-[state=checked]:bg-[#e91e63] border-slate-300 w-5 h-5"
+          className="data-[state=checked]:bg-[#b7801a] border-slate-300 w-5 h-5"
         />
         <Label
           htmlFor={field.name}
@@ -368,13 +658,22 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
   }
 
   // Array Fields (non-image)
-  if (
-    field.type === 'array' &&
-    field.item_type !== 'image'
-  ) {
-    const items = Array.isArray(value) ? value : [];
+  if (field.type === 'array' && field.item_type !== 'image') {
+    const items = Array.isArray(value)
+      ? value.filter(
+          (item): item is string | number | boolean =>
+            typeof item === 'string' ||
+            typeof item === 'number' ||
+            typeof item === 'boolean'
+        )
+      : [];
     const canAddMore = !field.max_items || items.length < field.max_items;
     const needsMore = field.min_items && items.length < field.min_items;
+    // La etiqueta del campo puede ser una frase larga: el botón y cada casilla
+    // usan el nombre corto del elemento.
+    const itemName = field.item_label
+      ? field.item_label.charAt(0).toUpperCase() + field.item_label.slice(1)
+      : 'Elemento';
 
     const addItem = () => {
       const newItem =
@@ -390,7 +689,7 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
       onChange(items.filter((_, i) => i !== index));
     };
 
-    const updateItem = (index: number, newValue: any) => {
+    const updateItem = (index: number, newValue: string | number | boolean) => {
       const updated = [...items];
       updated[index] = newValue;
       onChange(updated);
@@ -401,17 +700,18 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
         <div className="flex items-center justify-between">
           <Label className="text-base font-medium text-slate-700">
             {field.label}{' '}
-            {field.required && <span className="text-[#e91e63]">*</span>}
+            {field.required && <span className="text-[#b7801a]">*</span>}
           </Label>
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="shrink-0 whitespace-nowrap text-xs text-slate-400 font-medium">
             {items.length}
-            {field.max_items ? ` / ${field.max_items}` : ''} items
+            {field.max_items ? ` / ${field.max_items}` : ''}
           </span>
         </div>
 
         <div className="space-y-3">
           {items.map((item, idx) => (
             <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: inputs controlados de un esquema que almacena valores sin identificadores
               key={idx}
               className="flex items-start gap-2 p-3 rounded-lg border border-slate-200 bg-white group hover:border-slate-300 transition-colors"
             >
@@ -420,15 +720,16 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
                   <div className="space-y-1">
                     <Input
                       type="text"
-                      value={item}
+                      value={typeof item === 'boolean' ? '' : item}
                       onChange={(e) => updateItem(idx, e.target.value)}
-                      placeholder={`${field.label} ${idx + 1}`}
+                      placeholder={`${itemName} ${idx + 1}`}
                       maxLength={field.item_max_length}
-                      className="h-10 bg-slate-50/50 focus:bg-white text-slate-900 border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+                      className="h-10 bg-slate-50/50 focus:bg-white text-slate-900 border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
                     />
                     {field.item_max_length && (
                       <div className="text-right text-[10px] text-slate-400 font-medium">
-                        {item?.length || 0} / {field.item_max_length}
+                        {typeof item === 'string' ? item.length : 0} /{' '}
+                        {field.item_max_length}
                       </div>
                     )}
                   </div>
@@ -436,21 +737,21 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
                 {field.item_type === 'number' && (
                   <Input
                     type="number"
-                    value={item}
+                    value={typeof item === 'boolean' ? '' : item}
                     onChange={(e) => updateItem(idx, e.target.valueAsNumber)}
-                    placeholder={`${field.label} ${idx + 1}`}
-                    className="h-10 bg-slate-50/50 focus:bg-white text-slate-900 border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+                    placeholder={`${itemName} ${idx + 1}`}
+                    className="h-10 bg-slate-50/50 focus:bg-white text-slate-900 border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
                   />
                 )}
                 {field.item_type === 'boolean' && (
                   <div className="flex items-center gap-2 pl-2">
                     <Checkbox
-                      checked={!!item}
+                      checked={item === true}
                       onCheckedChange={(checked) => updateItem(idx, checked)}
-                      className="data-[state=checked]:bg-[#e91e63] border-slate-300 w-5 h-5"
+                      className="data-[state=checked]:bg-[#b7801a] border-slate-300 w-5 h-5"
                     />
                     <span className="text-sm text-slate-600">
-                      {field.label} {idx + 1}
+                      {itemName} {idx + 1}
                     </span>
                   </div>
                 )}
@@ -460,7 +761,7 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
                 variant="ghost"
                 size="icon"
                 onClick={() => removeItem(idx)}
-                className="h-10 w-10 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="h-10 w-10 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-100"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
@@ -474,12 +775,12 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
             variant="outline"
             onClick={addItem}
             className={cn(
-              'w-full border-dashed hover:border-[#e91e63] hover:bg-[#e91e63]/5 hover:text-[#e91e63]',
+              'w-full border-dashed hover:border-[#b7801a] hover:bg-[#b7801a]/5 hover:text-[#b7801a]',
               needsMore && 'border-red-300 text-red-600 hover:border-red-400'
             )}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Agregar {field.label}
+            Agregar {field.item_label ?? 'otro'}
           </Button>
         )}
 
@@ -503,80 +804,21 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
     field.type === 'image' ||
     (field.type === 'array' && field.item_type === 'image')
   ) {
-    const isMultiple = field.type === 'array';
-    const hasValue = value && (isMultiple ? value.length > 0 : !!value);
-
     return (
-      <div className="space-y-3">
-        <Label className="text-base font-medium text-slate-700">
-          {field.label}{' '}
-          {field.required && <span className="text-[#e91e63]">*</span>}
-        </Label>
-
-        <div
-          className={cn(
-            'relative border-2 border-dashed rounded-xl transition-all duration-300 ease-in-out group overflow-hidden min-h-[160px] flex flex-col items-center justify-center text-center p-6 cursor-pointer bg-white',
-            hasValue
-              ? 'border-[#e91e63]/30 bg-[#e91e63]/5'
-              : 'border-slate-300 hover:border-[#e91e63] hover:bg-slate-50'
-          )}
-        >
-          <input
-            type="file"
-            accept="image/*"
-            multiple={isMultiple}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-            onChange={(e) => {
-              const files = e.target.files ? Array.from(e.target.files) : [];
-              if (files.length) onFileUpload(files);
-            }}
-          />
-
-          <div
-            className={cn(
-              'w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors duration-300 shadow-sm',
-              hasValue
-                ? 'bg-[#e91e63]/10 text-[#e91e63]'
-                : 'bg-white text-slate-400 group-hover:bg-[#e91e63]/10 group-hover:text-[#e91e63]'
-            )}
-          >
-            {hasValue ? (
-              <Check className="w-6 h-6" />
-            ) : (
-              <CloudUpload className="w-6 h-6" />
-            )}
-          </div>
-
-          <h3 className="font-semibold text-slate-800">
-            {hasValue
-              ? isMultiple
-                ? `${value.length} archivos seleccionados`
-                : 'Imagen lista'
-              : 'Arrastra tus fotos aquí'}
-          </h3>
-          <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">
-            {hasValue
-              ? 'Haz clic o arrastra para cambiar'
-              : isMultiple
-                ? `Sube hasta ${field.max_items || 5} fotos`
-                : 'Soporta PNG, JPG, WEBP'}
-          </p>
-        </div>
-
-        {/* Image Previews */}
-        {hasValue && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4 animate-in fade-in slide-in-from-top-2">
-            {isMultiple ? (
-              value.map((file: File, idx: number) => (
-                <ImagePreview key={idx} file={file} />
-              ))
-            ) : (
-              <ImagePreview file={value} />
-            )}
-          </div>
-        )}
-      </div>
+      <ImageUploadField
+        label={field.label}
+        required={field.required}
+        multiple={field.type === 'array'}
+        maxItems={field.type === 'array' ? field.max_items : 1}
+        value={value}
+        onFiles={onFileUpload}
+      />
     );
+  }
+
+  // Music Fields (YouTube + letra sincronizada)
+  if (field.type === 'music') {
+    return <SongPicker field={field} value={value} onChange={onChange} />;
   }
 
   // Textarea Fields
@@ -588,35 +830,24 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
           className="text-base font-medium text-slate-700"
         >
           {field.label}{' '}
-          {field.required && <span className="text-[#e91e63]">*</span>}
+          {field.required && <span className="text-[#b7801a]">*</span>}
         </Label>
         <Textarea
           id={field.name}
           placeholder="Escribe aquí..."
-          value={value || ''}
+          value={textValue}
           onChange={(e) => onChange(e.target.value)}
           maxLength={field.max_length}
-          className="min-h-[120px] resize-y bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#e91e63] focus:ring-[#e91e63]/20"
+          className="min-h-[120px] resize-y bg-slate-50/50 focus:bg-white text-slate-900 transition-all border-slate-200 focus:border-[#b7801a] focus:ring-[#b7801a]/20"
         />
         {field.max_length && (
           <div className="text-right text-xs text-slate-400 font-medium">
-            {value?.length || 0} / {field.max_length}
+            {textValue.length} / {field.max_length}
           </div>
         )}
       </div>
     );
   }
 
-
   return null;
-}
-
-function ImagePreview({ file }: { file: File | string }) {
-  const src = file instanceof File ? URL.createObjectURL(file) : file;
-  return (
-    <div className="relative group aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-slate-100">
-      <img src={src} alt="Preview" className="w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-    </div>
-  );
 }
