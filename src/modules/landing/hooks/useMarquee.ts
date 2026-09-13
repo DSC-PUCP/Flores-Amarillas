@@ -14,11 +14,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *
  * Se mide en lugar de suponer porque el ancho depende de la fuente ya cargada,
  * del idioma y del tamaño de la ventana.
+ *
+ * Devuelve tambien el ancho de una copia. Es lo que permite animar UNA sola
+ * pista con todas las copias dentro, en vez de animar cada copia por su lado:
+ * cuando el numero de copias cambiaba —al cargar las fuentes o al
+ * redimensionar— las nuevas arrancaban su animacion desde cero mientras las
+ * otras iban a media carrera, y el texto se veia duplicado y desfasado.
  */
 export function useMarquee<T extends HTMLElement = HTMLDivElement>() {
   const contenedorRef = useRef<T>(null);
   const copiaRef = useRef<HTMLDivElement>(null);
   const [copias, setCopias] = useState(2);
+  /** Ancho de una copia; el CSS desplaza exactamente eso en cada vuelta. */
+  const [anchoCopia, setAnchoCopia] = useState(0);
 
   const medir = useCallback(() => {
     const contenedor = contenedorRef.current;
@@ -31,6 +39,7 @@ export function useMarquee<T extends HTMLElement = HTMLDivElement>() {
 
     // +1 para que siempre sobre un poco y el empalme nunca se quede corto.
     setCopias(Math.max(2, Math.ceil((anchoVisible * 2) / anchoCopia) + 1));
+    setAnchoCopia(anchoCopia);
   }, []);
 
   useEffect(() => {
@@ -56,5 +65,5 @@ export function useMarquee<T extends HTMLElement = HTMLDivElement>() {
     document.fonts.ready.then(medir).catch(() => {});
   }, [medir]);
 
-  return { contenedorRef, copiaRef, copias };
+  return { contenedorRef, copiaRef, copias, anchoCopia };
 }

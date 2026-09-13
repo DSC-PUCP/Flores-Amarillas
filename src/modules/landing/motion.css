@@ -530,30 +530,41 @@
     transparent
   );
 }
+/* Una sola pista con todas las copias: asi todas comparten la misma
+   animacion y es imposible que se desfasen entre ellas. */
 .bloom-ribbon-track {
+  display: flex;
+  align-items: center;
+  min-width: max-content;
+  animation: bloom-marquee var(--vuelta, 30s) linear infinite;
+  will-change: transform;
+}
+.bloom-ribbon-copy {
   display: flex;
   align-items: center;
   gap: 42px;
   padding-right: 42px;
   flex-shrink: 0;
   min-width: max-content;
-  animation: bloom-marquee 34s linear infinite;
 }
 .bloom-ribbon:hover .bloom-ribbon-track,
 .bloom-ribbon:focus-within .bloom-ribbon-track {
   animation-play-state: paused;
 }
 /**
- * Cada copia se desplaza exactamente su propio ancho, asi que al terminar el
- * ciclo la de al lado ocupa su sitio y el salto es invisible. Por eso el
- * desplazamiento es -100% de la copia y no del contenedor.
+ * La pista se desplaza exactamente el ancho de UNA copia, no su propio ancho.
+ * Al terminar la vuelta, la copia siguiente esta justo donde estaba la
+ * primera, asi que el salto al reiniciar es invisible.
+ *
+ * El ancho lo mide `useMarquee` y llega como variable, porque depende de la
+ * fuente ya cargada y del texto.
  */
 @keyframes bloom-marquee {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-100%, 0, 0);
+    transform: translate3d(calc(var(--ancho-copia, 0px) * -1), 0, 0);
   }
 }
 .bloom-ribbon-item {

@@ -24,7 +24,7 @@ const RIBBON_WORDS = [
   'Un enlace para regalar',
 ];
 
-function RibbonTrack({
+function RibbonCopy({
   hidden,
   ref,
 }: {
@@ -34,7 +34,7 @@ function RibbonTrack({
   return (
     <div
       ref={ref}
-      className="bloom-ribbon-track"
+      className="bloom-ribbon-copy"
       aria-hidden={hidden || undefined}
     >
       {RIBBON_WORDS.map((word) => (
@@ -169,12 +169,25 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
         </div>
       </div>
       <div className="bloom-ribbon" ref={cinta.contenedorRef}>
-        {/* La primera copia es la que se mide; el resto solo rellena, asi que
-            se oculta a los lectores de pantalla para no repetir el texto. */}
-        <RibbonTrack ref={cinta.copiaRef} />
-        {Array.from({ length: cinta.copias - 1 }, (_, i) => (
-          <RibbonTrack key={`cinta-${i + 1}`} hidden />
-        ))}
+        {/* Una sola pista con todas las copias dentro. Animar cada copia por
+            separado desfasaba las que se añadian despues. */}
+        <div
+          className="bloom-ribbon-track"
+          style={
+            {
+              '--ancho-copia': `${cinta.anchoCopia}px`,
+              // Velocidad constante: a mas ancho, mas tiempo por vuelta.
+              '--vuelta': `${Math.max(12, cinta.anchoCopia / 34)}s`,
+            } as CSSProperties
+          }
+        >
+          {/* La primera copia es la que se mide; el resto solo rellena, asi
+              que se oculta a los lectores para no repetir el texto. */}
+          <RibbonCopy ref={cinta.copiaRef} />
+          {Array.from({ length: cinta.copias - 1 }, (_, i) => (
+            <RibbonCopy key={`cinta-${i + 1}`} hidden />
+          ))}
+        </div>
       </div>
     </section>
   );
