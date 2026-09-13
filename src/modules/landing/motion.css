@@ -543,6 +543,11 @@
 .bloom-ribbon:focus-within .bloom-ribbon-track {
   animation-play-state: paused;
 }
+/**
+ * Cada copia se desplaza exactamente su propio ancho, asi que al terminar el
+ * ciclo la de al lado ocupa su sitio y el salto es invisible. Por eso el
+ * desplazamiento es -100% de la copia y no del contenedor.
+ */
 @keyframes bloom-marquee {
   from {
     transform: translate3d(0, 0, 0);

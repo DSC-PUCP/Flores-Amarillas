@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import type { CSSProperties, MouseEvent } from 'react';
 import { Ambient } from '../art/Ambient';
+import { useMarquee } from '../hooks/useMarquee';
 import { useParallax } from '../hooks/useParallax';
 
 interface HeroSectionProps {
@@ -23,9 +24,19 @@ const RIBBON_WORDS = [
   'Un enlace para regalar',
 ];
 
-function RibbonTrack({ hidden }: { hidden?: boolean }) {
+function RibbonTrack({
+  hidden,
+  ref,
+}: {
+  hidden?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
+}) {
   return (
-    <div className="bloom-ribbon-track" aria-hidden={hidden || undefined}>
+    <div
+      ref={ref}
+      className="bloom-ribbon-track"
+      aria-hidden={hidden || undefined}
+    >
       {RIBBON_WORDS.map((word) => (
         <span key={word} className="bloom-ribbon-item">
           {word}
@@ -39,6 +50,9 @@ function RibbonTrack({ hidden }: { hidden?: boolean }) {
 export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
   // El arte responde al puntero y al scroll escribiendo variables CSS.
   const artRef = useParallax<HTMLDivElement>();
+  // La cinta calcula cuantas copias necesita: con dos fijas dejaba hueco en
+  // pantallas anchas y parecia cortarse en vez de dar la vuelta.
+  const cinta = useMarquee<HTMLDivElement>();
 
   return (
     <section className="bloom-hero" aria-labelledby="hero-title">
@@ -154,11 +168,13 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
           </span>
         </div>
       </div>
-      <div className="bloom-ribbon">
-        <RibbonTrack />
-        {/* Copia idéntica: al desplazar la primera un ancho completo, esta
-            ocupa su lugar y el bucle no tiene costura. */}
-        <RibbonTrack hidden />
+      <div className="bloom-ribbon" ref={cinta.contenedorRef}>
+        {/* La primera copia es la que se mide; el resto solo rellena, asi que
+            se oculta a los lectores de pantalla para no repetir el texto. */}
+        <RibbonTrack ref={cinta.copiaRef} />
+        {Array.from({ length: cinta.copias - 1 }, (_, i) => (
+          <RibbonTrack key={`cinta-${i + 1}`} hidden />
+        ))}
       </div>
     </section>
   );
