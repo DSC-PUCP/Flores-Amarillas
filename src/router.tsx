@@ -19,7 +19,7 @@ export const getRouter = () => {
         </TanstackQuery.Provider>
       );
     },
-    scrollRestoration: true
+    scrollRestoration: true,
   });
 
   setupRouterSsrQueryIntegration({

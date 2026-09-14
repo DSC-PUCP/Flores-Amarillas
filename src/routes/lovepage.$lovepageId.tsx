@@ -136,12 +136,26 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="fixed bottom-6 right-6 z-40 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 border border-slate-200 dark:border-white/10 flex flex-col items-center gap-4 max-w-xs">
-            <PaymentSteps price={lovepage.price} />
-            <Button onClick={openWhatsapp} className={`w-full ${ctaClassName}`}>
-              Generar enlace permanente
-            </Button>
-          </div>
+          {lovepage.templateKey === 'plantilla_giano_feat_leo' ? (
+            <details className="fixed bottom-4 right-4 z-40 max-w-xs rounded-2xl border border-amber-200 bg-white p-3 text-slate-800 shadow-lg">
+              <summary className="cursor-pointer text-xs font-semibold text-amber-700">
+                Cómo activar mi regalo
+              </summary>
+              <div className="pt-4">
+                <PaymentSteps price={lovepage.price} />
+              </div>
+            </details>
+          ) : (
+            <div className="fixed bottom-6 right-6 z-40 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 border border-slate-200 dark:border-white/10 flex flex-col items-center gap-4 max-w-xs">
+              <PaymentSteps price={lovepage.price} />
+              <Button
+                onClick={openWhatsapp}
+                className={`w-full ${ctaClassName}`}
+              >
+                Generar enlace permanente
+              </Button>
+            </div>
+          )}
         </>
       )}
 

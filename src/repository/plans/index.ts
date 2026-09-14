@@ -12,7 +12,7 @@ const mapRowToPlan = (row: PlanRow): Plan => {
     name: row.name,
     price: row.price,
     features: row.features as string[],
-    description: row.description
+    description: row.description,
   };
 };
 

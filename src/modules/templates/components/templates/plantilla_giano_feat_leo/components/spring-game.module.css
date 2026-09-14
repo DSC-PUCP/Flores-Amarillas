@@ -1,0 +1,483 @@
+/* ── Slide wrapper ─────────────────────────────────────────── */
+.slide {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  padding: 55px 18px 165px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff3d3;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 23px, #fdd0180c 23px 46px),
+    repeating-linear-gradient(90deg, transparent 0 23px, #fdd0180c 23px 46px);
+  overflow: clip;
+  color: #65472b;
+}
+.slide::before,
+.slide::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: clamp(230px, 40vw, 550px);
+  aspect-ratio: 1312 / 1184;
+  background:
+    url("/images/spring/letter-corner-flowers.png") center / contain no-repeat;
+  pointer-events: none;
+}
+.slide::before {
+  top: 0;
+  left: 0;
+  transform: scaleX(-1);
+}
+.slide::after {
+  bottom: 0;
+  right: 0;
+  transform: scaleY(-1);
+}
+
+/* ── Heading ────────────────────────────────────────────────── */
+.heading {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.heading > p {
+  font:
+    500 10px "DM Sans",
+    sans-serif;
+  color: #798044;
+  letter-spacing: 0.2em;
+}
+.heading h2 {
+  font:
+    600 clamp(2rem, 5vw, 3.5rem) "Dancing Script",
+    cursive;
+  color: #082b60;
+  margin: 10px 0;
+  text-wrap: balance;
+}
+.heading > span {
+  font:
+    400 19px "Cormorant Garamond",
+    serif;
+}
+
+/* ── Game Boy body ──────────────────────────────────────────── */
+/*
+ * Original Game Boy DMG-01 colour: #C8C3B8 (light grey).
+ * We keep a slightly warmer tone that fits the page palette.
+ */
+.console {
+  width: min(100%, 520px);
+  padding: 18px 22px 26px;
+  /* Original GB has a squared top and a large chamfer on the bottom-right */
+  border-radius: 16px 16px 52px 16px;
+  background: linear-gradient(160deg, #dddbd5 0%, #cac8c1 55%, #b8b5ac 100%);
+  border: 2px solid #a8a5a0;
+  box-shadow:
+    inset 3px 3px 0 #f0efeb,
+    inset -4px -5px 0 #9a978f60,
+    0 14px 0 -6px #8e8c85,
+    0 26px 40px #40404028;
+}
+.console:focus {
+  outline: none;
+}
+.console:focus-visible {
+  outline: 3px solid #8b9655;
+  outline-offset: 5px;
+}
+
+/* ── Top label strip (inside console) ──────────────────────── */
+.topLine {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font: 600 8px monospace;
+  letter-spacing: 0.12em;
+  color: #7a7870;
+  padding-bottom: 11px;
+  border-bottom: 2px solid #b0ada5;
+  margin-bottom: 14px;
+}
+
+/* ── Screen area (bezel) ───────────────────────────────────── */
+.bezel {
+  padding: 10px 14px 8px;
+  border-radius: 10px 10px 30px 10px;
+  /* Original GB bezel is a dark grey plastic inset */
+  background: linear-gradient(145deg, #555550, #414040);
+  border: 2px solid #333330;
+  box-shadow: inset 2px 2px 5px #22221e88;
+}
+
+/* DOT MATRIX WITH STEREO SOUND label ── */
+.displayLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font: 600 6.5px monospace;
+  letter-spacing: 0.14em;
+  color: #ccc8b8;
+}
+.labelLine {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #b44040 50%, #4060c0 50%);
+  border-radius: 1px;
+}
+.labelText {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Screen ── */
+/*
+ * Game content is rendered in 320×180 logical units (640×360 canvas at 2×).
+ * Use 16:9 so the scene fills the screen without empty space.
+ */
+.screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  /* Original GB screen colour (off) is olive/yellow-green */
+  background: #8f9d47;
+  border: 6px solid #1e1e1a;
+  box-shadow:
+    0 1px 0 #666,
+    inset 0 4px 8px #0008;
+  overflow: hidden;
+}
+.screen canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  /* Classic GB green-screen look */
+  filter: grayscale(1) sepia(1) saturate(2) hue-rotate(22deg) brightness(0.78);
+  transition: filter 1.8s ease;
+}
+.screen[data-color="true"] canvas {
+  filter: none;
+}
+/* Scanline overlay */
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    #11111109 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* Battery indicator ── */
+.battery {
+  margin: 8px 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #aaa89c;
+  font: 7px monospace;
+  letter-spacing: 0.08em;
+}
+.battery i {
+  width: 6px;
+  height: 6px;
+  /* Original GB: red LED */
+  background: #dd3030;
+  box-shadow: 0 0 6px #ff4040;
+  border-radius: 50%;
+}
+.battery span {
+  margin-left: auto;
+}
+
+/* ── Brand label ────────────────────────────────────────────── */
+.brand {
+  margin: 14px 0 16px;
+  font:
+    italic 600 18px "Cormorant Garamond",
+    serif;
+  color: #55624a;
+  letter-spacing: 0.03em;
+}
+.brand em {
+  font-weight: 700;
+  font-style: italic;
+}
+.brand > span {
+  font: 8px sans-serif;
+  margin-left: 2px;
+  vertical-align: super;
+}
+
+/* ── Controls row ───────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 36px);
+  margin: 10px 0 6px;
+}
+
+/* D-pad ── */
+.dpad {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.35));
+}
+.dpadRow {
+  display: flex;
+  gap: 0;
+}
+.dpadEmpty {
+  width: 34px;
+  height: 34px;
+  /* fills the corner cells of the cross */
+  background: transparent;
+}
+.dpadCenter {
+  width: 34px;
+  height: 34px;
+  background: radial-gradient(circle at center, #222220 40%, #2a2a28 45%);
+}
+.dpadBtn {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  padding: 0;
+  background: #2a2a28;
+  color: #b0aca0;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  /* Cross shape using border-radius */
+}
+/* Round corners only on outer edges of each arm */
+.dpadRow:first-child .dpadBtn {
+  border-radius: 6px 6px 0 0;
+}
+.dpadRow:last-child .dpadBtn {
+  border-radius: 0 0 6px 6px;
+}
+.dpadRow:nth-child(2) .dpadBtn:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.dpadRow:nth-child(2) .dpadBtn:last-child {
+  border-radius: 0 6px 6px 0;
+}
+.dpadBtn:active {
+  background: #383836;
+  color: #fff;
+}
+
+.controlHint {
+  text-align: center;
+  font: 7px / 2 monospace;
+  letter-spacing: 0.08em;
+  color: #888070;
+}
+
+/* A / B action buttons ── */
+/*
+ * Original Game Boy: two purple/magenta circles, B left, A right,
+ * tilted ~25° clockwise.
+ */
+.actionButtons {
+  display: flex;
+  gap: 4px;
+  transform: rotate(-22deg);
+  padding: 8px 6px;
+  border-radius: 40px;
+  background: #c3c0b820;
+  flex-shrink: 0;
+}
+.actionButtons button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  /* Original GB colour: deep magenta/aubergine */
+  border: 2px solid #6b2a72;
+  background: radial-gradient(circle at 35% 30%, #c060c8, #8b3095);
+  box-shadow:
+    0 4px 0 #5a1f62,
+    0 6px 8px #40104860,
+    inset 1px 1px 3px #e890f0;
+  color: #f8e0fc;
+  font: 700 16px monospace;
+  cursor: pointer;
+  touch-action: manipulation;
+  letter-spacing: 0;
+}
+.actionButtons button:active {
+  translate: 0 3px;
+  box-shadow: 0 1px 0 #5a1f62;
+}
+
+/* ── Bottom controls (Select / Start / Speaker) ─────────────── */
+.bottomControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 0 4px;
+}
+.bottomControls button {
+  border: 0;
+  border-radius: 14px;
+  padding: 7px 14px;
+  /* Original GB select/start: small dark oval buttons */
+  background: #5a5850;
+  color: #d8d5cc;
+  font: 700 7px monospace;
+  letter-spacing: 0.1em;
+  box-shadow: 0 3px 0 #3e3c36;
+  cursor: pointer;
+  min-height: 28px;
+  min-width: 54px;
+}
+.bottomControls button:active {
+  translate: 0 2px;
+  box-shadow: 0 1px 0 #3e3c36;
+}
+.speaker {
+  margin-left: auto;
+  color: #9a9890;
+  transform: rotate(-22deg);
+  font-size: 20px;
+  letter-spacing: 3px;
+  display: block;
+}
+
+/* ── Start / Ready overlay ──────────────────────────────────── */
+.overlay {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 10px;
+  background: #c3cd86eb;
+  color: #384b29;
+  font-family: monospace;
+}
+.overlay > span {
+  font-size: 22px;
+}
+.overlay strong {
+  font-size: clamp(10px, 2.7vw, 14px);
+  letter-spacing: 0.08em;
+}
+.overlay p {
+  margin: 0;
+  font-size: 8px;
+}
+.overlay button {
+  padding: 8px 15px;
+  border: 1px solid #465b32;
+  color: #dce6b2;
+  background: #465b32;
+  font: 600 10px monospace;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+/* ── Caption below console ──────────────────────────────────── */
+.caption {
+  text-align: center;
+  margin-top: 28px;
+  max-width: 520px;
+}
+.caption p {
+  margin: 6px 0;
+  font:
+    500 21px "Dancing Script",
+    cursive;
+}
+.caption > span {
+  font:
+    10px / 1.8 "DM Sans",
+    sans-serif;
+  color: #7c7e53;
+}
+.caption h3 {
+  font:
+    600 clamp(24px, 4vw, 32px) "Dancing Script",
+    cursive;
+  margin: 0 0 9px;
+}
+.caption button {
+  border: 1px solid #cba957;
+  border-radius: 20px;
+  padding: 9px 17px;
+  margin-top: 13px;
+  color: #775728;
+  background: #ffe7a1;
+  cursor: pointer;
+  font:
+    12px "DM Sans",
+    sans-serif;
+}
+
+/* ── Focus rings ────────────────────────────────────────────── */
+.console button:focus-visible,
+.caption button:focus-visible {
+  outline: 3px solid #65734e;
+  outline-offset: 4px;
+}
+
+/* ── Narrow phones ──────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .slide {
+    padding-inline: 10px;
+  }
+  .console {
+    padding: 13px 14px 20px;
+  }
+  .bezel {
+    padding: 8px 8px 6px;
+  }
+  .displayLabel {
+    font-size: 5.5px;
+  }
+  .actionButtons {
+    gap: 8px;
+  }
+  .actionButtons button {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+  .dpadBtn,
+  .dpadCenter,
+  .dpadEmpty {
+    width: 28px;
+    height: 28px;
+  }
+  .controlHint {
+    display: none;
+  }
+  .overlay > span {
+    display: none;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .screen canvas {
+    transition: none;
+  }
+}

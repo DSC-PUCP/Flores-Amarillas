@@ -15,8 +15,8 @@ const mapRowToTemplate = (row: TemplateRow): Template => {
     description: row.description,
     schemaJson: row.schema_json as TemplateForm,
     planId: row.plan_id,
-    previewImageUrl: row.preview_image_url??"",
-    isVisible: row.is_visible>0
+    previewImageUrl: row.preview_image_url ?? '',
+    isVisible: row.is_visible > 0,
   };
 };
 

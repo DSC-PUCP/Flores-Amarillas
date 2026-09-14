@@ -1,0 +1,266 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&family=Dancing+Script:wght@400;500;600&family=League+Spartan:wght@700;800&display=swap");
+
+.spring {
+  position: relative;
+  background: #fff3d3;
+  color: #082b60;
+  isolation: isolate;
+  font-family: "League Spartan", sans-serif;
+}
+
+.slide {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.corner {
+  position: absolute;
+  width: 50.1%;
+  height: 50.1%;
+  background-image: url("/images/spring/floral-frame.png");
+  background-size: 200% 200%;
+  animation: bloom 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+.corner[data-corner="0"] {
+  top: 0;
+  left: 0;
+  background-position: left top;
+  transform-origin: left top;
+}
+.corner[data-corner="1"] {
+  top: 0;
+  right: 0;
+  background-position: right top;
+  transform-origin: right top;
+  animation-delay: 0.16s;
+}
+.corner[data-corner="2"] {
+  bottom: 0;
+  left: 0;
+  background-position: left bottom;
+  transform-origin: left bottom;
+  animation-delay: 0.3s;
+}
+.corner[data-corner="3"] {
+  bottom: 0;
+  right: 0;
+  background-position: right bottom;
+  transform-origin: right bottom;
+  animation-delay: 0.44s;
+}
+
+.message {
+  position: relative;
+  z-index: 2;
+  width: 65%;
+  max-width: 850px;
+  text-align: center;
+  padding: 4rem 0;
+}
+.date {
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+  margin: 0 0 0.6rem;
+  animation: reveal 0.7s ease-out 1.5s both;
+}
+.title {
+  font-size: clamp(2rem, 4.7vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.13;
+  letter-spacing: -0.045em;
+  margin: 0;
+  text-wrap: balance;
+  animation: reveal 0.8s ease-out 1.8s both;
+}
+.name {
+  color: #a38635;
+  font-size: clamp(2rem, 4.8vw, 4.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin: 0.65rem 0 0;
+  overflow-wrap: anywhere;
+  animation: reveal 0.85s ease-out 2.15s both;
+}
+.petals {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+.petalTrack {
+  position: absolute;
+  top: -8%;
+  width: var(--size);
+  height: var(--size);
+  animation: fall var(--duration) linear var(--delay) infinite;
+}
+.petal {
+  display: block;
+  width: 100%;
+  height: 65%;
+  border-radius: 85% 5% 80% 12%;
+  background: linear-gradient(135deg, #ffe779 10%, #ffd12d 55%, #efac12);
+  box-shadow: inset 1px 1px 2px #fff5ad99;
+  animation: flutter 3.2s ease-in-out var(--delay) infinite alternate;
+}
+.replay {
+  position: absolute;
+  z-index: 4;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.65rem 1rem;
+  border: 1px solid #aa8b3440;
+  border-radius: 100px;
+  background: #fff6ddeb;
+  color: #6b5725;
+  font:
+    600 0.7rem "League Spartan",
+    sans-serif;
+  cursor: pointer;
+  animation: reveal 0.8s ease-out 3s both;
+}
+.navigation {
+  position: absolute;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fffaf0ed;
+  padding: 6px 8px;
+  border-radius: 100px;
+  border: 1px solid #bdcc7980;
+  box-shadow: 0 3px 12px #082b6008;
+  font:
+    500 12px "DM Sans",
+    sans-serif;
+}
+.navigation button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #fdd018;
+  color: #082b60;
+  cursor: pointer;
+}
+.navigation button:disabled {
+  background: transparent;
+  opacity: 0.3;
+  cursor: default;
+}
+.navigation button:focus-visible {
+  outline: 2px solid #082b60;
+  outline-offset: 3px;
+}
+.replay:hover {
+  background: #fff9ec;
+}
+.replay:focus-visible {
+  outline: 3px solid #082b60;
+  outline-offset: 4px;
+}
+@keyframes bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.35) rotate(-5deg);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
+}
+@keyframes fall {
+  from {
+    transform: translate3d(0, -5vh, 0) rotate(var(--rotation));
+  }
+  to {
+    transform: translate3d(var(--drift), 115vh, 0)
+      rotate(calc(var(--rotation) + 280deg));
+  }
+}
+@keyframes flutter {
+  from {
+    transform: rotateY(0) rotate(-20deg);
+  }
+  to {
+    transform: rotateY(65deg) rotate(35deg);
+  }
+}
+@media (max-width: 600px) {
+  .replay {
+    left: 1rem;
+    transform: none;
+  }
+  .message {
+    width: 76%;
+    padding: 7rem 0;
+  }
+  .title {
+    font-size: clamp(1.8rem, 7.3vw, 2.7rem);
+  }
+  .name {
+    font-size: clamp(2rem, 9vw, 3.3rem);
+    margin-top: 1rem;
+  }
+  .date {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  .corner {
+    background-image: url("/images/spring/floral-frame-mobile.png");
+    background-size: 200% 200%;
+  }
+  .petalTrack:nth-child(n + 19) {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .corner,
+  .date,
+  .title,
+  .name,
+  .replay {
+    animation: none;
+  }
+  .petalTrack,
+  .petal {
+    animation: none;
+  }
+  .petals {
+    display: none;
+  }
+}

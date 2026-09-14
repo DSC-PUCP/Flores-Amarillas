@@ -48,21 +48,21 @@ export type Database = {
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Insert: {
           id?: number;
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Update: {
           id?: number;
           name?: string;
           price?: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Relationships: [];
       };

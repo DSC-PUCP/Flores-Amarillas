@@ -3,11 +3,12 @@ export type TemplateData = {
   personB: string;
   startDate: string;
   message: string;
+  letterMessage?: string;
   image?: string;
   timelinePhotos?: string[];
 
   // 👉 NUEVO CAMPO:
   reasonsToLove?: string;
-  couponText?: string;         // ✅ NUEVO
-  couponImage?: string;        // ✅ NUEVO
+  couponText?: string; // ✅ NUEVO
+  couponImage?: string; // ✅ NUEVO
 };

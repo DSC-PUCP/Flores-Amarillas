@@ -1,2 +1,2 @@
 export const PLACEHOLDER = {};
-export const SECRET_LETTER = ``
+export const SECRET_LETTER = ``;

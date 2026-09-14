@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 const HeartBackground: React.FC = () => {
-  const [hearts, setHearts] = useState<{ id: number; left: number; duration: number; delay: number }[]>([]);
+  const [hearts, setHearts] = useState<
+    { id: number; left: number; duration: number; delay: number }[]
+  >([]);
 
   useEffect(() => {
     // Generate random hearts only on client side to avoid hydration mismatch
@@ -30,7 +33,7 @@ const HeartBackground: React.FC = () => {
             duration: heart.duration,
             repeat: Infinity,
             delay: heart.delay,
-            ease: "linear",
+            ease: 'linear',
           }}
         >
           ❤

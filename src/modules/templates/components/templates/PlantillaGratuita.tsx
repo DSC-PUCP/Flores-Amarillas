@@ -129,7 +129,7 @@ export function PlantillaGratuita({ templateData }: TemplateSlideProps) {
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  
+
   // Timeline scroll ref
   const timelineRef = useRef<HTMLDivElement>(null);
 
@@ -138,7 +138,7 @@ export function PlantillaGratuita({ templateData }: TemplateSlideProps) {
       const scrollAmount = 280;
       timelineRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -179,7 +179,7 @@ export function PlantillaGratuita({ templateData }: TemplateSlideProps) {
 
   const handleOpen = () => {
     setIsOpening(true);
-    
+
     // Pre-load the main image before opening
     if (data.image) {
       const img = new Image();
@@ -334,7 +334,8 @@ export function PlantillaGratuita({ templateData }: TemplateSlideProps) {
                   <p
                     className={`font-script text-2xl md:text-3xl font-bold ${theme.accent}`}
                     style={{
-                      textShadow: '2px 2px 3px white, -2px -2px 3px white, 2px -2px 3px white, -2px 2px 3px white, 0 0 8px white'
+                      textShadow:
+                        '2px 2px 3px white, -2px -2px 3px white, 2px -2px 3px white, -2px 2px 3px white, 0 0 8px white',
                     }}
                   >
                     {data.personA} & {data.personB}
@@ -439,27 +440,27 @@ export function PlantillaGratuita({ templateData }: TemplateSlideProps) {
                     <ChevronRight size={24} />
                   </button>
 
-                  <div 
+                  <div
                     ref={timelineRef}
                     className="flex gap-6 overflow-x-auto px-8 pb-4 snap-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                   >
                     {data.timelinePhotos.map((photo, idx) => (
-                    <div
-                      key={idx}
-                      className="snap-center flex-shrink-0 relative transform even:rotate-1 odd:-rotate-1 hover:rotate-0 transition-transform duration-300"
-                    >
-                      <div className="bg-white p-2 pb-8 shadow-lg w-48 md:w-56">
-                        <img
-                          src={photo}
-                          className="w-full h-48 object-cover filter sepia-[0.2]"
-                          alt="Memory"
-                        />
-                        <div className="absolute bottom-3 right-4 text-slate-400">
-                          <Heart size={12} fill="currentColor" />
+                      <div
+                        key={idx}
+                        className="snap-center flex-shrink-0 relative transform even:rotate-1 odd:-rotate-1 hover:rotate-0 transition-transform duration-300"
+                      >
+                        <div className="bg-white p-2 pb-8 shadow-lg w-48 md:w-56">
+                          <img
+                            src={photo}
+                            className="w-full h-48 object-cover filter sepia-[0.2]"
+                            alt="Memory"
+                          />
+                          <div className="absolute bottom-3 right-4 text-slate-400">
+                            <Heart size={12} fill="currentColor" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                   </div>
                 </div>
               </div>

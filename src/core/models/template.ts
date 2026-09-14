@@ -47,8 +47,7 @@ export type DateTemplateField = BaseTemplateField & {
 export type TextAreaTemplateField = BaseTemplateField & {
   type: 'textarea';
   max_length?: number;
-}
-
+};
 
 export type TemplateField =
   | StringTemplateField

@@ -18,14 +18,14 @@ const ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     title: '2. Selecciona Diseño',
-    desc: "Navega por nuestra galería de plantillas románticas. Tenemos el estilo que define su relación.",
+    desc: 'Navega por nuestra galería de plantillas románticas. Tenemos el estilo que define su relación.',
     image:
       'https://kxsoembxjnuvxddqmkes.supabase.co/storage/v1/object/public/Valentines/assets/60ead124-4b17-4e81-882d-f65c57d97588.jpg',
     align: 'right',
   },
   {
     title: '3. Personaliza',
-    desc: "Sube sus mejores fotos, escribe esa carta que sale del corazón, define la fecha de inicio.",
+    desc: 'Sube sus mejores fotos, escribe esa carta que sale del corazón, define la fecha de inicio.',
     image:
       'https://kxsoembxjnuvxddqmkes.supabase.co/storage/v1/object/public/Valentines/assets/4f6d3bad-a8cb-4093-8f2a-61a5200d9f0a.jpg',
     align: 'left',

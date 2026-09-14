@@ -1,17 +1,17 @@
-import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import type React from 'react';
+import { useRef, useState } from 'react';
 
 type DragRevealProps = {
   text?: string;
   image?: string;
 };
 
-const DragReveal: React.FC<DragRevealProps> = ({ 
-  text = "¡Vale por una cena romántica!",
-  image = "https://picsum.photos/id/1005/200/200"
+const DragReveal: React.FC<DragRevealProps> = ({
+  text = '¡Vale por una cena romántica!',
+  image = 'https://picsum.photos/id/1005/200/200',
 }) => {
-
   const constraintsRef = useRef(null);
   const x = useMotionValue(0);
   const opacity = useTransform(x, [0, 200], [1, 0]);
@@ -34,16 +34,15 @@ const DragReveal: React.FC<DragRevealProps> = ({
       </div>
 
       <div className="relative h-80 w-full bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-rose-100">
-        
         {/* Contenido oculto (revelado) */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 flex flex-col items-center justify-center bg-rose-50 p-6 text-center"
           style={{ opacity: revealOpacity }}
         >
           <div className="mb-4">
-            <img 
+            <img
               src={image}
-              alt="Secret" 
+              alt="Secret"
               className="w-32 h-32 rounded-full object-cover border-4 border-rose-400 shadow-lg mx-auto"
             />
           </div>
@@ -59,7 +58,7 @@ const DragReveal: React.FC<DragRevealProps> = ({
 
         {/* Slider */}
         {!unlocked && (
-          <motion.div 
+          <motion.div
             ref={constraintsRef}
             className="absolute inset-0 bg-rose-500 z-10 flex items-center p-4 cursor-grab active:cursor-grabbing"
             style={{ opacity }}

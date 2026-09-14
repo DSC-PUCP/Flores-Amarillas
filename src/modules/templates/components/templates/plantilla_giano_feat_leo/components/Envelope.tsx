@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { SECRET_LETTER } from '../constants';
 
 interface EnvelopeProps {
-  message?: string;   // <-- NUEVO
+  message?: string; // <-- NUEVO
 }
 
 const Envelope: React.FC<EnvelopeProps> = ({ message }) => {
@@ -25,7 +26,7 @@ const Envelope: React.FC<EnvelopeProps> = ({ message }) => {
       >
         {/* Instruction Text */}
         {!isOpen && (
-          <motion.div 
+          <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
             className="absolute -top-16 left-0 right-0 text-center text-rose-600 font-bold z-20 pointer-events-none"
@@ -35,29 +36,30 @@ const Envelope: React.FC<EnvelopeProps> = ({ message }) => {
         )}
 
         {/* Envelope Body */}
-        <div className={`relative bg-rose-200 w-full h-64 rounded-b-xl shadow-xl transition-all duration-700 ${isOpen ? 'translate-y-32' : ''} z-10`}>
-          
+        <div
+          className={`relative bg-rose-200 w-full h-64 rounded-b-xl shadow-xl transition-all duration-700 ${isOpen ? 'translate-y-32' : ''} z-10`}
+        >
           {/* Top Flap */}
           <motion.div
             className="absolute top-0 left-0 w-full h-0 border-l-[16rem] border-r-[16rem] border-t-[8rem] border-l-transparent border-r-transparent border-t-rose-300 origin-top"
-            animate={{ 
+            animate={{
               rotateX: isOpen ? 180 : 0,
-              zIndex: isOpen ? 0 : 30
+              zIndex: isOpen ? 0 : 30,
             }}
-            transition={{ 
+            transition={{
               duration: 0.6,
-              zIndex: { delay: isOpen ? 0 : 0.5 }
+              zIndex: { delay: isOpen ? 0 : 0.5 },
             }}
             style={{ borderLeftWidth: '50%', borderRightWidth: '50%' }}
           />
-          
+
           {/* Heart Seal */}
           <motion.div
-             className="absolute top-[-15px] left-1/2 -translate-x-1/2 z-40 text-rose-600 bg-white rounded-full p-2 shadow-md"
-             animate={{ 
-               opacity: isOpen ? 0 : 1,
-               scale: isOpen ? 0 : 1
-             }}
+            className="absolute top-[-15px] left-1/2 -translate-x-1/2 z-40 text-rose-600 bg-white rounded-full p-2 shadow-md"
+            animate={{
+              opacity: isOpen ? 0 : 1,
+              scale: isOpen ? 0 : 1,
+            }}
           >
             <Heart fill="currentColor" size={24} />
           </motion.div>
@@ -66,15 +68,15 @@ const Envelope: React.FC<EnvelopeProps> = ({ message }) => {
           <motion.div
             className="absolute top-2 left-4 right-4 bg-white p-6 shadow-md rounded-lg text-rose-900 font-script text-xl leading-relaxed h-auto min-h-[200px] max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             initial={{ y: 0, opacity: 0, zIndex: 0 }}
-            animate={{ 
-              y: isOpen ? -200 : 0, 
+            animate={{
+              y: isOpen ? -200 : 0,
               opacity: isOpen ? 1 : 0,
-              zIndex: isOpen ? 50 : 0
+              zIndex: isOpen ? 50 : 0,
             }}
-            transition={{ 
-              delay: 0.3, 
+            transition={{
+              delay: 0.3,
               duration: 0.5,
-              zIndex: { delay: isOpen ? 0.8 : 0 }
+              zIndex: { delay: isOpen ? 0.8 : 0 },
             }}
           >
             <div className="whitespace-pre-line break-words overflow-wrap-anywhere">
@@ -83,9 +85,15 @@ const Envelope: React.FC<EnvelopeProps> = ({ message }) => {
           </motion.div>
 
           {/* Envelope Front Pocket (Visual Only) */}
-          <div 
-            className="absolute bottom-0 left-0 w-full h-full border-l-[16rem] border-r-[16rem] border-b-[8rem] border-l-rose-300 border-r-rose-300 border-b-rose-400 border-t-transparent rounded-b-xl z-20 pointer-events-none opacity-90" 
-            style={{ borderLeftWidth: '50%', borderRightWidth: '50%', borderBottomWidth: '16rem', height: 0, bottom: 0 }}
+          <div
+            className="absolute bottom-0 left-0 w-full h-full border-l-[16rem] border-r-[16rem] border-b-[8rem] border-l-rose-300 border-r-rose-300 border-b-rose-400 border-t-transparent rounded-b-xl z-20 pointer-events-none opacity-90"
+            style={{
+              borderLeftWidth: '50%',
+              borderRightWidth: '50%',
+              borderBottomWidth: '16rem',
+              height: 0,
+              bottom: 0,
+            }}
           />
         </div>
       </motion.div>

@@ -368,10 +368,7 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
   }
 
   // Array Fields (non-image)
-  if (
-    field.type === 'array' &&
-    field.item_type !== 'image'
-  ) {
+  if (field.type === 'array' && field.item_type !== 'image') {
     const items = Array.isArray(value) ? value : [];
     const canAddMore = !field.max_items || items.length < field.max_items;
     const needsMore = field.min_items && items.length < field.min_items;
@@ -606,7 +603,6 @@ function FieldRenderer({ field, value, onChange, onFileUpload }: any) {
       </div>
     );
   }
-
 
   return null;
 }

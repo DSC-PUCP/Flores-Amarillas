@@ -69,18 +69,15 @@ export function PlansSection() {
 
                   {/* Espacio reservado para características futuras */}
                   <div className="space-y-2 pt-4">
-                    {
-                      plan.features.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center text-sm text-slate-600 dark:text-slate-300"
-                        >
-                          <span className="w-2 h-2 bg-rose-400 rounded-full mr-3"></span>
-                          {feature}
-                        </div>
-                      ))
-                    }
-
+                    {plan.features.map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center text-sm text-slate-600 dark:text-slate-300"
+                      >
+                        <span className="w-2 h-2 bg-rose-400 rounded-full mr-3"></span>
+                        {feature}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

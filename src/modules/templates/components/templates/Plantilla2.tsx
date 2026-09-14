@@ -20,7 +20,16 @@ export function Plantilla2({ templateData }: TemplateSlideProps) {
 
   // Pre-compute heart properties so they don't change on re-render
   const hearts = useMemo(() => {
-    const colors = ['#fecdd3', '#fda4af', '#fb7185', '#f472b6', '#f9a8d4', '#fee2e2', '#fbbf24', '#ffffff'];
+    const colors = [
+      '#fecdd3',
+      '#fda4af',
+      '#fb7185',
+      '#f472b6',
+      '#f9a8d4',
+      '#fee2e2',
+      '#fbbf24',
+      '#ffffff',
+    ];
     return Array.from({ length: 60 }, (_, i) => ({
       left: Math.random() * 100,
       size: 14 + Math.random() * 28,
@@ -123,7 +132,7 @@ export function Plantilla2({ templateData }: TemplateSlideProps) {
         <div className="relative z-10 text-center px-4">
           <Heart className="w-12 h-12 text-rose-500 fill-rose-500 mx-auto mb-3 animate-pulse" />
           <p className="text-rose-700 font-semibold text-lg drop-shadow-sm">
-            Esto es para ti 
+            Esto es para ti
           </p>
         </div>
       </div>
