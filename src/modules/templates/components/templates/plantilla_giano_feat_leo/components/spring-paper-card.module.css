@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 115px 20px 110px;
+  padding: clamp(35px, 6vh, 65px) 20px clamp(90px, 12vh, 120px);
   background: #fff3d3;
   color: #082b60;
 }
@@ -137,7 +137,8 @@
 .linkage {
   position: absolute;
   left: calc(8% + var(--progress) * 46%);
-  top: 42%;
+  top: 45.5%;
+  transform: translateY(-50%);
   width: 70%;
   height: 7%;
   border: 1px solid #eee1be;
@@ -149,7 +150,8 @@
 /* ── Handle: paper strip sticking out RIGHT, at middle height ── */
 .handle {
   position: absolute;
-  top: 38%;
+  top: 45.5%;
+  transform: translateY(-50%);
   left: calc(78% + var(--progress) * 28%);
   width: clamp(48px, 8vw, 66px);
   height: clamp(48px, 8vw, 66px);
@@ -413,7 +415,7 @@
 /* ── Mobile ── */
 @media (max-width: 600px) {
   .slide {
-    padding: 125px 8px 120px;
+    padding: 40px 8px 95px;
   }
   .gingham {
     width: 96vw;
@@ -450,9 +452,6 @@
     font-size: 1.1rem;
     padding: 8px;
     text-align: center;
-  }
-  .handle {
-    top: 32%;
   }
   .flowerCluster {
     width: 150px;
