@@ -27,7 +27,7 @@ type FlowStatus = z.infer<typeof flowStatusSchema>;
 
 function config() {
   const confirmationBaseUrl =
-    env.FLOW_MODE === 'production' ? env.VITE_SERVER_URL : env.SERVER_URL;
+    env.FLOW_MODE === 'production' ? env.SERVER_URL : env.VITE_SERVER_URL;
   if (
     !env.FLOW_API_KEY ||
     !env.FLOW_SECRET_KEY ||
