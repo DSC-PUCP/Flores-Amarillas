@@ -21,7 +21,7 @@ export default function Slide3({
   onPrev,
 }: Slide3Props) {
   const data = (templateData || {});
-  const correctPassword = (String(data.password) || '123456').toUpperCase();
+  const correctPassword = (data.password as string || '123456').toUpperCase();
 
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [isError, setIsError] = useState(false);
