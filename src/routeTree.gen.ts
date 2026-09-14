@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as _layoutRouteImport } from './routes/__layout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LovepageLovepageIdRouteImport } from './routes/lovepage.$lovepageId'
@@ -20,6 +21,11 @@ import { Route as ApiFlowReturnRouteImport } from './routes/api.flow.return'
 import { Route as ApiFlowConfirmRouteImport } from './routes/api.flow.confirm'
 import { Route as _layoutTemplateIdRouteImport } from './routes/__layout/template/$id'
 
+const PreviewRoute = PreviewRouteImport.update({
+  id: '/preview',
+  path: '/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const _layoutRoute = _layoutRouteImport.update({
   id: '/__layout',
   getParentRoute: () => rootRouteImport,
@@ -72,6 +78,7 @@ const _layoutTemplateIdRoute = _layoutTemplateIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/preview': typeof PreviewRoute
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/template/$id': typeof _layoutTemplateIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/preview': typeof PreviewRoute
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/template/$id': typeof _layoutTemplateIdRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/__layout': typeof _layoutRouteWithChildren
+  '/preview': typeof PreviewRoute
   '/__layout/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/__layout/template/$id': typeof _layoutTemplateIdRoute
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/preview'
     | '/home'
     | '/lovepage/$lovepageId'
     | '/template/$id'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/preview'
     | '/home'
     | '/lovepage/$lovepageId'
     | '/template/$id'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/__layout'
+    | '/preview'
     | '/__layout/home'
     | '/lovepage/$lovepageId'
     | '/__layout/template/$id'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   _layoutRoute: typeof _layoutRouteWithChildren
+  PreviewRoute: typeof PreviewRoute
   LovepageLovepageIdRoute: typeof LovepageLovepageIdRoute
   ApiFlowConfirmRoute: typeof ApiFlowConfirmRoute
   ApiFlowReturnRoute: typeof ApiFlowReturnRoute
@@ -154,6 +167,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/preview': {
+      id: '/preview'
+      path: '/preview'
+      fullPath: '/preview'
+      preLoaderRoute: typeof PreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/__layout': {
       id: '/__layout'
       path: ''
@@ -245,6 +265,7 @@ const _layoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   _layoutRoute: _layoutRouteWithChildren,
+  PreviewRoute: PreviewRoute,
   LovepageLovepageIdRoute: LovepageLovepageIdRoute,
   ApiFlowConfirmRoute: ApiFlowConfirmRoute,
   ApiFlowReturnRoute: ApiFlowReturnRoute,

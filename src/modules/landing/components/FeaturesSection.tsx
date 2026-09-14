@@ -1,77 +1,121 @@
-import { FEATURES } from '../data/feature';
+import { ArrowUpRight, Flower2, Heart, Image, Link2 } from 'lucide-react';
+import type { CSSProperties } from 'react';
 
 export function FeaturesSection() {
-  // Duplicar features para scroll infinito
-  const scrollingFeatures = [...FEATURES, ...FEATURES];
-
   return (
-    <section className="py-20 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-            ¿Por qué elegir nuestras
-            <span className="text-rose-500"> Dedicatorias</span>?
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Descubre todas las funcionalidades que harán tu regalo único
+    <section
+      id="your-gift"
+      className="bloom-section bloom-includes"
+      aria-labelledby="includes-title"
+    >
+      <div className="bloom-container">
+        <div className="bloom-includes-heading">
+          <div data-reveal="left">
+            <span className="bloom-eyebrow">
+              <span /> MUCHO MÁS QUE UN «FELIZ DÍA»
+            </span>
+            <h2 id="includes-title">
+              Un pequeño enlace.
+              <br />
+              <em>Mucho de ustedes.</em>
+            </h2>
+          </div>
+          <p data-reveal="right">
+            Un regalo digital que reúne lo que una foto suelta o un mensaje de
+            chat no pueden contar juntos.
           </p>
         </div>
-
-        {/* Carousel Container */}
-        <div className="relative">
-          {/* Track que se mueve */}
-          <div
-            className="flex animate-scroll gap-6"
-            style={{ width: 'max-content' }}
+        <div className="bloom-includes-grid">
+          <article
+            className="bloom-feature bloom-feature-letter"
+            data-reveal="grow"
+            style={{ '--reveal-i': 0 } as CSSProperties}
           >
-            {scrollingFeatures.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={`${index}-${feature.title}`}
-                  className="flex-none w-[320px] text-center p-6 group bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
-                >
-                  <div
-                    className={`w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${
-                      feature.highlight
-                        ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 border-2 border-rose-200 dark:border-rose-700'
-                        : 'bg-slate-50 dark:bg-slate-700 text-rose-500 border border-slate-200 dark:border-slate-600 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/40'
-                    }`}
-                  >
-                    <Icon className="w-6 h-6" />
-                  </div>
-
-                  <h3
-                    className={`font-semibold mb-2 transition-colors ${
-                      feature.highlight
-                        ? 'text-rose-700 dark:text-rose-400'
-                        : 'text-slate-900 dark:text-slate-100 group-hover:text-rose-600'
-                    }`}
-                  >
-                    {feature.title}
-                  </h3>
-
-                  <p
-                    className={`text-sm transition-colors ${
-                      feature.highlight
-                        ? 'text-rose-600/80 dark:text-rose-300'
-                        : 'text-slate-600 dark:text-slate-300 group-hover:text-slate-700 dark:group-hover:text-slate-200'
-                    }`}
-                  >
-                    {feature.description}
-                  </p>
-
-                  {feature.badge && (
-                    <div className="mt-3 inline-flex items-center gap-1 px-2 py-1 bg-rose-500 text-white text-xs font-bold rounded-full">
-                      ✨ {feature.badge}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            {/* Espacio al final para evitar corte abrupto */}
-            <div className="flex-none w-6"></div>
-          </div>
+            <span className="bloom-feature-icon">
+              <Heart size={21} />
+            </span>
+            <h3>
+              Eso que solo tú
+              <br />
+              podrías escribir.
+            </h3>
+            <p>
+              Una carta con tus palabras, sus nombres y todo el cariño que
+              quieras ponerle.
+            </p>
+            <div className="bloom-mini-letter">
+              <span>Para ti, con mucho cariño</span>
+              <blockquote>
+                «Mis días favoritos
+                <br />
+                siempre tienen
+                <br />
+                <em>un poquito de ti.»</em>
+              </blockquote>
+              <Heart size={19} />
+            </div>
+          </article>
+          <article
+            className="bloom-feature bloom-feature-photos"
+            data-reveal="grow"
+            style={{ '--reveal-i': 1 } as CSSProperties}
+          >
+            <span className="bloom-feature-icon">
+              <Image size={21} />
+            </span>
+            <h3>
+              Sus momentos.
+              <br />
+              En su propio lugar.
+            </h3>
+            <p>
+              Tu foto de portada y los recuerdos que hacen especial su historia,
+              según el diseño.
+            </p>
+            <div className="bloom-mini-photos" aria-hidden="true">
+              <div className="bloom-photo-one">
+                <img src="/images/memory-together.jpg" alt="" loading="lazy" />
+                <span>Ese día tan bonito ♡</span>
+              </div>
+              <div className="bloom-photo-two">
+                <Flower2 />
+                <span>Nosotros, siempre.</span>
+              </div>
+            </div>
+          </article>
+          <article
+            className="bloom-feature bloom-feature-link"
+            data-reveal="grow"
+            style={{ '--reveal-i': 2 } as CSSProperties}
+          >
+            <span className="bloom-feature-icon">
+              <Link2 size={21} />
+            </span>
+            <h3>
+              Tan cerca como
+              <br />
+              abrir un enlace.
+            </h3>
+            <p>
+              Lo envías por tu chat favorito. Lo abre en su celular, sin
+              descargar una aplicación.
+            </p>
+            <div className="bloom-chat">
+              <span>Te hice algo. Ábrelo 💛</span>
+              <div>
+                <Flower2 size={29} />
+                <strong>Un regalo para ti</strong>
+                <small>Una dedicatoria por descubrir</small>
+                <ArrowUpRight size={19} />
+              </div>
+              <span className="bloom-chat-reply">
+                ¿Esto lo hiciste para mí? 🥹
+              </span>
+            </div>
+            <small className="bloom-example-note">
+              Ejemplo de cómo puedes compartirlo
+            </small>
+          </article>
         </div>
       </div>
     </section>
