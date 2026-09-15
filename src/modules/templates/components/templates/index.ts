@@ -7,3 +7,4 @@ export { PlantillaGratuita, plantillaGratuitaConfig } from './PlantillaGratuita'
 export { PlantillaGianoFeatLeo, plantillaGianoFeatLeoConfig } from './plantilla_giano_feat_leo/App';
 
 export { PlantillaLuisArce, plantillaLuisArceConfig } from './plantilla_luis_arce/App';
+export { PlantillaCarlosPrimavera, plantillaCarlosPrimaveraConfig } from './plantilla_carlos_primavera/App';

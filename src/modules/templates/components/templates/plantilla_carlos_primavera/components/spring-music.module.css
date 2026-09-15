@@ -1,0 +1,468 @@
+.slide {
+  position: relative;
+  min-height: 100svh;
+  padding: 120px 28px 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #082b60;
+  background: #fff3d3;
+  /* subtle gingham texture matching the paper card slide */
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 23px, #fdd01814 23px 46px),
+    repeating-linear-gradient(90deg, transparent 0 23px, #fdd01814 23px 46px);
+}
+.heading {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.heading h2 {
+  font:
+    600 clamp(2.4rem, 4.7vw, 4rem) "Dancing Script",
+    cursive;
+  margin: 8px 0;
+}
+.eyebrow {
+  font:
+    500 10px "DM Sans",
+    sans-serif;
+  letter-spacing: 0.22em;
+  color: #798044;
+  margin: 0;
+}
+.dots {
+  display: block;
+  letter-spacing: 0.4em;
+  font-size: 10px;
+  color: #c9ad5a;
+  margin-top: 4px;
+}
+.flowerCluster {
+  position: absolute;
+  width: clamp(210px, 25vw, 390px);
+  aspect-ratio: 1;
+  z-index: 0;
+}
+.flowerCluster[data-corner="top"] {
+  top: 0;
+  left: -20px;
+}
+.flowerCluster[data-corner="bottom"] {
+  bottom: 0;
+  right: -20px;
+  rotate: 180deg;
+}
+.flower {
+  position: absolute;
+  width: var(--flower-size);
+  height: auto;
+  filter: drop-shadow(0 3px 2px #98732218);
+  animation: flower-in 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.2) var(--delay) both;
+}
+
+@keyframes flower-in {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(calc(var(--angle) - 50deg));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(var(--angle));
+  }
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  width: min(900px, 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: center;
+  margin: 20px 0;
+}
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 35% -35px -28px;
+  z-index: -1;
+  border: 1px solid #d7b65460;
+  border-radius: 45% 12px 24px 18px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 18px, #e9b84626 18px 36px),
+    repeating-linear-gradient(90deg, #fff9e6 0 18px, #efc45c40 18px 36px);
+  transform: rotate(-3deg);
+  box-shadow: 0 12px 24px #8e682512;
+}
+
+.turntableBox {
+  position: relative;
+  background:
+    repeating-linear-gradient(12deg, #fffdf500 0 2px, #aa986709 2px 3px),
+    linear-gradient(145deg, #ffe7a0, #edbc46);
+  border: 3px solid #bb8c36;
+  border-radius: 24px 24px 18px 18px;
+  padding: 56px 38px 65px;
+  box-shadow:
+    inset 0 0 0 5px #ffe9a5,
+    inset 0 -15px 0 #bd862a40,
+    0 16px 0 -7px #a57732,
+    0 25px 35px #69561e28;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1;
+}
+
+.turntable {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  background: #63513c;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px #49301855;
+}
+
+.record {
+  width: 100%;
+  height: 100%;
+  animation: spin 3s linear infinite;
+  animation-play-state: var(--spinning, paused);
+}
+
+.vinylSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.arm {
+  position: absolute;
+  top: -5%;
+  right: -15%;
+  width: 35%;
+  height: 110%;
+  transform-origin: 50% 15%;
+  transition: transform 0.5s ease;
+  transform: rotate(-15deg);
+}
+
+.arm[data-playing="true"] {
+  transform: rotate(24deg);
+}
+
+.armSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sticker {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #fff;
+  border: 1px solid #e8d9ae;
+  padding: 5px 10px;
+  font:
+    500 12px "Dancing Script",
+    cursive;
+  color: #8d9655;
+  transform: rotate(-10deg);
+  box-shadow: 1px 2px 4px #00000012;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.notes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.notes[data-playing="true"] {
+  opacity: 1;
+}
+.notes:not([data-playing="true"]) .note {
+  animation: none;
+}
+
+.note {
+  position: absolute;
+  bottom: 65%;
+  left: var(--note-left, 40%);
+  font-size: 32px;
+  color: #9c7024;
+  text-shadow: 0 2px 0 #fff4cb;
+  opacity: 0;
+  animation: float-note 2.2s linear var(--note-delay, 0s) infinite;
+}
+
+@keyframes float-note {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(25px, -110px) rotate(18deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.playlist {
+  position: relative;
+  background:
+    repeating-linear-gradient(12deg, transparent 0 2px, #aa986707 2px 3px),
+    #fffbee;
+  border: 2px dashed #d9c9a0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 18px #69561e18;
+}
+.caseLabel {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  border: 1px solid #b58a3e;
+  border-radius: 5px;
+  background: #fff1bd;
+  padding: 5px 20px;
+  font:
+    600 21px "Dancing Script",
+    cursive;
+  color: #795525;
+  box-shadow: 0 3px 0 #ac7c3033;
+}
+.caseLabel span {
+  margin-left: 10px;
+}
+.playerStatus {
+  position: absolute;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font:
+    600 8px "DM Sans",
+    sans-serif;
+  letter-spacing: 0.14em;
+  color: #65472b;
+}
+.statusLight {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9b885b;
+}
+.turntableBox[data-playing="true"] .statusLight {
+  background: #567431;
+  box-shadow: 0 0 7px #6f962d;
+}
+.paperNote {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px 8px;
+  margin: 9px 0 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, #b08b3320 23px 24px),
+    #fff3d1;
+  box-shadow: 2px 4px 8px #69561e15;
+  transform: rotate(-2deg);
+  color: #795525;
+}
+.paperNote::before {
+  content: "";
+  position: absolute;
+  width: 65px;
+  height: 19px;
+  background: #e9bf5980;
+  top: -10px;
+  left: 40%;
+  transform: rotate(5deg);
+}
+.paperNote img {
+  width: 50px;
+  height: 64px;
+  object-fit: contain;
+}
+.paperNote p {
+  margin: 0;
+  font:
+    500 clamp(18px, 2vw, 23px) "Dancing Script",
+    cursive;
+}
+.paperNote em {
+  font-weight: 700;
+}
+.paperNote > span {
+  font-size: 26px;
+}
+.songInfo {
+  min-width: 0;
+}
+.songName {
+  overflow-wrap: anywhere;
+}
+.playButton:focus-visible {
+  outline: 3px solid #795525;
+  outline-offset: 3px;
+}
+
+.playlistTitle {
+  margin: 0 0 4px;
+  font:
+    600 1.1rem "Dancing Script",
+    cursive;
+  color: #8d9655;
+  letter-spacing: 0.02em;
+}
+
+.song {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fff9e7;
+  border: 1px solid #e8d9ae;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.song[data-active="true"] {
+  background: #fdf2cd;
+  border-color: #d9c9a0;
+  box-shadow: 0 4px 12px #69561e18;
+}
+
+.song[data-empty="true"] {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+.playButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #fdd018;
+  color: #69561e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.playButton:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.playButton:disabled {
+  background: #e8d9ae;
+  cursor: default;
+}
+
+.songInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.songName {
+  margin: 0;
+  font:
+    600 16px "DM Sans",
+    sans-serif;
+  color: #082b60;
+}
+
+.songDuration {
+  margin: 2px 0 0;
+  font:
+    400 12px "DM Sans",
+    sans-serif;
+  color: #798044;
+}
+
+.heartIcon {
+  color: #e5b63d;
+}
+
+.progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #e8d9ae;
+}
+
+.progressBar {
+  height: 100%;
+  background: #fdd018;
+  transition: width 0.1s linear;
+}
+
+.instructionsText {
+  position: relative;
+  z-index: 1;
+  font:
+    500 24px "Dancing Script",
+    cursive;
+  color: #65472b;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .stage {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+  .slide {
+    padding: 100px 18px 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record,
+  .note,
+  .flower {
+    animation: none;
+  }
+  .arm {
+    transition: none;
+  }
+}
