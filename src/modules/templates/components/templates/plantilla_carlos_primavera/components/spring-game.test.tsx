@@ -14,8 +14,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-// Recorre las seis pantallas y arranca el bucle del canvas: sola tarda ~600 ms,
-// pero con toda la suite en paralelo pasa de los 5 s por defecto.
 it('reaches screen six and supports start, pause, resume and restart', async () => {
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
   render(<SpringWelcome recipient="María" />);
@@ -43,4 +41,4 @@ it('reaches screen six and supports start, pause, resume and restart', async () 
     screen.getByRole('button', { name: 'Volver a Una carta para ti' })
   );
   expect(screen.getByRole('button', { name: 'Abrir carta' })).toBeTruthy();
-}, 15000);
+});

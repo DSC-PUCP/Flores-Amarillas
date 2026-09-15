@@ -8,6 +8,13 @@ export default defineConfig({
     },
   },
   test: {
+    /**
+     * 5 s (el defecto) no alcanza. Los tests de plantilla montan arboles de
+     * React grandes y la suite corre 21 archivos jsdom en paralelo: en una
+     * maquina cargada, tests que solos tardan menos de 1 s pasaban del limite
+     * y la suite salia roja sin que nada estuviera mal.
+     */
+    testTimeout: 20000,
     environment: 'jsdom',
     environmentOptions: {
       jsdom: { url: 'http://localhost:3000/' },

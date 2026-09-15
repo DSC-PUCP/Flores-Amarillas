@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
-import { type CSSProperties, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
+import { useSongClips } from '@/modules/music/hooks/useSongClips';
 import { assets } from '../assets';
 import { SpringCamera } from './spring-camera';
 import type { CameraMemory } from './spring-camera-data';
@@ -8,6 +9,21 @@ import { SpringLetter } from './spring-letter';
 import { SpringMusic } from './spring-music';
 import { SpringPaperCard } from './spring-paper-card';
 import styles from './spring-welcome.module.css';
+
+/**
+ * Que pantalla abre el editor en vivo para cada paso del formulario. Las
+ * escenas son las del protocolo compartido; las que esta plantilla no usa
+ * (reasons, coupon) simplemente no aparecen y no mueven nada.
+ */
+const SCENE_SLIDE: Record<string, number> = {
+  cover: 0,
+  review: 0,
+  intro: 1,
+  photos: 2,
+  song: 3,
+  letter: 4,
+  finale: 5,
+};
 
 const petals = Array.from({ length: 30 }, (_, index) => ({
   left: `${(index * 37 + 7) % 100}%`,
@@ -49,7 +65,8 @@ export function SpringWelcome({
   cardMessage = '',
   memories = [],
   cameraMessage = '',
-  songs = [],
+  songs,
+  editorScene,
   letterMessage = '',
   sender = '',
 }: {
@@ -57,12 +74,26 @@ export function SpringWelcome({
   cardMessage?: string;
   memories?: CameraMemory[];
   cameraMessage?: string;
-  songs?: { url: string; name: string }[];
+  /** SongClip[] tal como los guarda el campo `music` del formulario. */
+  songs?: unknown;
+  /** Escena que el cliente esta editando, si viene del editor en vivo. */
+  editorScene?: string;
   letterMessage?: string;
   sender?: string;
 }) {
   const [replay, setReplay] = useState(0);
   const [slide, setSlide] = useState(0);
+  // El reproductor vive aqui, no dentro de SpringMusic: asi la cancion sigue
+  // sonando al pasar a la carta o al juego.
+  const music = useSongClips(songs);
+
+  // Solo salta cuando cambia la escena: el editor reenvia en cada tecla, y
+  // seguir la revision devolveria al cliente a la pantalla de golpe.
+  useEffect(() => {
+    if (editorScene === undefined) return;
+    const target = SCENE_SLIDE[editorScene];
+    if (target !== undefined) setSlide(target);
+  }, [editorScene]);
   return (
     <main
       className={styles.spring}
@@ -75,6 +106,19 @@ export function SpringWelcome({
       }
     >
       <YellowPetals />
+      {music.count > 0 && (
+        // Reproductor de YouTube: solo pone el sonido, no se muestra. No puede
+        // ir con display:none porque el navegador no lo cargaria.
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 left-0 h-[113px] w-[200px] opacity-0"
+        >
+          <div
+            ref={music.hostRef}
+            className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full"
+          />
+        </div>
+      )}
       {slide === 0 ? (
         <section
           key={replay}
@@ -114,7 +158,7 @@ export function SpringWelcome({
       ) : slide === 2 ? (
         <SpringCamera memories={memories} message={cameraMessage} />
       ) : slide === 3 ? (
-        <SpringMusic songs={songs} />
+        <SpringMusic music={music} />
       ) : slide === 4 ? (
         <SpringLetter
           message={letterMessage}

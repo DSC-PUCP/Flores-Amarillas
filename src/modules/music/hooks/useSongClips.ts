@@ -88,6 +88,10 @@ export function useSongClips(value: unknown) {
     play,
     pause,
     toggle: () => (player.playing ? pause() : play()),
+    /** Salta a un fragmento concreto de la lista y lo reproduce. */
+    goTo: (next: number) => {
+      if (next >= 0 && next < songs.length) loadAt(next, true);
+    },
     next: () => loadAt((index + 1) % songs.length, true),
     previous: () => loadAt((index - 1 + songs.length) % songs.length, true),
   };

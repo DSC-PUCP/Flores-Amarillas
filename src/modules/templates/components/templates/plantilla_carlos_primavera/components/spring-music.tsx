@@ -1,10 +1,13 @@
 import { Heart, Pause, Play } from 'lucide-react';
-import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
+import type { SongClipsPlayer } from '@/modules/music/hooks/useSongClips';
+import { describePlayerError } from '@/modules/music/hooks/useYouTubePlayer';
 import { assets } from '../assets';
 import styles from './spring-music.module.css';
 
 interface SpringMusicProps {
-  songs: { url: string; name: string }[];
+  /** Reproductor compartido: vive en SpringWelcome para no cortarse al cambiar de pantalla. */
+  music: SongClipsPlayer;
 }
 
 const FLOWER_DATA = [
@@ -45,68 +48,24 @@ function FlowerCluster({ corner }: { corner: 'top' | 'bottom' }) {
   );
 }
 
-export function SpringMusic({ songs }: SpringMusicProps) {
-  const [activeSongIndex, setActiveSongIndex] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isSounding, setIsSounding] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [durations, setDurations] = useState<Record<number, number>>({});
-  const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+export function SpringMusic({ music }: SpringMusicProps) {
+  // La fila activa arranca vacia a proposito: antes del primer toque ninguna
+  // cancion debe verse sonando, aunque el hook ya tenga cargado el fragmento 0.
+  const [selected, setSelected] = useState<number | null>(null);
+  const isSounding = music.playing;
 
+  // Al terminar un fragmento el hook pasa al siguiente solo; la fila lo sigue.
   useEffect(() => {
-    let cancelled = false;
-    audioRefs.current.forEach((audio, idx) => {
-      if (!audio) return;
-      if (idx === activeSongIndex) {
-        if (isPlaying) {
-          audio.play().catch(() => {
-            if (!cancelled) {
-              setIsPlaying(false);
-              setIsSounding(false);
-            }
-          });
-        } else {
-          audio.pause();
-        }
-      } else {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [activeSongIndex, isPlaying]);
+    if (selected !== null && music.index !== selected) setSelected(music.index);
+  }, [music.index, selected]);
 
   const toggleSong = (index: number) => {
-    setIsSounding(false);
-    if (activeSongIndex === index) {
-      setIsPlaying((p) => !p);
-    } else {
-      setActiveSongIndex(index);
-      setIsPlaying(true);
-      setProgress(0);
+    if (selected === index) {
+      music.toggle();
+      return;
     }
-  };
-
-  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLAudioElement>) => {
-    const audio = e.currentTarget;
-    if (audio.duration) {
-      setProgress(audio.currentTime / audio.duration);
-    }
-  };
-
-  const handleLoadedMetadata = (
-    index: number,
-    e: React.SyntheticEvent<HTMLAudioElement>
-  ) => {
-    setDurations((prev) => ({ ...prev, [index]: e.currentTarget.duration }));
-  };
-
-  const handleEnded = () => {
-    setIsPlaying(false);
-    setIsSounding(false);
-    setProgress(0);
+    setSelected(index);
+    music.goTo(index);
   };
 
   const formatDuration = (seconds: number) => {
@@ -116,11 +75,9 @@ export function SpringMusic({ songs }: SpringMusicProps) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Pad to exactly 3 slots
-  const slots = Array.from(
-    { length: 3 },
-    (_, i) => songs[i] ?? { url: '', name: '' }
-  );
+  // Tres huecos fijos: el diseno del tocadiscos cuenta con tres lineas.
+  const slots = Array.from({ length: 3 }, (_, i) => music.songs[i] ?? null);
+  const error = describePlayerError(music.errorCode);
 
   return (
     <section className={styles.slide} aria-label="Nuestra música">
@@ -296,9 +253,9 @@ export function SpringMusic({ songs }: SpringMusicProps) {
         {/* Playlist */}
         <div className={styles.playlist}>
           <p className={styles.playlistTitle}>♪ Nuestras canciones</p>
-          {slots.map((song, idx) => {
-            const hasUrl = Boolean(song.url);
-            const isActive = activeSongIndex === idx;
+          {slots.map((clip, idx) => {
+            const isActive = clip !== null && selected === idx;
+            const name = clip?.title || `Canción ${idx + 1}`;
             const songKey = `song-${idx}`;
 
             return (
@@ -306,34 +263,31 @@ export function SpringMusic({ songs }: SpringMusicProps) {
                 key={songKey}
                 className={styles.song}
                 data-active={isActive}
-                data-empty={!hasUrl}
+                data-empty={clip === null}
               >
                 <button
                   type="button"
                   className={styles.playButton}
-                  onClick={() => hasUrl && toggleSong(idx)}
-                  disabled={!hasUrl}
+                  onClick={() => clip && toggleSong(idx)}
+                  disabled={clip === null}
                   aria-label={
-                    isActive && isPlaying
-                      ? `Pausar ${song.name || `Canción ${idx + 1}`}`
-                      : `Reproducir ${song.name || `Canción ${idx + 1}`}`
+                    isActive && music.playing
+                      ? `Pausar ${name}`
+                      : `Reproducir ${name}`
                   }
                 >
-                  {isActive && isPlaying ? (
+                  {isActive && music.playing ? (
                     <Pause size={16} fill="currentColor" />
                   ) : (
                     <Play size={16} fill="currentColor" />
                   )}
                 </button>
                 <div className={styles.songInfo}>
-                  <p className={styles.songName}>
-                    {hasUrl
-                      ? song.name || `Canción ${idx + 1}`
-                      : `Canción ${idx + 1}`}
-                  </p>
-                  {hasUrl && (
+                  <p className={styles.songName}>{name}</p>
+                  {clip && (
                     <p className={styles.songDuration}>
-                      {formatDuration(durations[idx])}
+                      {clip.artist ? `${clip.artist} · ` : ''}
+                      {formatDuration(clip.end - clip.start)}
                     </p>
                   )}
                 </div>
@@ -346,39 +300,9 @@ export function SpringMusic({ songs }: SpringMusicProps) {
                   <div className={styles.progressContainer}>
                     <div
                       className={styles.progressBar}
-                      style={{ width: `${progress * 100}%` }}
+                      style={{ width: `${music.progress * 100}%` }}
                     />
                   </div>
-                )}
-                {hasUrl && (
-                  <audio
-                    ref={(el) => {
-                      audioRefs.current[idx] = el;
-                    }}
-                    src={song.url}
-                    onTimeUpdate={(e) => {
-                      if (isActive) handleTimeUpdate(e);
-                    }}
-                    onPlaying={() => {
-                      if (isActive) setIsSounding(true);
-                    }}
-                    onPause={() => {
-                      if (isActive) setIsSounding(false);
-                    }}
-                    onWaiting={() => {
-                      if (isActive) setIsSounding(false);
-                    }}
-                    onError={() => {
-                      if (isActive) handleEnded();
-                    }}
-                    onLoadedMetadata={(e) => handleLoadedMetadata(idx, e)}
-                    onEnded={() => {
-                      if (isActive) handleEnded();
-                    }}
-                    preload="metadata"
-                  >
-                    <track kind="captions" />
-                  </audio>
                 )}
               </div>
             );
@@ -396,7 +320,7 @@ export function SpringMusic({ songs }: SpringMusicProps) {
       </div>
 
       <p className={styles.instructionsText}>
-        Toca una canción y déjate llevar ♡
+        {error ?? 'Toca una canción y déjate llevar ♡'}
       </p>
     </section>
   );

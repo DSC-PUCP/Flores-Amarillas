@@ -6,6 +6,7 @@ import { SpringWelcome } from './components/spring-welcome';
 export const plantillaCarlosPrimaveraForm = [
   {
     title: 'Pantalla 1 · Bienvenida de primavera',
+    previewScene: 'cover',
     fields: [
       {
         name: 'personA',
@@ -31,6 +32,7 @@ export const plantillaCarlosPrimaveraForm = [
   },
   {
     title: 'Pantalla 2 · Nosotros dos',
+    previewScene: 'intro',
     fields: [
       {
         name: 'message',
@@ -43,6 +45,7 @@ export const plantillaCarlosPrimaveraForm = [
   },
   {
     title: 'Pantalla 3 · Recuerditos nuestros',
+    previewScene: 'photos',
     fields: [
       ...Array.from({ length: 4 }, (_, index) => [
         {
@@ -69,54 +72,22 @@ export const plantillaCarlosPrimaveraForm = [
     ],
   },
   {
-    // TODO(fase 3): reemplazar por un unico campo `type: 'music'` para usar el
-    // catalogo de 25 canciones y el reproductor de YouTube de `@/modules/music`.
-    // Hoy `spring-music` mete esta URL en un <audio>, que no reproduce YouTube.
     title: 'Pantalla 4 · Nuestra música',
+    previewScene: 'song',
     fields: [
       {
-        name: 'song1',
-        label: 'Canción 1 (URL)',
-        type: 'string',
-        required: false,
-      },
-      {
-        name: 'song2',
-        label: 'Canción 2 (URL)',
-        type: 'string',
-        required: false,
-      },
-      {
-        name: 'song3',
-        label: 'Canción 3 (URL)',
-        type: 'string',
-        required: false,
-      },
-      {
-        name: 'song1Name',
-        label: 'Nombre de la canción 1',
-        type: 'string',
-        max_length: 60,
-        required: false,
-      },
-      {
-        name: 'song2Name',
-        label: 'Nombre de la canción 2',
-        type: 'string',
-        max_length: 60,
-        required: false,
-      },
-      {
-        name: 'song3Name',
-        label: 'Nombre de la canción 3',
-        type: 'string',
-        max_length: 60,
+        name: 'songs',
+        label: 'Elige sus canciones y el fragmento que más les guste',
+        type: 'music',
+        max_songs: 3,
+        max_clip_seconds: 90,
         required: false,
       },
     ],
   },
   {
     title: 'Pantalla 5 · Una carta para ti',
+    previewScene: 'letter',
     fields: [
       {
         name: 'letterMessage',
@@ -136,17 +107,6 @@ export function PlantillaCarlosPrimavera({ templateData }: TemplateSlideProps) {
   const message =
     typeof templateData.message === 'string' ? templateData.message : '';
 
-  const songs = [1, 2, 3].map((n) => ({
-    url:
-      typeof templateData[`song${n}`] === 'string'
-        ? (templateData[`song${n}`] as string)
-        : '',
-    name:
-      typeof templateData[`song${n}Name`] === 'string'
-        ? (templateData[`song${n}Name`] as string)
-        : `Canción ${n}`,
-  }));
-
   return (
     <SpringWelcome
       recipient={recipient || 'Para ti'}
@@ -157,7 +117,12 @@ export function PlantillaCarlosPrimavera({ templateData }: TemplateSlideProps) {
           ? templateData.cameraMessage
           : ''
       }
-      songs={songs}
+      songs={templateData.songs}
+      editorScene={
+        typeof templateData.editorScene === 'string'
+          ? templateData.editorScene
+          : undefined
+      }
       letterMessage={
         typeof templateData.letterMessage === 'string'
           ? templateData.letterMessage
