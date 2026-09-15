@@ -8,3 +8,5 @@ export { PlantillaGianoFeatLeo, plantillaGianoFeatLeoConfig } from './plantilla_
 
 export { PlantillaLuisArce, plantillaLuisArceConfig } from './plantilla_luis_arce/App';
 export { PlantillaCarlosPrimavera, plantillaCarlosPrimaveraConfig } from './plantilla_carlos_primavera/App';
+export { PlantillaJardinClasico, plantillaJardinClasicoConfig } from './plantilla_jardin_clasico/App';
+export { PlantillaJardinPremium, plantillaJardinPremiumConfig } from './plantilla_jardin_premium/App';
