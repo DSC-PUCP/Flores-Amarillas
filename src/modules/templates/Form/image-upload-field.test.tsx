@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ImageUploadField } from './image-upload-field';
@@ -44,9 +50,23 @@ vi.mock('./hooks/useLovePage', () => ({
 vi.mock('@/modules/music/components/SongPicker', () => ({
   SongPicker: () => null,
 }));
+// jsdom no dibuja imagenes: se simula la reduccion, no el canvas.
+vi.mock('./compress-image', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./compress-image')>()),
+  compressImage: vi.fn(async (file: File) =>
+    sized(file.name, Math.round(file.size / 4))
+  ),
+}));
 
 const photo = (name: string) =>
   new File(['image'], name, { type: 'image/jpeg', lastModified: 1 });
+
+/** Una foto con el peso que haga falta, sin reservar esos bytes de verdad. */
+function sized(name: string, bytes: number) {
+  const file = photo(name);
+  Object.defineProperty(file, 'size', { value: bytes });
+  return file;
+}
 function Uploader({ limit = 3 }: { limit?: number }) {
   const [files, setFiles] = useState<File[]>([]);
   return (
@@ -132,6 +152,25 @@ describe('fotos del formulario', () => {
       { key: 'timelinePhotos', file: [first] },
       { key: 'couponPhotos', file: [coupon] },
     ]);
+  });
+
+  it('reduce las fotos pesadas antes de subirlas', async () => {
+    render(<Uploader />);
+    select([sized('pesada.jpg', 6 * 1024 * 1024)]);
+    expect(screen.getByText(/Preparando tus fotos/)).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('1. pesada.jpg')).toBeTruthy());
+    expect(screen.queryByText(/Preparando tus fotos/)).toBeNull();
+  });
+
+  it('rechaza la foto que pasa del máximo y conserva las anteriores', async () => {
+    render(<Uploader />);
+    select([photo('liviana.jpg')]);
+    select([sized('enorme.jpg', 60 * 1024 * 1024)]);
+    await waitFor(() =>
+      expect(screen.getByText(/enorme.jpg pesa 15.0 MB/)).toBeTruthy()
+    );
+    expect(screen.getByText('1. liviana.jpg')).toBeTruthy();
+    expect(screen.getAllByRole('img')).toHaveLength(1);
   });
 
   it('no envía archivos eliminados de un campo vacío', () => {

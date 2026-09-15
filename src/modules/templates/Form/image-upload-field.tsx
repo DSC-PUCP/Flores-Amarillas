@@ -1,6 +1,12 @@
-import { ArrowLeft, ArrowRight, ImagePlus, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ImagePlus, Loader2, X } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { cn } from '@/lib/utils';
+import {
+  compressImage,
+  formatBytes,
+  MAX_IMAGE_BYTES,
+  needsCompression,
+} from './compress-image';
 
 type ImageUploadFieldProps = {
   label: string;
@@ -21,19 +27,30 @@ export function ImageUploadField({
 }: ImageUploadFieldProps) {
   const id = useId();
   const [error, setError] = useState('');
+  const [preparing, setPreparing] = useState(false);
   const files = (Array.isArray(value) ? value : [value]).filter(
     (item): item is File => item instanceof File
   );
   const limit = multiple ? maxItems : 1;
-  const addFiles = (incoming: File[]) => {
-    if (!incoming.length) return;
-    const images = incoming.filter((file) => file.type.startsWith('image/'));
-    if (images.length !== incoming.length) {
-      setError('Selecciona archivos de imagen.');
+
+  const commit = (incoming: File[]) => {
+    const heavy = incoming.filter((file) => file.size > MAX_IMAGE_BYTES);
+    const usable = incoming.filter((file) => file.size <= MAX_IMAGE_BYTES);
+    const problems: string[] = [];
+    if (heavy.length > 0) {
+      problems.push(
+        heavy.length === 1
+          ? `${heavy[0].name} pesa ${formatBytes(heavy[0].size)} y el máximo es ${formatBytes(MAX_IMAGE_BYTES)}.`
+          : `${heavy.length} fotos pasan de ${formatBytes(MAX_IMAGE_BYTES)} y no se subieron.`
+      );
+    }
+    // Ninguna sirve: se avisa y se deja lo que ya había elegido.
+    if (usable.length === 0) {
+      setError(problems.join(' '));
       return;
     }
     const combined = multiple ? [...files] : [];
-    for (const file of images) {
+    for (const file of usable) {
       if (
         !combined.some(
           (other) =>
@@ -45,12 +62,33 @@ export function ImageUploadField({
         combined.push(file);
       }
     }
-    setError(
-      combined.length > limit
-        ? `Puedes subir hasta ${limit} fotos. Se conservaron las primeras ${limit}.`
-        : ''
-    );
+    if (combined.length > limit) {
+      problems.push(
+        `Puedes subir hasta ${limit} fotos. Se conservaron las primeras ${limit}.`
+      );
+    }
+    setError(problems.join(' '));
     onFiles(combined.slice(0, limit));
+  };
+
+  const addFiles = (incoming: File[]) => {
+    if (!incoming.length) return;
+    const images = incoming.filter((file) => file.type.startsWith('image/'));
+    if (images.length !== incoming.length) {
+      setError('Selecciona archivos de imagen.');
+      return;
+    }
+    // Las fotos livianas siguen de largo, sin esperar a nada.
+    if (!images.some(needsCompression)) {
+      commit(images);
+      return;
+    }
+    setPreparing(true);
+    setError('');
+    void Promise.all(images.map(compressImage)).then((ready) => {
+      setPreparing(false);
+      commit(ready);
+    });
   };
   const move = (index: number, step: number) => {
     const reordered = [...files];
@@ -100,6 +138,7 @@ export function ImageUploadField({
           type="file"
           accept="image/*"
           multiple={multiple}
+          disabled={preparing}
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           aria-describedby={`${id}-hint ${id}-error`}
           onChange={(event) => {
@@ -108,9 +147,16 @@ export function ImageUploadField({
           }}
         />
         <p id={`${id}-hint`} className="mt-2 text-sm text-slate-500">
-          {multiple
-            ? `${files.length} / ${limit} fotos · Puedes añadirlas en varias selecciones.`
-            : 'PNG, JPG o WEBP · La foto se mostrará completa.'}
+          {preparing ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              Preparando tus fotos…
+            </span>
+          ) : multiple ? (
+            `${files.length} / ${limit} fotos · Hasta ${formatBytes(MAX_IMAGE_BYTES)} cada una.`
+          ) : (
+            `PNG, JPG o WEBP · Hasta ${formatBytes(MAX_IMAGE_BYTES)}.`
+          )}
         </p>
       </div>
       <output id={`${id}-error`} className="block text-sm text-red-600">
