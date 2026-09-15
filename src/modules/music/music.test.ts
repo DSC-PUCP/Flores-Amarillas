@@ -12,7 +12,6 @@ import {
   extractYouTubeId,
   guessTrackAndArtist,
   looksLikeYouTubeLink,
-  parseIsoDuration,
 } from './youtube';
 
 describe('parseLrc', () => {
@@ -65,11 +64,6 @@ describe('youtube', () => {
 
   it('no confunde un nombre de canción de 11 letras con un link', () => {
     expect(looksLikeYouTubeLink('Bohemianxyz')).toBe(false);
-  });
-
-  it('lee duraciones ISO 8601', () => {
-    expect(parseIsoDuration('PT4M33S')).toBe(273);
-    expect(parseIsoDuration('PT1H2S')).toBe(3602);
   });
 
   it('limpia el título del video para buscar la letra', () => {

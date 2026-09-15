@@ -32,16 +32,6 @@ export function extractYouTubeId(input: string): string | null {
 export const looksLikeYouTubeLink = (input: string) =>
   /youtu\.?be/i.test(input) && extractYouTubeId(input) !== null;
 
-/** "PT4M33S" -> 273 */
-export function parseIsoDuration(iso: string): number | null {
-  const match = /^P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(iso);
-  if (!match) return null;
-  const [days, hours, minutes, seconds] = match
-    .slice(1)
-    .map((part) => Number(part ?? 0));
-  return ((days * 24 + hours) * 60 + minutes) * 60 + seconds;
-}
-
 const NOISE =
   /\s*[([][^)\]]*\b(?:official|oficial|video|v[ií]deo|audio|lyrics?|letra|visuali[sz]er|hd|4k|remaster(?:ed)?|mv)\b[^)\]]*[)\]]/gi;
 const FEATURING = /\s*[([]?\b(?:ft|feat)\.?\s[^)\]]*[)\]]?/i;

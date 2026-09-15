@@ -1,13 +1,12 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { env } from '@/env';
-import { extractYouTubeId, parseIsoDuration } from './youtube';
+import { extractYouTubeId } from './youtube';
 
 export type SongSearchResult = {
   videoId: string;
   title: string;
   channel: string;
-  /** Segundos. null cuando viene de un link pegado (lo da el reproductor). */
+  /** Segundos. Siempre null: la duración la informa el reproductor. */
   duration: number | null;
 };
 
@@ -22,85 +21,6 @@ export type LyricsCandidate = {
 
 // LRCLIB pide identificar la app en el User-Agent.
 const LRCLIB_HEADERS = { 'User-Agent': 'FloresAmarillas/1.0 (dedicatorias)' };
-
-const ENTITIES: Record<string, string> = {
-  '&amp;': '&',
-  '&quot;': '"',
-  '&#39;': "'",
-  '&apos;': "'",
-  '&lt;': '<',
-  '&gt;': '>',
-};
-const decodeEntities = (text: string) =>
-  text.replace(/&(?:amp|quot|#39|apos|lt|gt);/g, (entity) => ENTITIES[entity]);
-
-type YouTubeSearchBody = {
-  items?: {
-    id: { videoId: string };
-    snippet: { title: string; channelTitle: string };
-  }[];
-};
-type YouTubeVideosBody = {
-  items?: { id: string; contentDetails: { duration: string } }[];
-};
-
-/**
- * Busca videos musicales insertables. Cada búsqueda gasta 100 de las 10 000
- * unidades diarias gratis de YouTube, por eso solo se busca al confirmar.
- */
-export const searchSongs = createServerFn({ method: 'GET' })
-  .inputValidator(z.object({ query: z.string().trim().min(2).max(100) }))
-  .handler(async ({ data }) => {
-    const key = env.YOUTUBE_API_KEY;
-    if (!key) return { enabled: false, results: [] as SongSearchResult[] };
-
-    const search = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?${new URLSearchParams({
-        part: 'snippet',
-        type: 'video',
-        videoEmbeddable: 'true',
-        maxResults: '8',
-        q: data.query,
-        key,
-      })}`
-    );
-    if (!search.ok) {
-      throw new Error(
-        search.status === 403
-          ? 'La búsqueda de hoy se agotó. Pega el link de YouTube de la canción.'
-          : 'No se pudo buscar en YouTube. Pega el link de la canción.'
-      );
-    }
-    const items = ((await search.json()) as YouTubeSearchBody).items ?? [];
-
-    const durations = new Map<string, number | null>();
-    if (items.length > 0) {
-      const videos = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?${new URLSearchParams({
-          part: 'contentDetails',
-          id: items.map((item) => item.id.videoId).join(','),
-          key,
-        })}`
-      );
-      if (videos.ok) {
-        for (const video of ((await videos.json()) as YouTubeVideosBody)
-          .items ?? []) {
-          durations.set(
-            video.id,
-            parseIsoDuration(video.contentDetails.duration)
-          );
-        }
-      }
-    }
-
-    const results: SongSearchResult[] = items.map((item) => ({
-      videoId: item.id.videoId,
-      title: decodeEntities(item.snippet.title),
-      channel: decodeEntities(item.snippet.channelTitle),
-      duration: durations.get(item.id.videoId) ?? null,
-    }));
-    return { enabled: true, results };
-  });
 
 /** Lee un link pegado. No gasta cuota: usa oEmbed, que además falla si el video no se puede insertar. */
 export const resolveYouTubeLink = createServerFn({ method: 'GET' })

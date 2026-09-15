@@ -9,7 +9,7 @@ import type { SongSearchResult } from '../services';
 import { readSongClips } from '../song-clip';
 import { youtubeThumbnail } from '../youtube';
 import { ClipEditor } from './ClipEditor';
-import { SongSearch } from './SongSearch';
+import { SongLibrary } from './SongLibrary';
 
 type Props = {
   field: MusicTemplateField;
@@ -29,9 +29,9 @@ export function SongPicker({ field, value, onChange }: Props) {
   const maxSongs = field.max_songs ?? 3;
   const maxClipSeconds = field.max_clip_seconds ?? 90;
 
-  const [searching, setSearching] = useState(false);
+  const [picking, setPicking] = useState(false);
   const [editor, setEditor] = useState<EditorState | null>(null);
-  const busy = searching || editor !== null;
+  const busy = picking || editor !== null;
 
   const save = (clip: SongClip) => {
     if (!editor) return;
@@ -157,20 +157,20 @@ export function SongPicker({ field, value, onChange }: Props) {
           onSave={save}
           onCancel={() => setEditor(null)}
         />
-      ) : searching ? (
-        <SongSearch
+      ) : picking ? (
+        <SongLibrary
           onPick={(source) => {
-            setSearching(false);
+            setPicking(false);
             setEditor({ index: null, source });
           }}
-          onCancel={() => setSearching(false)}
+          onCancel={() => setPicking(false)}
         />
       ) : (
         songs.length < maxSongs && (
           <Button
             type="button"
             variant="outline"
-            onClick={() => setSearching(true)}
+            onClick={() => setPicking(true)}
             className="h-auto w-full border-dashed py-4 hover:border-[#e91e63] hover:bg-[#e91e63]/5 hover:text-[#e91e63]"
           >
             {songs.length === 0 ? (
