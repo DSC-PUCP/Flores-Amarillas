@@ -21,8 +21,7 @@
   z-index: -1;
   width: clamp(278.25px, 50.085vw, 686.35px);
   aspect-ratio: 1312 / 1184;
-  background:
-    url("/images/spring/letter-corner-flowers.png") center / contain no-repeat;
+  background: var(--corner-flowers) center / contain no-repeat;
   pointer-events: none;
 }
 .corner {

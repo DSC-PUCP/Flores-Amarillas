@@ -25,7 +25,7 @@
   position: absolute;
   width: 50.1%;
   height: 50.1%;
-  background-image: url("/images/spring/floral-frame.png");
+  background-image: var(--frame);
   background-size: 200% 200%;
   animation: bloom 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
@@ -241,7 +241,7 @@
     margin-bottom: 1rem;
   }
   .corner {
-    background-image: url("/images/spring/floral-frame-mobile.png");
+    background-image: var(--frame-mobile);
     background-size: 200% 200%;
   }
   .petalTrack:nth-child(n + 19) {

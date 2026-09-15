@@ -1,3 +1,4 @@
+import { assets } from '../assets';
 export interface GardenArt {
   background: HTMLImageElement;
   boy: HTMLCanvasElement[];
@@ -93,9 +94,9 @@ function frame(
 let artPromise: Promise<GardenArt> | undefined;
 export function loadGardenArt() {
   artPromise ??= Promise.all([
-    image('/images/spring/game-garden.png'),
-    image('/images/spring/game-boy-sheet.jpg'),
-    image('/images/spring/game-girl-sheet.jpg'),
+    image(assets.gameGarden),
+    image(assets.gameBoySheet),
+    image(assets.gameGirlSheet),
   ])
     .then(([background, boy, girl]) => ({
       background,

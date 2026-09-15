@@ -1,5 +1,6 @@
 import { Heart, MailOpen, RotateCcw } from 'lucide-react';
-import { useId, useRef, useState } from 'react';
+import { type CSSProperties, useId, useRef, useState } from 'react';
+import { assets } from '../assets';
 import styles from './spring-letter.module.css';
 
 interface SpringLetterProps {
@@ -19,7 +20,15 @@ export function SpringLetter({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <section className={styles.slide} aria-label="Una carta para ti">
+    <section
+      className={styles.slide}
+      aria-label="Una carta para ti"
+      style={
+        {
+          '--corner-flowers': `url("${assets.letterCornerFlowers}")`,
+        } as CSSProperties
+      }
+    >
       <div className={styles.corner} aria-hidden="true" />
       <div className={styles.cornerBottom} aria-hidden="true" />
       <header className={styles.heading}>
@@ -38,12 +47,12 @@ export function SpringLetter({
               Para {recipient === 'Para ti' ? 'ti' : recipient} ♡
             </span>
             <div className={styles.stamp}>
-              <img src="/images/spring/card-flower.png" alt="" />
+              <img src={assets.cardFlower} alt="" />
               <span>Días más bonitos</span>
             </div>
             <img
               className={styles.envelopeFlower}
-              src="/images/spring/card-flower.png"
+              src={assets.cardFlower}
               alt=""
             />
             <div className={styles.seal}>
@@ -61,7 +70,7 @@ export function SpringLetter({
             >
               <img
                 className={styles.paperFlower}
-                src="/images/spring/card-flower.png"
+                src={assets.cardFlower}
                 alt=""
               />
               <p className={styles.paperEyebrow}>

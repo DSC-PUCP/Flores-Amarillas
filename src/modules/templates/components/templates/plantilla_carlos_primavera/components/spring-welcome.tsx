@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
 import { type CSSProperties, useState } from 'react';
+import { assets } from '../assets';
 import { SpringCamera } from './spring-camera';
 import type { CameraMemory } from './spring-camera-data';
 import { SpringGame } from './spring-game';
@@ -63,7 +64,16 @@ export function SpringWelcome({
   const [replay, setReplay] = useState(0);
   const [slide, setSlide] = useState(0);
   return (
-    <main className={styles.spring} aria-label="Un regalo de primavera">
+    <main
+      className={styles.spring}
+      aria-label="Un regalo de primavera"
+      style={
+        {
+          '--frame': `url("${assets.floralFrame}")`,
+          '--frame-mobile': `url("${assets.floralFrameMobile}")`,
+        } as CSSProperties
+      }
+    >
       <YellowPetals />
       {slide === 0 ? (
         <section

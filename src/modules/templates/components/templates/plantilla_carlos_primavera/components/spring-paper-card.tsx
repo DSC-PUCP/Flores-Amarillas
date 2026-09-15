@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { assets } from '../assets';
 import styles from './spring-paper-card.module.css';
 
 const flowers = [
@@ -79,7 +80,7 @@ export function SpringPaperCard({ message }: { message: string }) {
             {flowers.map((flower, index) => (
               <img
                 key={`${flower.x}-${flower.y}`}
-                src="/images/spring/card-flower.png"
+                src={assets.cardFlower}
                 alt=""
                 className={styles.flower}
                 style={
@@ -137,7 +138,7 @@ export function SpringPaperCard({ message }: { message: string }) {
           <div className={styles.linkage} aria-hidden="true" />
           <img
             className={styles.boy}
-            src="/images/spring/card-boy.png"
+            src={assets.cardBoy}
             alt="Chico con un ramo de flores amarillas"
             draggable={false}
           />
@@ -170,7 +171,7 @@ export function SpringPaperCard({ message }: { message: string }) {
           {/* ── Layer 3 (front): girl fixed on the right ── */}
           <img
             className={styles.girl}
-            src="/images/spring/card-girl.png"
+            src={assets.cardGirl}
             alt="Chica esperando con ilusión"
             draggable={false}
           />

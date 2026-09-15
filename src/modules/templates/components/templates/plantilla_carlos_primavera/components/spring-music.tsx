@@ -1,5 +1,6 @@
 import { Heart, Pause, Play } from 'lucide-react';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { assets } from '../assets';
 import styles from './spring-music.module.css';
 
 interface SpringMusicProps {
@@ -26,7 +27,7 @@ function FlowerCluster({ corner }: { corner: 'top' | 'bottom' }) {
       {FLOWER_DATA.map((flower, index) => (
         <img
           key={`${flower.x}-${flower.y}`}
-          src="/images/spring/card-flower.png"
+          src={assets.cardFlower}
           alt=""
           className={styles.flower}
           style={
@@ -383,7 +384,7 @@ export function SpringMusic({ songs }: SpringMusicProps) {
             );
           })}
           <div className={styles.paperNote}>
-            <img src="/images/spring/card-flower.png" alt="" />
+            <img src={assets.cardFlower} alt="" />
             <p>
               La música también es una
               <br />

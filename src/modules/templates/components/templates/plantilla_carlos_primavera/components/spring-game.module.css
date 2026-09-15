@@ -21,8 +21,7 @@
   z-index: -1;
   width: clamp(230px, 40vw, 550px);
   aspect-ratio: 1312 / 1184;
-  background:
-    url("/images/spring/letter-corner-flowers.png") center / contain no-repeat;
+  background: var(--corner-flowers) center / contain no-repeat;
   pointer-events: none;
 }
 .slide::before {

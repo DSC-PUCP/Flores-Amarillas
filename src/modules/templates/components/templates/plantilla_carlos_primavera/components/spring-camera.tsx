@@ -20,6 +20,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { assets } from '../assets';
 import styles from './spring-camera.module.css';
 import type { CameraMemory } from './spring-camera-data';
 
@@ -151,7 +152,7 @@ export function SpringCamera({
             ].map((flower, index) => (
               <img
                 key={`${flower.x}-${flower.y}`}
-                src="/images/spring/card-flower.png"
+                src={assets.cardFlower}
                 alt=""
                 className={styles.flower}
                 style={
@@ -178,7 +179,7 @@ export function SpringCamera({
       >
         <div className={styles.camera}>
           <img
-            src="/images/spring/memory-camera.png"
+            src={assets.memoryCamera}
             alt="Cámara de recuerdos decorada con flores amarillas"
             draggable={false}
           />

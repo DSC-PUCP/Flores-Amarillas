@@ -1,5 +1,12 @@
 // biome-ignore-all lint/a11y/noNoninteractiveTabindex: The canvas game needs a focusable surface for its documented keyboard controls.
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { assets } from '../assets';
 import styles from './spring-game.module.css';
 import { type GardenArt, loadGardenArt } from './spring-game-art';
 import {
@@ -115,7 +122,15 @@ export function SpringGame({ recipient }: { recipient: string }) {
   }, [status]);
 
   return (
-    <section className={styles.slide} aria-label="Una aventura para ti">
+    <section
+      className={styles.slide}
+      aria-label="Una aventura para ti"
+      style={
+        {
+          '--corner-flowers': `url("${assets.letterCornerFlowers}")`,
+        } as CSSProperties
+      }
+    >
       <header className={styles.heading}>
         <p>EL ÚLTIMO PASITO ES HASTA TI</p>
         <h2>Una flor, una pequeña aventura</h2>
