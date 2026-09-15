@@ -15,15 +15,9 @@ const QUESTIONS = [
   },
   {
     id: 'preview',
-    question: '¿Puedo ver mi dedicatoria antes de pagar?',
+    question: '¿Puedo ver mi dedicatoria antes de compartirla?',
     answer:
-      'Sí. Elige un diseño, completa sus datos y revisa el resultado. Los diseños de pago tienen una vista previa de 5 minutos. Después necesitas activar el enlace para que tu dedicatoria vuelva a estar disponible.',
-  },
-  {
-    id: 'payment',
-    question: '¿Cómo pago y cuándo se activa el enlace?',
-    answer:
-      'Si eliges un diseño de pago, el botón de activación te lleva a WhatsApp. Allí coordinas el pago por Yape o Plin y envías tu comprobante. El equipo lo valida manualmente y activa tu página; espera esa confirmación antes de entregar el regalo.',
+      'Sí. Elige un diseño, completa sus datos y revisa el resultado antes de compartirlo.',
   },
   {
     id: 'share',
@@ -35,7 +29,7 @@ const QUESTIONS = [
     id: 'duration',
     question: '¿Cuánto tiempo estará disponible?',
     answer:
-      'Las dedicatorias gratuitas se crean sin una fecha de vencimiento programada. En las de pago, al validar tu comprobante se elimina el límite de la vista previa. Guarda tu enlace para poder volver a abrir tu dedicatoria.',
+      'La disponibilidad depende del plan que elijas. Guarda tu enlace para poder volver a abrir tu dedicatoria.',
   },
 ];
 
@@ -70,8 +64,8 @@ export function FaqSection() {
           />
         </div>
 
-        {/* Sin `defaultValue`: arranca con todo cerrado para que se vean las
-            cinco preguntas de un vistazo. Con una abierta, las de abajo
+        {/* Sin `defaultValue`: arranca con todo cerrado para que se vean todas las
+            preguntas de un vistazo. Con una abierta, las de abajo
             quedaban empujadas fuera de pantalla y parecia que habia menos. */}
         <Accordion type="single" collapsible data-reveal="right">
           {QUESTIONS.map(({ id, question, answer }) => (

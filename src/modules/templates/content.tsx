@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import type { Template } from '@/core/models/template';
 import { usePlans } from '../landing/hooks/usePlans';
+import { PremiumThumbnail } from './components/templates/plantilla_giano_feat_leo/components/premium-thumbnail';
 import { useTemplates } from './hooks/useTemplate';
 
 function TemplateThumbnail({ template }: { template: Template }) {
@@ -20,11 +21,15 @@ function TemplateThumbnail({ template }: { template: Template }) {
     : template.previewImageUrl;
   const imageFailed = !image || failedImage === image;
 
+  if (template.templateKey === 'plantilla_giano_feat_leo') {
+    return <PremiumThumbnail />;
+  }
+
   if (isFlowerDesign) {
     return (
       <div className="relative flex h-64 items-center justify-center overflow-hidden bg-[#FFF8D7] px-6 pt-7">
         <span className="absolute left-5 top-5 rounded-full bg-white/75 px-3 py-1.5 text-[10px] font-semibold text-[#183E32]">
-          Sobre, carta y fotos
+          Sobre, carta y foto
         </span>
         <div className="relative mt-5 h-48 w-56 max-w-full">
           {imageFailed ? (
@@ -137,9 +142,6 @@ export function TemplateContent() {
         </Link>
 
         <header className="mb-10 max-w-3xl">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#FFD329] px-3.5 py-2 text-[10px] font-bold tracking-[0.13em] uppercase">
-            <Flower2 size={14} /> Flores amarillas · Tu regalo empieza aquí
-          </p>
           <h1 className="font-display text-[clamp(2.4rem,5vw,4.3rem)] leading-[1.06] tracking-tight">
             Elige cómo empieza <span className="italic">su sorpresa.</span>
           </h1>
@@ -274,10 +276,17 @@ export function TemplateContent() {
                           Personalizar este diseño{' '}
                           <ArrowRight size={16} className="shrink-0" />
                         </button>
-                        {template.templateKey === 'plantilla_gratuita' && (
+                        {(template.templateKey === 'plantilla_gratuita' ||
+                          template.templateKey ===
+                            'plantilla_giano_feat_leo') && (
                           <Link
                             to="/preview"
                             search={{
+                              template:
+                                template.templateKey ===
+                                'plantilla_giano_feat_leo'
+                                  ? 'premium'
+                                  : 'free',
                               recipient: 'Sofía',
                               message:
                                 'Estas flores son para recordarte lo mucho que te quiero.',
@@ -285,7 +294,7 @@ export function TemplateContent() {
                             }}
                             className="mt-3 flex min-h-11 items-center justify-center text-xs font-semibold underline decoration-[#183E32]/30 underline-offset-4 hover:decoration-[#183E32] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
                           >
-                            Probar la dedicatoria
+                            Ver ejemplo
                           </Link>
                         )}
                       </div>

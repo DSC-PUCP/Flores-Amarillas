@@ -668,6 +668,47 @@
   color: #46725c;
   margin-top: 7px;
 }
+.bloom-demo-templates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 30px;
+}
+.bloom-demo-templates legend {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.bloom-demo-templates label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  min-width: 130px;
+  padding: 10px 20px;
+  border: 1px solid #183e3233;
+  border-radius: 50px;
+  background: #fffcf4;
+  font-size: 13px;
+  cursor: pointer;
+}
+.bloom-demo-templates input { accent-color: #183e32; }
+.bloom-demo-templates label:has(input:checked) {
+  border-color: #183e32;
+  background: #ffd329;
+  font-weight: 700;
+}
+.bloom-demo-templates label:has(input:focus-visible) {
+  outline: 2px solid #183e32;
+  outline-offset: 4px;
+}
+
 .bloom-demo-tip {
   display: flex;
   align-items: center;

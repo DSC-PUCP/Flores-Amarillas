@@ -107,7 +107,10 @@ function TimeTogether({ startDate }: { startDate: number }) {
   ];
 
   return (
-    <section className="rounded-[28px] bg-[#183E32] px-5 py-9 text-[#FFF8D7] sm:px-9">
+    <section
+      data-editor-scene="intro"
+      className="rounded-[28px] bg-[#183E32] px-5 py-9 text-[#FFF8D7] sm:px-9"
+    >
       <p className="mb-3 text-[10px] font-bold tracking-[0.22em] uppercase text-[#FFD329]">
         Desde que empezó nuestra historia
       </p>
@@ -137,7 +140,11 @@ function PhotoMemories({ photos }: { photos: string[] }) {
   const activePhoto = photos[activeIndex];
 
   return (
-    <section aria-label="Nuestros recuerdos" className="min-w-0">
+    <section
+      data-editor-scene="photos"
+      aria-label="Nuestros recuerdos"
+      className="min-w-0"
+    >
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
           <p className="mb-2 text-[10px] font-bold tracking-[0.2em] uppercase text-[#597157]">
@@ -231,7 +238,14 @@ export function FlowerDedication({
     ...new Set([...(coverPhoto ? [coverPhoto] : []), ...memories]),
   ];
   const startDate = parseStartDate(templateData.startDate);
-  const [isOpen, setIsOpen] = useState(false);
+  const editor = isPreview && templateData.editorPreview === true;
+  const editorScene =
+    typeof templateData.editorScene === 'string'
+      ? templateData.editorScene
+      : 'cover';
+  const editing = editor && editorScene !== 'review';
+  const [opened, setIsOpen] = useState(false);
+  const isOpen = editing ? editorScene !== 'cover' : opened;
   const [shareStatus, setShareStatus] = useState('');
   const [shareBusy, setShareBusy] = useState(false);
   const [manualLink, setManualLink] = useState('');
@@ -243,6 +257,36 @@ export function FlowerDedication({
   const linkId = useId();
 
   useEffect(() => {
+    if (
+      editor &&
+      editorScene === 'review' &&
+      typeof templateData.editorRevision === 'number'
+    ) {
+      setIsOpen(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [editor, editorScene, templateData.editorRevision]);
+  useEffect(() => {
+    if (!editing || !isOpen || typeof templateData.editorRevision !== 'number')
+      return;
+    const node = document.querySelector<HTMLElement>(
+      `[data-editor-scene="${(editorScene === 'photos' && !photos.length) || (editorScene === 'intro' && startDate === null) ? 'letter' : editorScene}"]`
+    );
+    window.scrollTo({
+      top: node ? node.getBoundingClientRect().top + window.scrollY - 16 : 0,
+      behavior: 'instant',
+    });
+  }, [
+    editing,
+    isOpen,
+    editorScene,
+    templateData.editorRevision,
+    photos.length,
+    startDate,
+  ]);
+
+  useEffect(() => {
+    if (editor) return;
     if (isOpen) {
       hasOpened.current = true;
       letterRef.current?.focus({ preventScroll: true });
@@ -251,7 +295,7 @@ export function FlowerDedication({
       envelopeRef.current?.focus({ preventScroll: true });
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
-  }, [isOpen]);
+  }, [isOpen, editor]);
 
   const copyLink = async () => {
     if (isPreview || shareBusy) return;
@@ -308,14 +352,16 @@ export function FlowerDedication({
       {isOpen ? (
         <div className="relative mx-auto max-w-5xl px-5 py-6 sm:px-9 sm:py-9">
           <div className="mb-8 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-[#597157] hover:text-[#183E32] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
-            >
-              <ArrowLeft size={15} />
-              Volver al sobre
-            </button>
+            {!editing && (
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-[#597157] hover:text-[#183E32] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
+              >
+                <ArrowLeft size={15} />
+                Volver al sobre
+              </button>
+            )}
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-[#597157]">
               Un detalle para ti
             </span>
@@ -336,7 +382,10 @@ export function FlowerDedication({
           </div>
 
           <div className="grid items-start gap-8 md:grid-cols-[1.05fr_1fr] md:gap-10">
-            <article className="relative min-w-0 rounded-[4px_28px_28px_28px] bg-[#FFFEF7] p-6 shadow-[0_15px_60px_-35px_#183E3250] sm:p-9">
+            <article
+              data-editor-scene="letter"
+              className="relative min-w-0 rounded-[4px_28px_28px_28px] bg-[#FFFEF7] p-6 shadow-[0_15px_60px_-35px_#183E3250] sm:p-9"
+            >
               <div className="mb-7 flex items-center justify-between">
                 <MailOpen
                   size={22}
@@ -349,7 +398,10 @@ export function FlowerDedication({
                 Para {personB},
               </p>
               <p className="text-base leading-[1.9] whitespace-pre-wrap break-words text-[#415542] sm:text-lg">
-                {message}
+                {message ||
+                  (editing
+                    ? 'Tu dedicatoria aparecerá aquí mientras la escribes.'
+                    : '')}
               </p>
               <div className="mt-8 border-t border-[#183E32]/10 pt-6">
                 <p className="mb-1 text-xs text-[#597157]">

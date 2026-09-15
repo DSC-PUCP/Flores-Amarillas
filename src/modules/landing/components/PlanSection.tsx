@@ -1,5 +1,5 @@
 import { Flower2, Loader2, RefreshCw } from 'lucide-react';
-import { type CSSProperties, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { Plan } from '@/core/models';
 import { usePlans } from '../hooks/usePlans';
 import { PlanCard, type PlanTier } from './PlanCard';
@@ -150,17 +150,6 @@ export function PlansSection({
               />
             ))}
           </div>
-        )}
-
-        {!showLoading && !showError && !showEmpty && (
-          <p
-            data-reveal
-            style={{ '--reveal-i': 3 } as CSSProperties}
-            className="mx-auto mt-7 max-w-2xl text-center text-xs leading-6 text-[#1E3B2A]/70"
-          >
-            En los diseños de pago, primero revisas tu dedicatoria y después
-            coordinas la activación por WhatsApp. El pago se valida manualmente.
-          </p>
         )}
       </div>
     </section>

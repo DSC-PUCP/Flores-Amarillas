@@ -9,6 +9,9 @@ export const env = createEnv({
     FLOW_SECRET_KEY: z.string().min(1).optional(),
     FLOW_MODE: z.enum(['sandbox', 'production']).default('sandbox'),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+
+    // YouTube Data API v3. Sin clave, el formulario pide pegar el link.
+    YOUTUBE_API_KEY: z.string().min(1).optional(),
   },
 
   clientPrefix: 'VITE_',
@@ -28,6 +31,7 @@ export const env = createEnv({
     FLOW_MODE: process.env.FLOW_MODE,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     SERVER_URL: process.env.SERVER_URL,
+    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
   },
 
   emptyStringAsUndefined: true,

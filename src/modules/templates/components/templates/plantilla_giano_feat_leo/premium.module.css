@@ -1,0 +1,1750 @@
+/* Títulos editoriales de trazos sólidos y texto limpio. */
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap");
+
+/*
+ * Plantilla Premium · Flores Amarillas.
+ *
+ * Paleta de la marca (ver la landing): el amarillo nunca va solo, siempre con
+ * verde bosque, cielo o crema. Sobre amarillo el texto es verde, nunca blanco.
+ */
+/* Colores de la canción: registrados para que cambien con transición. */
+@property --mood-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f7c325;
+}
+@property --mood-second {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8863a;
+}
+@property --mood-light {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffe9a8;
+}
+@property --mood-deep {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0e2217;
+}
+@property --mood-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #1e3b2a;
+}
+@property --mood-ink-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6c5537;
+}
+@property --mood-strong {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8a6a1f;
+}
+@property --mood-highlight {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #b7801a;
+}
+@property --mood-paper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fffbf2;
+}
+@property --mood-band {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fbf2df;
+}
+@property --mood-card {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fffdf7;
+}
+@property --mood-sky {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #dceef7;
+}
+@property --mood-petal {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f7c325;
+}
+@property --mood-petal-back {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d89a1f;
+}
+@property --mood-petal-mid {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8b84b;
+}
+@property --mood-petal-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #eacb86;
+}
+@property --mood-seed-ring {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8a5a1b;
+}
+@property --mood-seed {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6b4414;
+}
+@property --mood-seed-dot {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3f2709;
+}
+@property --mood-leaf {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8ba84c;
+}
+@property --mood-leaf-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6e9140;
+}
+@property --mood-leaf-pale {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c7d8ae;
+}
+@property --mood-stem {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #4f7a3a;
+}
+@property --mood-kraft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8d2a6;
+}
+@property --mood-kraft-light {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f4e8d2;
+}
+@property --mood-kraft-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #dcc08e;
+}
+@property --mood-ribbon {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ef7a5e;
+}
+@property --mood-ribbon-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d86a4f;
+}
+
+.root {
+  --mood-accent: #f7c325;
+  --mood-second: #e8863a;
+  --mood-light: #ffe9a8;
+  --mood-deep: #0e2217;
+  --mood-ink: #1e3b2a;
+  --mood-ink-soft: #6c5537;
+  --mood-strong: #8a6a1f;
+  --mood-highlight: #b7801a;
+  --mood-paper: #fffbf2;
+  --mood-band: #fbf2df;
+  --mood-card: #fffdf7;
+  --mood-sky: #dceef7;
+  --mood-petal: #f7c325;
+  --mood-petal-back: #d89a1f;
+  --mood-petal-mid: #e8b84b;
+  --mood-petal-muted: #eacb86;
+  --mood-seed-ring: #8a5a1b;
+  --mood-seed: #6b4414;
+  --mood-seed-dot: #3f2709;
+  --mood-leaf: #8ba84c;
+  --mood-leaf-dark: #6e9140;
+  --mood-leaf-pale: #c7d8ae;
+  --mood-stem: #4f7a3a;
+  --mood-kraft: #e8d2a6;
+  --mood-kraft-light: #f4e8d2;
+  --mood-kraft-dark: #dcc08e;
+  --mood-ribbon: #ef7a5e;
+  --mood-ribbon-dark: #d86a4f;
+
+  /* El papel es la base; solo el disco adopta el ambiente oscuro del álbum. */
+  --page-bg: var(--mood-paper);
+  --page-ink: var(--mood-ink);
+  --page-soft: var(--mood-ink-soft);
+  --page-strong: var(--mood-strong);
+
+  /* Amarillos fijos: no siguen a la canción. */
+  --sun: #f7c325;
+  --sun-light: #ffe9a8;
+  --amancay-tone: #e8863a;
+
+  /* Nombres de la marca. */
+  --sol: var(--sun);
+  --miel: var(--mood-petal-back);
+  --mostaza: var(--mood-petal-mid);
+  --mantequilla: var(--sun-light);
+  --papel: var(--mood-paper);
+  --arena: var(--mood-band);
+  --lino: var(--mood-kraft-light);
+  --bosque: var(--mood-ink);
+  --hoja: var(--mood-leaf);
+  --salvia: var(--mood-leaf-pale);
+  --amancay: var(--amancay-tone);
+  --coral: var(--mood-ribbon);
+  --cielo: var(--mood-sky);
+  --tinta: var(--mood-ink-soft);
+  --nota: var(--mood-ink-soft);
+
+  min-height: 100svh;
+  overflow-x: clip;
+  background: var(--page-bg);
+  transition-property:
+    --mood-accent, --mood-second, --mood-light, --mood-deep, --mood-ink, --mood-ink-soft, --mood-strong, --mood-highlight, --mood-paper, --mood-band, --mood-card, --mood-sky, --mood-petal, --mood-petal-back, --mood-petal-mid, --mood-petal-muted, --mood-seed-ring, --mood-seed, --mood-seed-dot, --mood-leaf, --mood-leaf-dark, --mood-leaf-pale, --mood-stem, --mood-kraft, --mood-kraft-light, --mood-kraft-dark, --mood-ribbon, --mood-ribbon-dark;
+  transition-duration: 1.6s;
+  transition-timing-function: ease;
+  color: var(--page-ink);
+  font-family: Manrope, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+.root ::selection {
+  background: var(--sol);
+  color: var(--bosque);
+}
+.root :is(button, a, [tabindex]):focus-visible {
+  outline: 3px solid var(--amancay);
+  outline-offset: 4px;
+}
+
+.display {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  /* Números alineados para el contador. */
+  font-variant-numeric: lining-nums;
+}
+.hand {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-style: italic;
+  letter-spacing: 0;
+}
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+/* ---------- Portada ---------- */
+
+.cover {
+  justify-content: safe center;
+  background:
+    radial-gradient(ellipse at 50% 75%, #f7c32518, transparent 65%),
+    var(--page-bg);
+}
+
+/* ---------- Pétalos que caen ---------- */
+
+.petalLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.petal {
+  position: absolute;
+  top: -8vh;
+  width: var(--size);
+  left: var(--x);
+  color: var(--tone);
+  opacity: 0;
+  animation: fall var(--duration) linear var(--delay) infinite;
+}
+@keyframes fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(var(--drift), 55vh, 0) rotate(200deg);
+  }
+  92% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(0, 115vh, 0) rotate(400deg);
+    opacity: 0;
+  }
+}
+
+/* ---------- Flores que se mecen ---------- */
+
+.sway {
+  transform-origin: 50% 100%;
+  animation: sway var(--sway, 6s) ease-in-out var(--sway-delay, 0s) infinite
+    alternate;
+}
+@keyframes sway {
+  from {
+    transform: rotate(calc(var(--sway-angle, 3deg) * -1));
+  }
+  to {
+    transform: rotate(var(--sway-angle, 3deg));
+  }
+}
+
+.spin {
+  animation: spin 9s linear infinite;
+}
+.spinPaused {
+  animation-play-state: paused;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.floaty {
+  animation: floaty 2.4s ease-in-out infinite;
+}
+@keyframes floaty {
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Galería ---------- */
+
+.polaroid {
+  background: var(--mood-card);
+  padding: 0.6rem 0.6rem 0;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--mood-ink) 5%, transparent),
+    0 18px 34px -22px color-mix(in srgb, var(--mood-ink) 40%, transparent);
+  transform: rotate(var(--tilt, 0deg));
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s;
+}
+.polaroid:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--mood-ink) 5%, transparent),
+    0 26px 40px -22px color-mix(in srgb, var(--mood-ink) 50%, transparent);
+}
+.tape {
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.5rem;
+  translate: -50% 0;
+  rotate: -4deg;
+  background: color-mix(in srgb, var(--sun-light) 80%, transparent);
+  box-shadow: 0 1px 2px
+    color-mix(in srgb, var(--mood-ink-soft) 13%, transparent);
+}
+
+.lightbox {
+  width: min(100vw - 2rem, 56rem);
+  max-width: none;
+  max-height: calc(100svh - 2rem);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 1.5rem;
+  background: var(--page-bg);
+  color: var(--page-ink);
+}
+.lightbox::backdrop {
+  background: color-mix(in srgb, var(--mood-deep) 80%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+/* ---------- Flor de razones ---------- */
+
+.petalButton {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.7s cubic-bezier(0.3, 0.7, 0.3, 1),
+    opacity 0.7s ease;
+}
+.petalShape {
+  fill: var(--mood-petal);
+}
+.petalButton:hover .petalShape,
+.petalButton:focus-visible .petalShape {
+  fill: var(--mantequilla);
+}
+.root .petalButton:focus,
+.root .petalButton:focus-visible {
+  /* El foco se marca en el borde del pétalo, no con un rectángulo. */
+  outline: none;
+}
+.petalButton:focus-visible .petalShape {
+  stroke: var(--amancay);
+  stroke-width: 2.5;
+}
+.petalRest {
+  cursor: default;
+  opacity: 0.6;
+}
+.petalGone {
+  transform: translateY(-90px) rotate(28deg) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+.petalHint {
+  animation: hint 2.6s ease-in-out infinite;
+}
+@keyframes hint {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  90% {
+    transform: translateY(1px);
+  }
+}
+
+/* ---------- Carta ---------- */
+
+.envelope {
+  perspective: 1400px;
+}
+.flap {
+  transform-origin: 50% 0%;
+  transition: transform 0.8s cubic-bezier(0.4, 0.1, 0.2, 1);
+  backface-visibility: hidden;
+}
+.flapOpen {
+  transform: rotateX(180deg);
+}
+.seal {
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
+}
+.sealGone {
+  transform: scale(0.4) rotate(-30deg);
+  opacity: 0;
+}
+.letterSheet {
+  background:
+    radial-gradient(
+      120% 60% at 100% 0%,
+      color-mix(in srgb, var(--sun-light) 25%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--mood-card);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--mood-ink-soft) 8%, transparent),
+    0 30px 60px -38px color-mix(in srgb, var(--mood-ink) 50%, transparent);
+}
+.paper {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2.05rem,
+      color-mix(in srgb, var(--mood-petal-back) 12%, transparent) 2.05rem,
+      color-mix(in srgb, var(--mood-petal-back) 12%, transparent) 2.1rem
+    ),
+    var(--mood-card);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--mood-ink-soft) 8%, transparent),
+    0 30px 60px -38px color-mix(in srgb, var(--mood-ink) 50%, transparent);
+}
+
+/* ---------- Cupón ---------- */
+
+.ticket {
+  --notch: 1.1rem;
+  -webkit-mask:
+    radial-gradient(circle var(--notch) at 0 50%, #0000 98%, #000) left / 51%
+    100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 50%, #0000 98%, #000) right /
+    51% 100% no-repeat;
+  mask:
+    radial-gradient(circle var(--notch) at 0 50%, #0000 98%, #000) left / 51%
+    100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 50%, #0000 98%, #000) right /
+    51% 100% no-repeat;
+}
+.scratch {
+  touch-action: none;
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='12' fill='%23fffbf2' stroke='%231e3b2a' stroke-width='2'/%3E%3C/svg%3E")
+    14 14,
+    pointer;
+  transition: opacity 0.6s ease;
+}
+
+/* ---------- Reproductor ---------- */
+
+.equalizer span {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: eq 0.9s ease-in-out infinite alternate;
+}
+.equalizer span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.equalizer span:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes eq {
+  from {
+    height: 3px;
+  }
+  to {
+    height: 12px;
+  }
+}
+
+/* ---------- Ambiente de la música ---------- */
+
+/* Color de la canción en los márgenes, sin pulsos ni haces sobre el contenido. */
+.pageLights {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 0% 30%,
+      color-mix(in srgb, var(--mood-accent) 14%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse at 100% 80%,
+      color-mix(in srgb, var(--mood-second) 10%, transparent),
+      transparent 65%
+    );
+}
+.stage {
+  border-radius: 2rem;
+  background: var(--mood-deep);
+  border: 1px solid color-mix(in srgb, var(--mood-light) 18%, transparent);
+  box-shadow: 0 24px 80px -35px #0007;
+}
+
+.lyricNow {
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.35);
+}
+.lyricSide {
+  color: rgb(255 255 255 / 0.72);
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.4);
+}
+
+/* ---------- Vinilo ---------- */
+
+.vinyl {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #0000 0 30%, #ffffff0d 30.5% 31%, #0000 31.5%),
+    radial-gradient(circle, #0000 0 47%, #ffffff0a 47.5% 48%, #0000 48.5%),
+    radial-gradient(circle, #0000 0 64%, #ffffff0a 64.5% 65%, #0000 65.5%),
+    repeating-radial-gradient(circle, #171717 0 1.2px, #0b0b0b 1.2px 2.6px);
+  box-shadow:
+    inset 0 0 0 3px #050505,
+    0 28px 50px -22px #000000cc,
+    0 0 28px color-mix(in srgb, var(--mood-accent) 12%, transparent);
+  animation: spin 7s linear infinite;
+}
+.vinylOn {
+  animation-play-state: running;
+}
+.vinylOff {
+  animation-play-state: paused;
+}
+.vinylLabel {
+  position: absolute;
+  inset: 30%;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px #0a0a0a,
+    0 0 0 4px #ffffff14;
+}
+.vinylHole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3.4%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #0b0b0b;
+  box-shadow: 0 0 0 2px #ffffff40;
+}
+.vinylSheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 210deg,
+    #0000 0deg,
+    #ffffff26 22deg,
+    #0000 52deg,
+    #0000 180deg,
+    #ffffff1a 202deg,
+    #0000 232deg
+  );
+  -webkit-mask: radial-gradient(circle, #0000 0 30%, #000 30.5%);
+  mask: radial-gradient(circle, #0000 0 30%, #000 30.5%);
+}
+.tonearm {
+  position: absolute;
+  top: -8%;
+  right: -14%;
+  width: 26%;
+  transform-origin: 70% 10%;
+  transform: rotate(-24deg);
+  transition: transform 1.1s cubic-bezier(0.4, 0.1, 0.2, 1);
+  filter: drop-shadow(0 8px 6px #00000073);
+}
+.tonearmOn {
+  transform: rotate(6deg);
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--mood-accent);
+  opacity: 0;
+  pointer-events: none;
+  animation: ripple 3s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.ring:nth-child(2) {
+  animation-delay: 1s;
+  border-color: var(--mood-second);
+}
+.ring:nth-child(3) {
+  animation-delay: 2s;
+  border-color: var(--mood-light);
+}
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* ---------- Recorrido por escenas ---------- */
+.sceneDeck {
+  position: relative;
+  z-index: 10;
+  height: 100svh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.sceneDeck::-webkit-scrollbar {
+  display: none;
+}
+.deckTrack {
+  position: relative;
+  height: calc(var(--scene-count) * 100svh);
+}
+.deckStage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  transition: background-color 0.65s ease;
+}
+.deckStops {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.deckStops > div {
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--page-bg);
+  color: var(--page-ink);
+}
+.sceneScroll {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+.sceneContent {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.scenePaper {
+  background:
+    radial-gradient(ellipse at 0% 0%, #f7c3250c, transparent 55%),
+    var(--mood-paper);
+}
+.sceneNight {
+  --page-bg: var(--mood-deep);
+  --page-ink: #fffbf2;
+  --page-soft: color-mix(in srgb, #fffbf2 74%, transparent);
+  --page-strong: var(--mood-light);
+  background: var(--page-bg);
+}
+
+.album {
+  position: relative;
+  color: var(--mood-ink);
+  background: var(--mood-card);
+  padding: clamp(0.65rem, 2vw, 1.25rem);
+  border: 1px solid #d89a1f30;
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 65px -32px #1e3b2a45;
+}
+.albumStage {
+  height: clamp(19rem, 60svh, 38rem);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--mood-band);
+  touch-action: pan-y;
+}
+.albumPhoto {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: zoom-in;
+}
+.zoomHint {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  background: #fffbf2ed;
+  color: var(--mood-ink);
+  padding: 0.5rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.7rem;
+}
+.albumControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.albumControls button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid #1e3b2a20;
+  border-radius: 50%;
+  background: var(--mood-paper);
+}
+.albumControls button:hover {
+  background: var(--sun-light);
+}
+.albumThumbs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem 0.25rem 0.25rem;
+  overflow-x: auto;
+}
+.albumThumbs button {
+  flex: 0 0 4.25rem;
+  height: 4.25rem;
+  padding: 0.2rem;
+  border: 2px solid transparent;
+  border-radius: 0.6rem;
+  background: var(--mood-band);
+}
+.albumThumbs button[aria-pressed="true"] {
+  border-color: var(--mood-strong);
+}
+/* ---------- Pradera y vida alrededor (guía de Flores Amarillas) ---------- */
+
+.meadowSway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: sway var(--sway, 6s) ease-in-out var(--sway-delay, 0s) infinite
+    alternate;
+}
+.grassWind {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: wind 5.5s ease-in-out infinite alternate;
+}
+@keyframes wind {
+  from {
+    transform: skewX(-2.5deg);
+  }
+  to {
+    transform: skewX(3deg);
+  }
+}
+.meadowFade {
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+}
+
+.fauna {
+  position: fixed;
+  inset: 0;
+  /* Detrás del contenido: vuelan alrededor de los textos, no encima. */
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+.butterflyPath {
+  position: absolute;
+  left: 0;
+  animation: flyAcross var(--duration) linear var(--delay) infinite;
+}
+@keyframes flyAcross {
+  0% {
+    transform: translate(-10vw, 0);
+  }
+  22% {
+    transform: translate(18vw, -7vh);
+  }
+  48% {
+    transform: translate(48vw, 4vh);
+  }
+  74% {
+    transform: translate(78vw, -6vh);
+  }
+  100% {
+    transform: translate(112vw, 2vh);
+  }
+}
+.butterflyBob {
+  animation: bob var(--bob) ease-in-out infinite alternate;
+  filter: drop-shadow(0 6px 6px rgb(92 68 37 / 0.18));
+}
+@keyframes bob {
+  from {
+    transform: translateY(-10px) rotate(-8deg);
+  }
+  to {
+    transform: translateY(12px) rotate(10deg);
+  }
+}
+.wingLeft,
+.wingRight {
+  transform-box: fill-box;
+  animation: flap 0.24s ease-in-out infinite alternate;
+}
+.wingLeft {
+  transform-origin: 100% 50%;
+}
+.wingRight {
+  transform-origin: 0% 50%;
+}
+@keyframes flap {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.3);
+  }
+}
+
+.pollenLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.3;
+}
+.pollen {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6c4 0%, #f7c325 55%, #f7c32500 72%);
+  box-shadow: 0 0 4px #f7c32540;
+  opacity: 0;
+  animation: pollenRise var(--duration) ease-in-out var(--delay) infinite;
+}
+@keyframes pollenRise {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(var(--drift), -22vh) scale(1);
+  }
+  85% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(calc(var(--drift) * -0.5), -46vh) scale(0.7);
+    opacity: 0;
+  }
+}
+
+.fireflies {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.firefly {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff1a6;
+  box-shadow:
+    0 0 6px 2px #ffe58acc,
+    0 0 18px 6px #f7c32559;
+  animation:
+    fireflyDrift var(--duration) ease-in-out var(--delay) infinite alternate,
+    fireflyBlink calc(var(--duration) * 0.37) ease-in-out var(--delay) infinite;
+}
+@keyframes fireflyDrift {
+  from {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(26px, -18px);
+  }
+  to {
+    transform: translate(-18px, 14px);
+  }
+}
+@keyframes fireflyBlink {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff8dc;
+  box-shadow: 0 0 6px #fff3c4;
+  animation: twinkle var(--duration) ease-in-out var(--delay) infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sceneDeck,
+  .sceneScroll {
+    scroll-behavior: auto;
+  }
+  .petal,
+  .sway,
+  .spin,
+  .floaty,
+  .petalHint,
+  .equalizer span,
+  .meadowSway,
+  .grassWind,
+  .wingLeft,
+  .wingRight,
+  .pollen,
+  .firefly,
+  .star,
+  .ring {
+    animation: none;
+  }
+  .vinyl {
+    animation: none;
+  }
+  .petal,
+  .fauna,
+  .pollenLayer {
+    display: none;
+  }
+  .flap,
+  .petalButton,
+  .polaroid,
+  .seal,
+  .scratch,
+  .tonearm {
+    transition: none;
+  }
+}
+
+/* Jardín ilustrado y personaje articulado: SVG y CSS, sin bitmaps. */
+.mascotPresentation {
+  position: relative;
+  margin-top: 0.5rem;
+  width: min(64vw, 18rem);
+}
+.mascotButton {
+  display: block;
+  width: 100%;
+  border-radius: 45%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mascotButton:focus-visible {
+  outline: 3px solid var(--mood-highlight);
+  outline-offset: 6px;
+}
+.mascotGreeting {
+  position: absolute;
+  z-index: 1;
+  top: 24%;
+  left: 72%;
+  transform: translateY(-100%);
+  display: inline-flex;
+  white-space: nowrap;
+  pointer-events: none;
+  padding: 0.5rem 0.8rem;
+  background: #fffaf0;
+  border: 1px solid #ebd5ad;
+  border-radius: 1rem;
+  color: #896345;
+  font-size: 0.8rem;
+  box-shadow: 0 6px 20px #b2986220;
+}
+.mascotGreeting::after {
+  content: "";
+  position: absolute;
+  bottom: -0.3rem;
+  left: 0.85rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  background: #fffaf0;
+  border-right: 1px solid #ebd5ad;
+  border-bottom: 1px solid #ebd5ad;
+  rotate: 45deg;
+}
+.garden {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.gardenWash {
+  position: absolute;
+  inset: -15%;
+  opacity: 0.8;
+  background:
+    radial-gradient(ellipse at 15% 80%, #b9d69c45, transparent 42%),
+    radial-gradient(ellipse at 90% 20%, #ffe3a767, transparent 38%),
+    radial-gradient(
+      ellipse at 75% 90%,
+      color-mix(in srgb, var(--mood-light) 22%, transparent),
+      transparent 55%
+    );
+  animation: springLight 24s ease-in-out infinite alternate;
+}
+.garden::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: radial-gradient(#8a785b50 0.5px, transparent 0.6px);
+  background-size: 5px 5px;
+}
+.garden[data-garden="cover"],
+.garden[data-garden="intro"] {
+  background: linear-gradient(180deg, #eef5e751, transparent 60%);
+}
+.garden[data-garden="photos"] .gardenWash {
+  background:
+    radial-gradient(ellipse at 5% 80%, #b4d5c86b, transparent 48%),
+    radial-gradient(ellipse at 100% 0%, #ffe4b989, transparent 40%);
+}
+.garden[data-garden="letter"] .gardenWash {
+  background:
+    radial-gradient(ellipse at 0% 0%, #d6e3bb80, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, #edcdbd65, transparent 50%);
+}
+.garden[data-garden="coupon"] .gardenWash {
+  background:
+    radial-gradient(ellipse at 0% 100%, #f5d5a9aa, transparent 50%),
+    radial-gradient(ellipse at 100% 0%, #ffeca7a0, transparent 45%);
+}
+.garden[data-garden="finale"] .gardenWash {
+  background:
+    radial-gradient(ellipse at 50% 45%, #fff6c083, transparent 60%),
+    radial-gradient(ellipse at 0% 90%, #b9d6a780, transparent 45%);
+}
+.garden svg {
+  position: absolute;
+  overflow: visible;
+}
+.garden svg svg {
+  position: static;
+}
+.gardenMeadow {
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: clamp(7rem, 24vh, 18rem);
+}
+.gardenCloud {
+  top: 4%;
+  left: -2%;
+  width: clamp(9rem, 24vw, 23rem);
+  animation: cloudTravel 28s ease-in-out infinite alternate;
+}
+.gardenCloudSmall {
+  right: 4%;
+  top: 18%;
+  width: clamp(6rem, 18vw, 14rem);
+  animation: cloudTravel 32s ease-in-out -14s infinite alternate-reverse;
+}
+.gardenGarland {
+  top: -4rem;
+  left: 8%;
+  width: min(70%, 45rem);
+  opacity: 0.8;
+}
+.gardenPot {
+  bottom: -0.5rem;
+  left: -1.5rem;
+  width: clamp(8rem, 20vw, 17rem);
+}
+.gardenBasket {
+  bottom: -1.5rem;
+  left: -1rem;
+  width: clamp(9rem, 24vw, 19rem);
+}
+.gardenLeftVine {
+  top: -1rem;
+  left: -2rem;
+  width: clamp(7rem, 17vw, 14rem);
+}
+.gardenRightVine {
+  right: -3rem;
+  bottom: -2rem;
+  width: clamp(7rem, 17vw, 14rem);
+}
+.gardenStamp {
+  top: 4%;
+  right: 1%;
+  width: clamp(8rem, 18vw, 14rem);
+  opacity: 0.65;
+}
+.gardenCornerBloom {
+  right: -1rem;
+  bottom: -2rem;
+  width: clamp(8rem, 19vw, 16rem);
+}
+.gardenWreath {
+  top: 50%;
+  left: 50%;
+  width: min(92vw, 47rem);
+  transform: translate(-50%, -50%);
+  opacity: 0.45;
+}
+.gardenButterfly {
+  width: clamp(2.4rem, 5vw, 4.5rem);
+  top: 25%;
+  right: 8%;
+  animation: butterflyVisit 17s ease-in-out infinite;
+}
+.gardenButterflySmall {
+  width: clamp(1.8rem, 3.5vw, 3rem);
+  left: 10%;
+  bottom: 24%;
+  animation: butterflyVisit 21s ease-in-out -9s infinite reverse;
+}
+.gardenBee {
+  width: clamp(2.5rem, 5vw, 4rem);
+  left: 12%;
+  bottom: 25%;
+  animation: beeVisit 14s ease-in-out infinite;
+}
+.gardenPicnic {
+  position: absolute;
+  left: -2rem;
+  bottom: -4rem;
+  width: 34%;
+  height: 10rem;
+  rotate: 7deg;
+  opacity: 0.35;
+  border-radius: 2rem;
+  background:
+    repeating-linear-gradient(90deg, #eebd9260 0 14px, transparent 14px 28px),
+    repeating-linear-gradient(0deg, #eebd9260 0 14px, #fff9ed 14px 28px);
+}
+.petalBreath {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bloomOpen 7s ease-in-out infinite alternate;
+}
+.flowerNod,
+.potFlowers,
+.gardenPlant {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plantSway 6s ease-in-out var(--plant-delay, 0s) infinite alternate;
+}
+.vineSway {
+  transform-origin: 50% 0;
+  animation: vineWind 8s ease-in-out infinite alternate;
+}
+.garlandSprig {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sprigNod 7s ease-in-out var(--plant-delay, 0s) infinite alternate;
+}
+.gardenWingLeft {
+  transform-origin: 45px 35px;
+  animation: butterflyWing 0.85s ease-in-out infinite alternate;
+}
+.gardenWingRight {
+  transform-origin: 45px 35px;
+  animation: butterflyWing 0.85s ease-in-out infinite alternate-reverse;
+}
+.beeWings {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: beeWing 160ms ease-in-out infinite alternate;
+}
+.gardenMotes {
+  position: absolute;
+  inset: 0;
+}
+.gardenMotes i {
+  position: absolute;
+  width: 4px;
+  height: 6px;
+  border-radius: 70% 20%;
+  background: #e9c168;
+  opacity: 0;
+  left: 8%;
+  top: 70%;
+  animation: springMote 16s linear infinite;
+}
+.gardenMotes i:nth-child(2) {
+  left: 92%;
+  top: 40%;
+  animation-delay: -4s;
+}
+.gardenMotes i:nth-child(3) {
+  left: 20%;
+  top: 20%;
+  animation-delay: -9s;
+}
+.gardenMotes i:nth-child(4) {
+  left: 78%;
+  top: 80%;
+  animation-delay: -13s;
+}
+.gardenMotes i:nth-child(5) {
+  left: 5%;
+  top: 45%;
+  animation-delay: -6s;
+}
+.gardenMotes i:nth-child(6) {
+  left: 85%;
+  top: 15%;
+  animation-delay: -11s;
+}
+.scene[data-active="false"] .garden *,
+.scene[data-active="false"] .garden {
+  animation-play-state: paused;
+}
+@keyframes springLight {
+  to {
+    transform: translate(3%, -3%) scale(1.08);
+  }
+}
+@keyframes cloudTravel {
+  to {
+    transform: translateX(30px) translateY(8px);
+  }
+}
+@keyframes plantSway {
+  from {
+    transform: rotate(-1deg);
+  }
+  to {
+    transform: rotate(var(--plant-angle, 2deg));
+  }
+}
+@keyframes bloomOpen {
+  to {
+    transform: scale(1.035) rotate(2deg);
+  }
+}
+@keyframes vineWind {
+  to {
+    transform: rotate(2deg) translateX(3px);
+  }
+}
+@keyframes sprigNod {
+  to {
+    transform: rotate(3deg);
+  }
+}
+@keyframes butterflyWing {
+  to {
+    transform: scaleX(0.45);
+  }
+}
+@keyframes beeWing {
+  to {
+    transform: scaleY(0.45) rotate(10deg);
+  }
+}
+@keyframes butterflyVisit {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  35% {
+    transform: translate(-30px, -24px) rotate(10deg);
+  }
+  70% {
+    transform: translate(8px, -40px) rotate(-4deg);
+  }
+}
+@keyframes beeVisit {
+  30% {
+    transform: translate(35px, -20px) rotate(-6deg);
+  }
+  65% {
+    transform: translate(16px, 8px) rotate(8deg);
+  }
+}
+@keyframes springMote {
+  0% {
+    opacity: 0;
+    transform: translate(0, 25px) rotate(0);
+  }
+  25%,
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(25px, -85px) rotate(100deg);
+  }
+}
+@media (max-width: 640px) {
+  .gardenGarland {
+    top: -1.5rem;
+    left: -12%;
+    width: 100%;
+    opacity: 0.55;
+  }
+  .gardenMeadow {
+    height: 8rem;
+    width: 170%;
+    left: -35%;
+  }
+  .gardenPot,
+  .gardenBasket,
+  .gardenLeftVine,
+  .gardenRightVine,
+  .gardenCornerBloom {
+    opacity: 0.6;
+  }
+  .gardenStamp {
+    top: 0;
+    right: -1.5rem;
+    opacity: 0.35;
+  }
+  .gardenButterfly {
+    right: 3%;
+  }
+  .gardenWreath {
+    width: 125vw;
+    opacity: 0.3;
+  }
+}
+@media (max-height: 700px) {
+  .mascotPresentation {
+    width: min(48vw, 13rem);
+    margin-top: 0.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .garden *,
+  .cuteAnimal *,
+  .garden,
+  .cuteAnimal {
+    animation: none;
+    transition: none;
+  }
+  .cuteGaze {
+    transform: none;
+  }
+  .gardenMotes,
+  .cuteHearts {
+    display: none;
+  }
+}
+
+.mascotPicker {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: #234735;
+  text-align: left;
+}
+.mascotPicker legend {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.mascotOptions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.mascotOption {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0.4rem 0.8rem;
+  border: 1.5px solid #dbdfce;
+  border-radius: 1.25rem;
+  background: #fffdf7;
+  cursor: pointer;
+  transition:
+    border-color 200ms,
+    background-color 200ms;
+}
+.mascotOption > svg {
+  width: min(100%, 7rem);
+  height: auto;
+  aspect-ratio: 320 / 350;
+}
+.mascotOption > span {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.mascotOption:has(input:checked) {
+  border-color: #c49a28;
+  background: #fff5cc;
+}
+.mascotOption:has(input:focus-visible) {
+  outline: 3px solid #62806a;
+  outline-offset: 3px;
+}
+.mascotOption:not(:has(input:checked)) svg * {
+  animation-play-state: paused;
+}
+.mascotRadio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  clip-path: inset(50%);
+}
+.mascotOption > .mascotCheck {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.4rem;
+  display: none;
+  color: #8a671b;
+}
+.mascotOption:has(input:checked) .mascotCheck {
+  display: block;
+}
+.mascotPickerCompact {
+  margin-top: 0.75rem;
+  max-width: 25rem;
+}
+.mascotPickerCompact legend {
+  margin-bottom: 0.5rem;
+  width: 100%;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.mascotPickerCompact .mascotOption {
+  border-radius: 1rem;
+  padding: 0.25rem 0.2rem 0.5rem;
+}
+.mascotPickerCompact .mascotOption > svg {
+  height: 4rem;
+  width: 4rem;
+}
+.mascotPickerCompact .mascotOption > span {
+  font-size: 0.7rem;
+}
+.garden[data-garden="letter"] .gardenLeftVine {
+  left: 0;
+  top: 1rem;
+}
+@media (max-width: 380px) {
+  .mascotOptions {
+    gap: 0.4rem;
+  }
+  .mascotOption > svg {
+    height: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascotOption {
+    transition: none;
+  }
+}
+
+.cover[data-mascot-choice="true"] .mascotPresentation {
+  width: min(50vw, 14rem);
+}
+
+/* Animalitos kawaii: color plano, contorno oscuro y proporciones pequeñas. */
+.cuteAnimal {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.cuteBody,
+.cuteHead,
+.cuteEarLeft,
+.cuteEarRight,
+.cuteEyes,
+.cutePawLeft,
+.cutePawRight,
+.cuteFlowers,
+.cuteTail,
+.cutePetals {
+  transform-box: fill-box;
+}
+.cuteBody {
+  transform-origin: 50% 100%;
+  animation: cuteBreathe 4s ease-in-out infinite;
+}
+.cuteHead {
+  transform-origin: 50% 95%;
+  animation: cuteCurious var(--pet-speed, 5s) ease-in-out infinite;
+}
+.cuteEarLeft {
+  transform-origin: 75% 100%;
+  animation: cuteEarHello var(--pet-speed, 5s) ease-in-out infinite;
+}
+.cuteEarRight {
+  transform-origin: 25% 100%;
+  animation: cuteEarHello var(--pet-speed, 5s) ease-in-out -1.5s infinite
+    reverse;
+}
+.cuteEyes {
+  transform-origin: center;
+  animation: cuteBlink 5.4s infinite;
+}
+.cuteGaze {
+  transform: translate(var(--look-x, 0px), var(--look-y, 0px));
+  transition: transform 180ms ease-out;
+}
+.cutePawLeft {
+  transform-origin: 10% 50%;
+  animation: cuteHug 4s ease-in-out infinite;
+}
+.cutePawRight {
+  transform-origin: 90% 50%;
+  animation: cuteHug 4s ease-in-out infinite reverse;
+}
+.cuteFlowers {
+  transform-origin: 50% 95%;
+  animation: cuteOffer 4s ease-in-out infinite;
+}
+.cutePetals {
+  transform-origin: center;
+  animation: cuteBloom 7s ease-in-out infinite alternate;
+}
+.cuteTail {
+  transform-origin: 0 80%;
+  animation: cuteTailWave var(--pet-speed, 5s) ease-in-out infinite;
+}
+.cuteAnimal[data-character="puppy"] .cuteTail {
+  animation-duration: 1.2s;
+}
+.cuteHearts {
+  animation: cuteLove 7s ease-in-out infinite;
+}
+@keyframes cuteBreathe {
+  50% {
+    transform: scale(1.02, 1.015);
+  }
+}
+@keyframes cuteCurious {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg) translateY(-2px);
+  }
+}
+@keyframes cuteEarHello {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0);
+  }
+  70% {
+    transform: rotate(-5deg);
+  }
+  80% {
+    transform: rotate(3deg);
+  }
+}
+@keyframes cuteBlink {
+  0%,
+  40%,
+  44%,
+  72%,
+  76%,
+  100% {
+    transform: scaleY(1);
+  }
+  42%,
+  74% {
+    transform: scaleY(0.05);
+  }
+}
+@keyframes cuteHug {
+  50% {
+    transform: rotate(3deg) translateY(-1px);
+  }
+}
+@keyframes cuteOffer {
+  50% {
+    transform: rotate(-2deg) translateY(-2px);
+  }
+}
+@keyframes cuteBloom {
+  to {
+    transform: rotate(3deg);
+  }
+}
+@keyframes cuteTailWave {
+  50% {
+    transform: rotate(-7deg);
+  }
+}
+@keyframes cuteLove {
+  0%,
+  15%,
+  95%,
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  40%,
+  70% {
+    opacity: 0.8;
+    transform: translateY(-5px);
+  }
+}
+.mascotOption > span:not(.mascotCheck) {
+  text-align: center;
+}
+.mascotPickerCompact .mascotOptions {
+  display: flex;
+  overflow-x: auto;
+  padding: 0.3rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: #e4c563 transparent;
+}
+.mascotPickerCompact .mascotOption {
+  flex: 0 0 4.4rem;
+  scroll-snap-align: center;
+}
+.mascotPickerHint {
+  margin: 0.4rem 0 0;
+  font-size: 0.7rem;
+  color: #6b765e;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .mascotOptions {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .mascotOption {
+    grid-column: span 2;
+  }
+  .mascotOption:last-child {
+    grid-column: 3 / span 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cuteAnimal *,
+  .cuteAnimal {
+    animation: none;
+    transition: none;
+  }
+  .cuteGaze {
+    transform: none;
+  }
+  .cuteHearts {
+    display: none;
+  }
+  .mascotPickerCompact .mascotOptions {
+    scroll-behavior: auto;
+  }
+}

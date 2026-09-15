@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { ArrowRight, Expand, Flower2, RotateCcw, Sparkles } from 'lucide-react';
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { useTemplates } from '@/modules/templates/hooks/useTemplate';
 
 const MESSAGES = [
   {
@@ -24,39 +26,31 @@ const MESSAGES = [
   },
 ];
 
-const MESSAGE_LIMIT = 250;
-
 export function ShowcaseSection() {
+  const [template, setTemplate] = useState<'free' | 'premium'>('free');
   const [audience, setAudience] = useState(0);
-  const [recipient, setRecipient] = useState(MESSAGES[0].name);
-  const [message, setMessage] = useState(MESSAGES[0].message);
-  const [preview, setPreview] = useState({ recipient, message });
+  const preview = useMemo(
+    () => ({
+      recipient: MESSAGES[audience].name,
+      message: MESSAGES[audience].message,
+    }),
+    [audience]
+  );
+  const { data: templates = [] } = useTemplates();
+  const selectedTemplate = templates.find(
+    (item) =>
+      item.isVisible &&
+      item.templateKey ===
+        (template === 'premium'
+          ? 'plantilla_giano_feat_leo'
+          : 'plantilla_gratuita')
+  );
   const [version, setVersion] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const audienceRef = useRef<HTMLFieldSetElement>(null);
 
-  // Mientras el texto todavía no llegó al ejemplo, el indicador muestra que
-  // hay algo en camino. Evita la duda de "¿se está actualizando o no?".
-  const isSyncing =
-    preview.recipient !== (recipient.trim() || MESSAGES[0].name) ||
-    preview.message !== (message.trim() || MESSAGES[0].message);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setPreview({
-        recipient: recipient.trim() || 'Sofía',
-        message: message.trim() || MESSAGES[0].message,
-      });
-    }, 600);
-    return () => clearTimeout(timeout);
-  }, [recipient, message]);
-
-  const selectAudience = (index: number) => {
-    setAudience(index);
-    setRecipient(MESSAGES[index].name);
-    setMessage(MESSAGES[index].message);
-  };
+  const selectAudience = (index: number) => setAudience(index);
 
   /**
    * Las ideas son un grupo de opciones excluyentes, así que se recorren con
@@ -93,7 +87,10 @@ export function ShowcaseSection() {
   useEffect(() => {
     if (loaded) {
       frameRef.current?.contentWindow?.postMessage(
-        { type: 'flower-demo:update', ...preview },
+        {
+          type: 'flower-demo:update',
+          ...preview,
+        },
         window.location.origin
       );
     }
@@ -140,8 +137,9 @@ export function ShowcaseSection() {
    * referencia. Con `preview` en las dependencias se desmontaba y volvia a
    * montar en cada tecleo, y un `ready` que llegara en ese hueco se perdia.
    */
-  const previewRef = useRef(preview);
-  previewRef.current = preview;
+  const update = preview;
+  const previewRef = useRef(update);
+  previewRef.current = update;
 
   useEffect(() => {
     const sendWhenReady = (event: MessageEvent<unknown>) => {
@@ -166,10 +164,6 @@ export function ShowcaseSection() {
     window.addEventListener('message', sendWhenReady);
     return () => window.removeEventListener('message', sendWhenReady);
   }, []);
-
-  const remaining = MESSAGE_LIMIT - message.length;
-  const counterLevel =
-    remaining === 0 ? 'full' : remaining <= 40 ? 'warn' : 'ok';
 
   return (
     <section
@@ -196,16 +190,39 @@ export function ShowcaseSection() {
             <em>algo hecho para ti.</em>
           </h2>
           <p data-reveal style={{ '--reveal-i': 2 } as CSSProperties}>
-            Esto sí se puede tocar. Escribe su nombre, abre el sobre y descubre
-            la dedicatoria.
+            Abre un ejemplo y descubre cómo se siente recibirlo. Después, crea
+            el tuyo con sus nombres, tus palabras y recuerdos.
           </p>
         </div>
+        <fieldset className="bloom-demo-templates">
+          <legend>Elige una plantilla para probar</legend>
+          {(
+            [
+              { value: 'free', label: 'Gratuita' },
+              { value: 'premium', label: 'Premium' },
+            ] as const
+          ).map((option) => (
+            <label key={option.value}>
+              <input
+                type="radio"
+                name="demo-template"
+                value={option.value}
+                checked={template === option.value}
+                onChange={() => {
+                  setLoaded(false);
+                  setTemplate(option.value);
+                }}
+              />
+              {option.label}
+            </label>
+          ))}
+        </fieldset>
         <div className="bloom-demo-grid">
           <div className="bloom-demo-editor" data-reveal="left">
             <div className="bloom-small-label">
-              <Sparkles size={16} /> DALE TU TOQUE
+              <Sparkles size={16} /> DESCUBRE EL REGALO
             </div>
-            <h3>Empieza por esa persona.</h3>
+            <h3>Una sorpresa para alguien especial.</h3>
             <p>
               Una idea para tu pareja, tu amistad de siempre o quien te hace
               sentir en casa.
@@ -230,41 +247,12 @@ export function ShowcaseSection() {
                 </button>
               ))}
             </fieldset>
-            <label className="bloom-field">
-              ¿Para quién son estas flores?
-              <input
-                name="demo-recipient"
-                value={recipient}
-                onChange={(event) => setRecipient(event.target.value)}
-                maxLength={25}
-                autoComplete="off"
-                placeholder="Escribe su nombre"
-              />
-            </label>
-            <label className="bloom-field">
-              Algo que quieras decirle
-              <textarea
-                name="demo-message"
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
-                maxLength={MESSAGE_LIMIT}
-                rows={4}
-              />
-            </label>
-            <div className="bloom-field-footer">
-              <span
-                className="bloom-sync"
-                data-state={isSyncing ? 'typing' : 'synced'}
-              >
-                {isSyncing ? 'Llevando tus cambios…' : 'Ejemplo actualizado'}
-              </span>
-              <span className="bloom-counter" data-level={counterLevel}>
-                {message.length}/{MESSAGE_LIMIT}
-              </span>
-            </div>
-            <a href="#gift-preview" className="bloom-mobile-preview-link">
-              Ver mis cambios en el regalo ↓
-            </a>
+            <blockquote className="my-6 border-l-2 border-[#D9B347] pl-5 text-lg leading-relaxed text-[#415542]">
+              “{preview.message}”
+              <footer className="mt-3 text-sm font-semibold text-[#597157]">
+                Para {preview.recipient}
+              </footer>
+            </blockquote>
             <div className="bloom-demo-tip">
               <Flower2 size={21} />
               <p>
@@ -272,9 +260,19 @@ export function ShowcaseSection() {
                 tus propias fotos.
               </p>
             </div>
-            <Link to="/template" className="bloom-button bloom-button-green">
-              Ahora quiero crear el mío <ArrowRight size={17} />
-            </Link>
+            {selectedTemplate ? (
+              <Link
+                to="/template/$id"
+                params={{ id: String(selectedTemplate.id) }}
+                className="bloom-button bloom-button-green"
+              >
+                Crear este regalo <ArrowRight size={17} />
+              </Link>
+            ) : (
+              <Link to="/template" className="bloom-button bloom-button-green">
+                Crear este regalo <ArrowRight size={17} />
+              </Link>
+            )}
             <small className="bloom-demo-disclaimer">
               Esta prueba no se guarda ni se publica.
             </small>
@@ -286,7 +284,7 @@ export function ShowcaseSection() {
           >
             <div className="bloom-preview-label">
               <span className="bloom-live-dot" /> DEDICATORIA INTERACTIVA{' '}
-              <span>Ejemplo</span>
+              <span>{template === 'premium' ? 'Premium' : 'Gratuita'}</span>
             </div>
             <div className="bloom-preview-window" data-loaded={loaded}>
               <div className="bloom-preview-toolbar">
@@ -311,22 +309,40 @@ export function ShowcaseSection() {
               )}
               <iframe
                 ref={attachFrame}
-                key={version}
-                src="/preview?embed=true"
-                title="Prueba tu dedicatoria: abre el sobre y descubre la carta"
+                key={`${template}-${version}`}
+                src={
+                  template === 'premium'
+                    ? '/preview?template=premium&embed=true'
+                    : '/preview?embed=true'
+                }
+                title={
+                  template === 'premium'
+                    ? 'Prueba tu dedicatoria premium: abre el regalo y recorre las secciones'
+                    : 'Prueba tu dedicatoria: abre el sobre y descubre la carta'
+                }
                 className="bloom-preview-frame"
                 loading="lazy"
               />
             </div>
             <Link
               to="/preview"
-              search={{ ...preview, embed: false }}
+              search={{
+                ...preview,
+                template,
+                embed: false,
+              }}
               target="_blank"
               rel="noopener noreferrer"
               className="bloom-expand"
             >
               <Expand size={15} /> Abrir ejemplo en pantalla completa
             </Link>
+            {template === 'premium' && (
+              <p className="bloom-preview-caption">
+                Toca tu animalito y desliza dentro del regalo para recorrer las
+                secciones.
+              </p>
+            )}
             <p className="bloom-preview-caption">
               La misma plantilla que recibe la otra persona.
               <br />
