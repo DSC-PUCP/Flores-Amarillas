@@ -15,6 +15,7 @@ import {
   setDir,
   stepGarden,
 } from './spring-game-engine';
+import { createDirInput, isJumpKey, sideForKey } from './spring-game-input';
 import { drawGarden } from './spring-game-renderer';
 
 type GameStatus = 'ready' | 'playing' | 'paused' | 'won';
@@ -103,23 +104,34 @@ export function SpringGame({ recipient }: { recipient: string }) {
     };
   }, [status, art]);
 
-  const heldKeys = useRef<Set<string>>(new Set());
+  const input = useRef(createDirInput());
 
-  // Keyboard: left/right held keys update dir each frame via interval
+  const applyDir = useCallback(() => {
+    setDir(gameRef.current, input.current.dir());
+  }, []);
+
+  const press = useCallback(
+    (side: 'left' | 'right', id: string | number) => {
+      input.current.press(side, id);
+      applyDir();
+    },
+    [applyDir]
+  );
+
+  const release = useCallback(
+    (side: 'left' | 'right', id: string | number) => {
+      input.current.release(side, id);
+      applyDir();
+    },
+    [applyDir]
+  );
+
+  // Al pausar, ganar o volver al inicio no puede quedar un lado apretado.
   useEffect(() => {
-    if (status !== 'playing') return;
-    const interval = setInterval(() => {
-      const keys = heldKeys.current;
-      if (keys.has('ArrowRight') || keys.has('d') || keys.has('D')) {
-        setDir(gameRef.current, 1);
-      } else if (keys.has('ArrowLeft') || keys.has('a') || keys.has('A')) {
-        setDir(gameRef.current, -1);
-      } else {
-        setDir(gameRef.current, 0);
-      }
-    }, 16);
-    return () => clearInterval(interval);
-  }, [status]);
+    if (status === 'playing') return;
+    input.current.releaseAll();
+    applyDir();
+  }, [status, applyDir]);
 
   return (
     <section
@@ -141,41 +153,24 @@ export function SpringGame({ recipient }: { recipient: string }) {
         className={styles.console}
         onKeyDown={(e) => {
           if (e.target !== consoleRef.current) return;
-          if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key) && !e.repeat) {
+          if (isJumpKey(e.key) && !e.repeat) {
             e.preventDefault();
             startOrJump();
           }
-          if (['ArrowRight', 'd', 'D', 'ArrowLeft', 'a', 'A'].includes(e.key)) {
+          const side = sideForKey(e.key);
+          if (side) {
             e.preventDefault();
-            heldKeys.current.add(e.key);
-            if (['ArrowRight', 'd', 'D'].includes(e.key)) {
-              setDir(gameRef.current, 1);
-            } else {
-              setDir(gameRef.current, -1);
-            }
+            press(side, e.key.toLowerCase());
           }
           if (e.key === 'Escape' && status === 'playing') setStatus('paused');
         }}
         onKeyUp={(e) => {
-          heldKeys.current.delete(e.key);
-          if (['ArrowRight', 'd', 'D', 'ArrowLeft', 'a', 'A'].includes(e.key)) {
-            const keys = heldKeys.current;
-            if (keys.has('ArrowRight') || keys.has('d') || keys.has('D')) {
-              setDir(gameRef.current, 1);
-            } else if (
-              keys.has('ArrowLeft') ||
-              keys.has('a') ||
-              keys.has('A')
-            ) {
-              setDir(gameRef.current, -1);
-            } else {
-              setDir(gameRef.current, 0);
-            }
-          }
+          const side = sideForKey(e.key);
+          if (side) release(side, e.key.toLowerCase());
         }}
         tabIndex={0}
         role="application"
-        aria-label="Consola. ← → para moverse; Espacio o ↑ para saltar; Escape para pausar"
+        aria-label="Consola. Manten ◀ o ▶ para caminar y toca A para saltar; con teclado, ← → para moverse, Espacio o ↑ para saltar y Escape para pausar"
       >
         {/* ── Top label bar ── */}
         <div className={styles.topLine}>
@@ -219,7 +214,7 @@ export function SpringGame({ recipient }: { recipient: string }) {
                       return;
                     }
                     startOrJump();
-                    consoleRef.current?.focus();
+                    consoleRef.current?.focus({ preventScroll: true });
                   }}
                 >
                   {assetError
@@ -257,7 +252,7 @@ export function SpringGame({ recipient }: { recipient: string }) {
                 onPointerDown={(e) => {
                   e.preventDefault();
                   startOrJump();
-                  consoleRef.current?.focus();
+                  consoleRef.current?.focus({ preventScroll: true });
                 }}
               >
                 ▲
@@ -271,11 +266,19 @@ export function SpringGame({ recipient }: { recipient: string }) {
                 aria-label="Mover izquierda"
                 onPointerDown={(e) => {
                   e.preventDefault();
-                  setDir(gameRef.current, -1);
-                  consoleRef.current?.focus();
+                  // Capturar el puntero deja que el dedo se deslice fuera del
+                  // boton sin soltar la direccion, como un pad de verdad. Es
+                  // una mejora, no un requisito: si el navegador la rechaza el
+                  // pad sigue andando con pointerup.
+                  try {
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  } catch {}
+                  press('left', e.pointerId);
+                  consoleRef.current?.focus({ preventScroll: true });
                 }}
-                onPointerUp={() => setDir(gameRef.current, 0)}
-                onPointerLeave={() => setDir(gameRef.current, 0)}
+                onPointerUp={(e) => release('left', e.pointerId)}
+                onPointerCancel={(e) => release('left', e.pointerId)}
+                onLostPointerCapture={(e) => release('left', e.pointerId)}
               >
                 ◀
               </button>
@@ -286,11 +289,19 @@ export function SpringGame({ recipient }: { recipient: string }) {
                 aria-label="Mover derecha"
                 onPointerDown={(e) => {
                   e.preventDefault();
-                  setDir(gameRef.current, 1);
-                  consoleRef.current?.focus();
+                  // Capturar el puntero deja que el dedo se deslice fuera del
+                  // boton sin soltar la direccion, como un pad de verdad. Es
+                  // una mejora, no un requisito: si el navegador la rechaza el
+                  // pad sigue andando con pointerup.
+                  try {
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  } catch {}
+                  press('right', e.pointerId);
+                  consoleRef.current?.focus({ preventScroll: true });
                 }}
-                onPointerUp={() => setDir(gameRef.current, 0)}
-                onPointerLeave={() => setDir(gameRef.current, 0)}
+                onPointerUp={(e) => release('right', e.pointerId)}
+                onPointerCancel={(e) => release('right', e.pointerId)}
+                onLostPointerCapture={(e) => release('right', e.pointerId)}
               >
                 ▶
               </button>
@@ -303,7 +314,7 @@ export function SpringGame({ recipient }: { recipient: string }) {
                 aria-label="Abajo"
                 onPointerDown={(e) => {
                   e.preventDefault();
-                  consoleRef.current?.focus();
+                  consoleRef.current?.focus({ preventScroll: true });
                 }}
               >
                 ▼
@@ -313,8 +324,8 @@ export function SpringGame({ recipient }: { recipient: string }) {
           </div>
 
           <span className={styles.controlHint}>
-            ← → MOVER
-            <br />↑ SALTAR
+            MANTÉN ◀ ▶
+            <br />A SALTA
           </span>
 
           {/* A / B buttons */}
@@ -335,7 +346,7 @@ export function SpringGame({ recipient }: { recipient: string }) {
               onPointerDown={(e) => {
                 e.preventDefault();
                 startOrJump();
-                consoleRef.current?.focus();
+                consoleRef.current?.focus({ preventScroll: true });
               }}
               onClick={(e) => {
                 if (e.detail === 0) startOrJump();
@@ -388,7 +399,7 @@ export function SpringGame({ recipient }: { recipient: string }) {
         ) : (
           <>
             <p>Ayúdalo a llegar — salta los tronquitos.</p>
-            <span>← → moverse · ESPACIO / ↑ saltar · B pausa · ~45 s</span>
+            <span>Mantén ◀ ▶ para caminar · A salta · B pausa · ~45 s</span>
           </>
         )}
       </div>

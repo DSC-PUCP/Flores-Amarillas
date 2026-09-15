@@ -255,7 +255,10 @@
   font-size: 11px;
   line-height: 1;
   cursor: pointer;
-  touch-action: manipulation;
+  /* none, no manipulation: hay que poder mantener el boton y deslizar el dedo
+     sin que el navegador se lleve el gesto como scroll y cancele la pulsacion. */
+  touch-action: none;
+  -webkit-touch-callout: none;
   display: grid;
   place-items: center;
   user-select: none;
@@ -314,7 +317,9 @@
   color: #f8e0fc;
   font: 700 16px monospace;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
   letter-spacing: 0;
 }
 .actionButtons button:active {
