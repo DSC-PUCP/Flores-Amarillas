@@ -8,6 +8,12 @@ export interface GardenArt {
 const image = (src: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
     const asset = new Image();
+    // Obligatorio, y tiene que ir ANTES de src: los sprites se sirven desde
+    // Supabase Storage, o sea desde otro origen. Sin pedirlos en modo CORS el
+    // navegador "mancha" el canvas donde se dibujan y getImageData -el recorte
+    // de los personajes en frame()- revienta con SecurityError. Storage
+    // responde Access-Control-Allow-Origin: *, asi que con esto alcanza.
+    asset.crossOrigin = 'anonymous';
     asset.onload = () => resolve(asset);
     asset.onerror = () => reject(new Error('No se pudo cargar el jardín.'));
     asset.src = src;
