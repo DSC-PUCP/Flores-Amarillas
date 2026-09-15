@@ -14,3 +14,8 @@ supabase/.branches
 .output
 .vinxi
 .env.production
+.idea/
+
+# Material de transito hacia Supabase Storage, nunca versionado.
+bucket-*/
+SUBIR-A-SUPABASE/
