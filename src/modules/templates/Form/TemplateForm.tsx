@@ -268,29 +268,22 @@ export function TemplateForm() {
                 crearlo.
               </p>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="outline" onClick={() => editStep(currentStep)}>
-                Seguir editando
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={createLovepageMutation.isPending}
-                className="bg-[#183E32] text-white hover:bg-[#285642]"
-              >
-                {createLovepageMutation.isPending ? (
-                  <Loader2 size={16} className="mr-2 animate-spin" />
-                ) : (
-                  <Check size={16} className="mr-2" />
-                )}{' '}
-                Crear mi regalo
-              </Button>
-            </div>
+            {/* Generar vive abajo, junto a los ajustes: aquí competía con
+                "Seguir editando" y se pulsaba sin haber revisado nada. */}
+            <Button variant="outline" onClick={() => editStep(currentStep)}>
+              Seguir editando
+            </Button>
           </section>
         )}
+        {/* En la revisión no hay nada que "editar": el móvil muestra los dos
+            paneles seguidos para que generar quede siempre a la vista. */}
         <div
           role="tablist"
           aria-label="Editor del regalo"
-          className="grid grid-cols-2 gap-2 rounded-2xl bg-[#183E32]/5 p-1.5 lg:hidden"
+          className={cn(
+            'grid grid-cols-2 gap-2 rounded-2xl bg-[#183E32]/5 p-1.5 lg:hidden',
+            reviewing && 'hidden'
+          )}
         >
           {(['edit', 'preview'] as const).map((tab) => (
             <button
@@ -326,28 +319,51 @@ export function TemplateForm() {
             aria-label="Personalizar tu regalo"
             className={cn(
               'min-w-0 space-y-6',
-              mobileTab !== 'edit' && 'hidden lg:block'
+              !reviewing && mobileTab !== 'edit' && 'hidden lg:block'
             )}
           >
             {reviewing ? (
-              <div className="rounded-2xl border border-[#183E32]/15 bg-white p-6">
-                <h2 className="font-display text-2xl">
-                  ¿Quieres ajustar algo?
-                </h2>
-                <div className="mt-4 grid gap-2">
-                  {steps.map((step, index) => (
-                    <button
-                      key={step.title}
-                      type="button"
-                      onClick={() => editStep(index)}
-                      className="flex min-h-12 items-center justify-between rounded-xl border border-[#183E32]/10 px-4 text-left text-sm hover:bg-[#FFF8D7]"
-                    >
-                      Editar {step.title}
-                      <Pencil size={14} />
-                    </button>
-                  ))}
+              <>
+                <div className="rounded-2xl border border-[#183E32]/15 bg-white p-6">
+                  <h2 className="font-display text-2xl">
+                    ¿Quieres ajustar algo?
+                  </h2>
+                  <div className="mt-4 grid gap-2">
+                    {steps.map((step, index) => (
+                      <button
+                        key={step.title}
+                        type="button"
+                        onClick={() => editStep(index)}
+                        className="flex min-h-12 items-center justify-between rounded-xl border border-[#183E32]/10 px-4 text-left text-sm hover:bg-[#FFF8D7]"
+                      >
+                        Editar {step.title}
+                        <Pencil size={14} />
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+                {/* El final del recorrido: después de repasar los ajustes, lo
+                    único que queda por hacer. Por eso lleva borde entero y
+                    sombra sólida, y no el gris del resto de tarjetas. */}
+                <div className="rounded-2xl border-2 border-[#183E32] bg-[#FFF8D7] p-6 shadow-[0_6px_0_#183E32]">
+                  <h2 className="font-display text-2xl">¿Todo listo?</h2>
+                  <p className="mt-1 text-sm text-[#597157]">
+                    Guardamos tu regalo y te damos el enlace para compartirlo.
+                  </p>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={createLovepageMutation.isPending}
+                    className="mt-5 h-14 w-full rounded-xl bg-[#183E32] text-base font-semibold text-white shadow-md transition-transform hover:bg-[#285642] active:scale-[0.98] disabled:opacity-70"
+                  >
+                    {createLovepageMutation.isPending ? (
+                      <Loader2 size={18} className="mr-2 animate-spin" />
+                    ) : (
+                      <Check size={18} className="mr-2" />
+                    )}{' '}
+                    Generar mi regalo
+                  </Button>
+                </div>
+              </>
             ) : (
               <>
                 {/* Progress Indicator */}
@@ -455,7 +471,7 @@ export function TemplateForm() {
             aria-label="Vista previa del regalo"
             className={cn(
               'min-w-0 lg:sticky lg:top-6',
-              mobileTab !== 'preview' && 'hidden lg:block'
+              !reviewing && mobileTab !== 'preview' && 'hidden lg:block'
             )}
           >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -484,7 +500,7 @@ export function TemplateForm() {
             <p className="mt-3 text-xs leading-relaxed text-[#597157]">
               {reviewing
                 ? 'Tus textos y fotos, tal como los recibirá esa persona.'
-                : 'Los cambios se muestran aquí. Tu regalo se guarda cuando pulses “Crear mi regalo”.'}
+                : 'Los cambios se muestran aquí. Tu regalo se guarda cuando pulses “Generar mi regalo”.'}
             </p>
           </section>
         </div>

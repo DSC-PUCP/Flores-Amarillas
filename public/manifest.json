@@ -1,15 +1,26 @@
 {
-  "short_name": "Start Template",
-  "name": "TanStack Start Template",
+  "short_name": "Primavera Digital",
+  "name": "Primavera Digital",
   "icons": [
     {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
       "src": "favicon.ico",
-      "sizes": "48x48 32x32 16x16",
+      "sizes": "64x64",
       "type": "image/x-icon"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#f7c325",
+  "background_color": "#fffbf2"
 }

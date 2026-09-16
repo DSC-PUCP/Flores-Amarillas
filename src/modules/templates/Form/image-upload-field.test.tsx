@@ -146,7 +146,7 @@ describe('fotos del formulario', () => {
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
     expect(mutate).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     const input = mutate.mock.calls[0][0];
     expect(input.files).toEqual([
       { key: 'timelinePhotos', file: [first] },
@@ -183,7 +183,7 @@ describe('fotos del formulario', () => {
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
     expect(mutate).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     expect(mutate.mock.calls[0][0].files).toEqual([]);
     expect(mutate.mock.calls[0][0].configJson.timelinePhotos).toEqual([]);
   });

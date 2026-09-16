@@ -77,7 +77,7 @@ describe('animalito de la dedicatoria premium', () => {
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
     expect(mutate).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     expect(mutate).toHaveBeenCalledWith(
       {
         templateId: 2,
@@ -97,7 +97,7 @@ describe('animalito de la dedicatoria premium', () => {
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
     expect(mutate).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({ configJson: { mascot: 'panda' } }),
       expect.any(Object)
@@ -115,7 +115,7 @@ describe('animalito de la dedicatoria premium', () => {
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
     expect(mutate).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({ configJson: { mascot: 'rabbit' } }),
       expect.any(Object)
@@ -200,13 +200,13 @@ describe('animalito de la dedicatoria premium', () => {
     expect(files[0].multiple).toBe(false);
     expect(screen.queryByText('Timeline de fotos')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-    expect(screen.getByLabelText<HTMLInputElement>(/Desde qué día/).value).toBe(
+    expect(screen.getByLabelText<HTMLInputElement>(/¿Cuándo fue su primera primavera?/).value).toBe(
       ''
     );
     fireEvent.click(
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Crear mi regalo' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({
         configJson: {

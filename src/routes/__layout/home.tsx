@@ -22,7 +22,7 @@ const OG_IMAGE = env.VITE_SERVER_URL
 export const Route = createFileRoute('/__layout/home')({
   head: () => ({
     meta: [
-      { title: 'Flores amarillas, palabras tuyas · Dedicatorias en Flor' },
+      { title: 'Flores amarillas, palabras tuyas · Primavera Digital' },
       {
         name: 'description',
         content:
@@ -40,10 +40,10 @@ export const Route = createFileRoute('/__layout/home')({
       { property: 'og:image', content: OG_IMAGE },
       {
         property: 'og:image:alt',
-        content: 'Ramo de girasoles amarillos de Dedicatorias en Flor',
+        content: 'Ramo de girasoles amarillos de Primavera Digital',
       },
       { property: 'og:type', content: 'website' },
-      { property: 'og:site_name', content: 'Dedicatorias en Flor' },
+      { property: 'og:site_name', content: 'Primavera Digital' },
       {
         name: 'twitter:title',
         content: 'Flores amarillas. Y todo eso que sientes.',

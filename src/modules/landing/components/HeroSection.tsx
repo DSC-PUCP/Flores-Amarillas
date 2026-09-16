@@ -77,7 +77,7 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
           >
             <button
               type="button"
-              className="bloom-button bloom-button-green"
+              className="bloom-button bloom-button-cta"
               onClick={onCreateGift}
             >
               Crear mi regalo <ArrowRight size={18} />

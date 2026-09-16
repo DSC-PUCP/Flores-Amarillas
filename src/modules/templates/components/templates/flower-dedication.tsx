@@ -482,7 +482,7 @@ export function FlowerDedication({
             </section>
           )}
           <p className="mt-12 pb-3 text-center text-[10px] font-semibold tracking-[0.18em] uppercase text-[#597157]">
-            Hecho con cariño · Dedicatorias en Flor
+            Hecho con cariño · Primavera Digital
           </p>
         </div>
       ) : (
@@ -592,7 +592,7 @@ export function FlowerDedication({
             </p>
             {!compactPreview && (
               <p className="mt-7 text-[9px] font-semibold tracking-[0.17em] uppercase text-[#6F7D5A]">
-                Flores amarillas · Dedicatorias en Flor
+                Flores amarillas · Primavera Digital
               </p>
             )}
           </div>

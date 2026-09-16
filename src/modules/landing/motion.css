@@ -212,6 +212,128 @@
   }
 }
 
+/**
+ * CTA principal: respira en reposo, se alza cuando te acercas y se hunde al
+ * pulsar.
+ *
+ * El halo se anima con `box-shadow` y no con un pseudoelemento porque
+ * `.bloom-button` recorta con `overflow: hidden` para el destello: un anillo
+ * hijo quedaria cortado en el borde de la pastilla. La sombra se pinta fuera
+ * de la caja, asi que sobrevive al recorte.
+ */
+.bloom-button-cta {
+  animation: bloom-cta-latido 3.6s var(--bloom-ease) 1.4s infinite;
+}
+@keyframes bloom-cta-latido {
+  0%,
+  55%,
+  100% {
+    box-shadow:
+      0 6px 0 #1e3b2a,
+      0 18px 30px -16px #a7790080,
+      0 0 0 0 #f7c32500;
+  }
+  62% {
+    box-shadow:
+      0 6px 0 #1e3b2a,
+      0 18px 30px -16px #a7790080,
+      0 0 0 0 #f7c325b0;
+  }
+  85%,
+  99% {
+    box-shadow:
+      0 6px 0 #1e3b2a,
+      0 18px 30px -16px #a7790080,
+      0 0 0 18px #f7c32500;
+  }
+}
+
+/* El destello del verde, pero mas seguido: este boton si grita un poco. */
+.bloom-button-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    #fffdf288 45%,
+    #fffdf2bb 55%,
+    transparent
+  );
+  transform: translateX(-160%) skewX(-18deg);
+  animation: bloom-cta-brillo 5.2s ease-in-out 1.6s infinite;
+  pointer-events: none;
+}
+@keyframes bloom-cta-brillo {
+  0%,
+  72% {
+    transform: translateX(-160%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(330%) skewX(-18deg);
+  }
+}
+
+/* Al acercar el puntero: crece, se alza y la flecha tira hacia adelante. */
+.bloom-button-cta:hover,
+.bloom-button-cta:focus-visible {
+  transform: translateY(-3px) scale(1.035);
+  /* El latido dejaria la sombra a medias justo cuando el boton se alza. */
+  animation-play-state: paused;
+}
+.bloom-button-cta:hover svg {
+  animation: bloom-cta-flecha 0.9s var(--bloom-ease) infinite;
+}
+@keyframes bloom-cta-flecha {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/**
+ * Al pulsar: la tecla baja hasta su sombra y una onda clara sale del centro.
+ * Se nota aunque el clic navegue enseguida, que es el caso normal aqui.
+ */
+.bloom-button-cta:active {
+  transform: translateY(6px) scale(0.985);
+  box-shadow:
+    0 0 0 #1e3b2a,
+    0 6px 12px -10px #a7790080;
+  transition-duration: 0.07s;
+}
+.bloom-button-cta::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: #fffdf2;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+.bloom-button-cta:active::before {
+  animation: bloom-cta-onda 0.55s var(--bloom-ease);
+}
+@keyframes bloom-cta-onda {
+  0% {
+    opacity: 0.6;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(26);
+  }
+}
+
 .bloom-text-link svg {
   transition: transform var(--bloom-fast) var(--bloom-ease);
 }
@@ -1042,6 +1164,15 @@
   }
   .bloom-mobile-menu a {
     opacity: 1;
+    transform: none;
+  }
+  /* Sin latido ni destello: queda la tecla amarilla, que ya destaca sola. */
+  .bloom-button-cta::after,
+  .bloom-button-cta::before {
+    display: none;
+  }
+  .bloom-button-cta:hover,
+  .bloom-button-cta:focus-visible {
     transform: none;
   }
 }

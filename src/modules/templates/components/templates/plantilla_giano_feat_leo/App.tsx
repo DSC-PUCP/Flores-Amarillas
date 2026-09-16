@@ -63,7 +63,7 @@ export const plantillaGianoFeatLeoForm = [
       {
         name: 'startDate',
         label:
-          '¿Cuándo empezó su historia? (opcional: el contador parte de ese día)',
+          '¿Cuándo fue su primera primavera? (opcional: el contador parte de ese día)',
         type: 'date',
         required: false,
       },

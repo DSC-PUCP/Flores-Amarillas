@@ -1779,3 +1779,60 @@
     text-underline-offset: 4px;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* CTA principal: "Crear mi regalo"                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Es el unico boton amarillo con tinta verde de toda la pagina. El verde de
+ * `.bloom-button-green` se confunde con los titulares sobre el papel crema, y
+ * este tiene que ganar la mirada a la primera: es la accion por la que existe
+ * la landing.
+ *
+ * El bloque va al final del archivo a proposito. Las reglas responsivas de mas
+ * arriba usan `.bloom-hero .bloom-button`, que pesa lo mismo que
+ * `.bloom-site .bloom-button-cta`; al declararse despues, el CTA conserva su
+ * tamano grande en movil en vez de encoger como los botones secundarios.
+ */
+.bloom-site .bloom-button-cta,
+.bloom-shell .bloom-button-cta {
+  min-height: 64px;
+  padding: 19px 36px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #1e3b2a;
+  background: linear-gradient(168deg, #ffe37a, #f7c325 52%, #efb30e);
+  border: 2px solid #1e3b2a;
+  /* Sombra solida abajo: le da cuerpo de tecla, que es lo que pide pulsarlo. */
+  box-shadow:
+    0 6px 0 #1e3b2a,
+    0 18px 30px -16px #a7790080;
+}
+.bloom-site .bloom-button-cta:hover,
+.bloom-shell .bloom-button-cta:hover {
+  background: linear-gradient(168deg, #fff0a8, #ffd23d 52%, #f5bd15);
+  box-shadow:
+    0 9px 0 #1e3b2a,
+    0 26px 38px -18px #a7790099;
+}
+.bloom-button-cta:focus-visible {
+  outline: 3px solid #1e3b2a;
+  outline-offset: 3px;
+}
+@media (max-width: 700px) {
+  .bloom-site .bloom-button-cta,
+  .bloom-shell .bloom-button-cta {
+    min-height: 58px;
+    padding: 17px 26px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 370px) {
+  .bloom-site .bloom-button-cta,
+  .bloom-shell .bloom-button-cta {
+    padding-inline: 20px;
+    font-size: 13px;
+  }
+}

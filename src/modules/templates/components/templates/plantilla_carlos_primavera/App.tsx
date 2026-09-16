@@ -24,7 +24,7 @@ export const plantillaCarlosPrimaveraForm = [
       },
       {
         name: 'startDate',
-        label: '¿Cuándo comenzó su historia?',
+        label: '¿Cuándo fue su primera primavera?',
         type: 'date',
         required: true,
       },

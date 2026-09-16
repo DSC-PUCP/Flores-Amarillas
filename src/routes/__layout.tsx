@@ -109,7 +109,7 @@ function LayoutComponent() {
               <Flower2 />
             </span>
             <span>
-              Dedicatorias <em>en Flor</em>
+              Primavera <em>Digital</em>
             </span>
           </Link>
           <nav className="bloom-nav-links" aria-label="Navegación principal">
@@ -195,7 +195,7 @@ function LayoutComponent() {
               <Flower2 />
             </span>
             <span>
-              Dedicatorias <em>en Flor</em>
+              Primavera <em>Digital</em>
             </span>
           </Link>
           <p>© 2026 · Pequeños detalles. Bonitas formas de querer.</p>

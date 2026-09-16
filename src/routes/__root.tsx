@@ -22,7 +22,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Regalo Especial' },
+      { title: 'Primavera Digital' },
       {
         name: 'description',
         content:
@@ -40,7 +40,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       { property: 'og:image:alt', content: 'Regalo especial de amor' },
       { property: 'og:type', content: 'article' },
-      { property: 'og:site_name', content: 'Regalo Especial' },
+      { property: 'og:site_name', content: 'Primavera Digital' },
       { property: 'og:locale', content: 'es_ES' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: 'Con todo mi cariño' },
@@ -55,6 +55,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
+      // El SVG manda en los navegadores que lo entienden; el .ico queda de
+      // respaldo para los que no (y para la pestana anclada de Safari).
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon.ico', sizes: '64x64' },
+      { rel: 'apple-touch-icon', href: '/favicon-64.png' },
       { rel: 'manifest', href: '/manifest.json' },
       { rel: 'stylesheet', href: appCss },
     ],

@@ -69,7 +69,7 @@ export const plantillaGratuitaForm = [
     fields: [
       {
         name: 'startDate',
-        label: '¿Desde qué día quieres contar? (opcional)',
+        label: '¿Cuándo fue su primera primavera? (opcional)',
         type: 'date',
         required: false,
       },

@@ -34,7 +34,7 @@ export const Route = createFileRoute('/preview')({
   validateSearch: previewSearchSchema,
   head: () => ({
     meta: [
-      { title: 'Prueba una dedicatoria · Dedicatorias en Flor' },
+      { title: 'Prueba una dedicatoria · Primavera Digital' },
       { name: 'robots', content: 'noindex, nofollow' },
     ],
   }),

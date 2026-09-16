@@ -56,7 +56,7 @@ export function LandingContent({ onCreateGift }: LandingContentProps) {
           </h2>
           <Link
             to="/template"
-            className="bloom-button bloom-button-green"
+            className="bloom-button bloom-button-cta"
             data-reveal="grow"
             style={{ '--reveal-i': 2 } as CSSProperties}
           >
