@@ -20,6 +20,7 @@ export const plantillaJardinPremiumForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Ana (texto de prueba)',
       },
       {
         name: 'personA',
@@ -27,6 +28,7 @@ export const plantillaJardinPremiumForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Carlos (texto de prueba)',
       },
     ],
   },
@@ -42,6 +44,8 @@ export const plantillaJardinPremiumForm = [
         type: 'textarea',
         max_length: 400,
         required: true,
+        default:
+          'Planté un jardín entero para decirte algo muy simple: me alegra que estés. (texto de prueba)',
       },
     ],
   },
@@ -62,6 +66,8 @@ export const plantillaJardinPremiumForm = [
         type: 'textarea',
         max_length: 600,
         required: false,
+        default:
+          'Si abriste el cofre es porque insististe, y eso es justo lo que me gusta de ti. (texto de prueba)',
       },
     ],
   },

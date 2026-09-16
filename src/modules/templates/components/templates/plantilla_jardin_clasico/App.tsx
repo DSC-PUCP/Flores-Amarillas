@@ -16,6 +16,7 @@ export const plantillaJardinClasicoForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Ana (texto de prueba)',
       },
       {
         name: 'personA',
@@ -23,6 +24,7 @@ export const plantillaJardinClasicoForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Carlos (texto de prueba)',
       },
     ],
   },
@@ -38,6 +40,8 @@ export const plantillaJardinClasicoForm = [
         type: 'textarea',
         max_length: 400,
         required: true,
+        default:
+          'Planté un jardín entero para decirte algo muy simple: me alegra que estés. (texto de prueba)',
       },
     ],
   },

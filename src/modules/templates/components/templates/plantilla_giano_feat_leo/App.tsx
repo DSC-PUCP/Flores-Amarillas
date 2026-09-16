@@ -35,6 +35,7 @@ export const plantillaGianoFeatLeoForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Carlos (texto de prueba)',
       },
       {
         name: 'personB',
@@ -42,6 +43,7 @@ export const plantillaGianoFeatLeoForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Ana (texto de prueba)',
       },
       {
         name: 'mascot',
@@ -119,6 +121,8 @@ export const plantillaGianoFeatLeoForm = [
         type: 'textarea',
         max_length: 1200,
         required: true,
+        default:
+          'Gracias por cada primavera contigo, por las de verdad y por las que nos inventamos un martes cualquiera. (texto de prueba)',
       },
     ],
   },
@@ -152,6 +156,7 @@ export const plantillaGianoFeatLeoForm = [
         type: 'string',
         max_length: 50,
         required: false,
+        default: 'Un desayuno en la cama (texto de prueba)',
       },
       {
         name: 'couponPhotos',
@@ -174,6 +179,7 @@ export const plantillaGianoFeatLeoForm = [
         type: 'string',
         max_length: 80,
         required: false,
+        default: 'Siempre tuyo (texto de prueba)',
       },
     ],
   },
