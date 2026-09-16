@@ -154,6 +154,7 @@ export function SongPicker({ field, value, onChange }: Props) {
           source={editor.source}
           initial={editor.initial}
           maxClipSeconds={maxClipSeconds}
+          lyrics={field.lyrics ?? true}
           onSave={save}
           onCancel={() => setEditor(null)}
         />

@@ -53,10 +53,18 @@ describe('handmade spring card', () => {
 
   it('navigates from the welcome to the card and back', () => {
     render(<SpringWelcome recipient="Ana" cardMessage="Una frase especial" />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Ir a Nuestra música' })
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Ir a Nosotros dos' }));
     expect(screen.getByRole('heading', { name: 'Nosotros dos' })).toBeTruthy();
+    // La musica quedo entre la portada y la carta corta, asi que volver a la
+    // primera pantalla son dos pasos.
     fireEvent.click(
-      screen.getByRole('button', { name: 'Ir a la primera pantalla' })
+      screen.getByRole('button', { name: 'Volver a Nuestra música' })
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Volver a la portada' })
     );
     expect(screen.getByText('Ana')).toBeTruthy();
   });

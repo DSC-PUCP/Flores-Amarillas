@@ -91,6 +91,38 @@
   overflow-wrap: anywhere;
   animation: reveal 0.85s ease-out 2.15s both;
 }
+/* ── Cierre ──────────────────────────────────────────────────
+   Reusa el marco floral y los tiempos de la portada: el regalo
+   termina donde empezo. */
+.farewell {
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(2.1rem, 5vw, 4.2rem);
+  line-height: 1.22;
+  margin: 0;
+  text-wrap: balance;
+  animation: reveal 0.85s ease-out 0.5s both;
+}
+.farewellLove {
+  display: block;
+  color: #a38635;
+  font-family: "League Spartan", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.4vw, 2.8rem);
+  letter-spacing: -0.03em;
+  margin-top: 1.4rem;
+  /* Aqui va un nombre, no una frase nuestra: uno largo y sin espacios se
+     saldria de la caja. La portada ya se protege igual. */
+  overflow-wrap: anywhere;
+  animation: reveal 0.85s ease-out 1.1s both;
+}
+.farewellSign {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  margin: 2rem 0 0;
+  opacity: 0.75;
+  animation: reveal 0.8s ease-out 1.6s both;
+}
+
 .petals {
   position: fixed;
   inset: 0;

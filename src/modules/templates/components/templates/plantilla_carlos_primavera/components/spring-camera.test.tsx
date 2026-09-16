@@ -84,30 +84,63 @@ describe('spring camera', () => {
     expect(slider.getAttribute('aria-valuenow')).toBe('0');
   });
 
-  it('requires four independent uploads, four details, and the final phrase in step three', () => {
-    const fields = plantillaCarlosPrimaveraForm[2].fields;
-    expect(
-      fields.filter((field) => field.type === 'image' && field.required)
-    ).toHaveLength(4);
-    expect(
-      fields.filter((field) => field.type === 'textarea' && field.required)
-    ).toHaveLength(5);
+  it('pide las cuatro fotos en una sola casilla y ya no pide un texto por foto', () => {
+    const paso = plantillaCarlosPrimaveraForm.find((step) =>
+      step.title.includes('Recuerditos')
+    );
+    if (!paso) throw new Error('Falta la pantalla de recuerdos');
+    const fields = paso.fields;
+    const lista = fields.find((field) => field.type === 'array');
+    expect(lista).toMatchObject({
+      name: 'memoryPhotos',
+      item_type: 'image',
+      max_items: 4,
+      required: true,
+    });
+    // Ni una casilla de imagen suelta ni las cuatro frases por foto: solo
+    // queda la frase final de la pantalla. Se compara sobre los tipos ya
+    // ensanchados: si no, TypeScript avisa de que 'image' ya no existe en esta
+    // pantalla, que es justamente lo que se quiere comprobar.
+    const tipos: string[] = fields.map((field) => field.type);
+    expect(tipos).not.toContain('image');
+    expect(tipos.filter((tipo) => tipo === 'textarea')).toHaveLength(1);
   });
 
-  it('keeps legacy photos in order and does not duplicate missing photos', () => {
-    const photos = getCameraMemories({
+  it('lee la lista nueva y sigue entendiendo las paginas ya publicadas', () => {
+    // Lo que guarda el formulario de hoy.
+    const nuevas = getCameraMemories({
+      memoryPhotos: ['a.jpg', 'b.jpg', 'c.jpg', 'd.jpg'],
+    });
+    expect(nuevas.map((photo) => photo.image)).toEqual([
+      'a.jpg',
+      'b.jpg',
+      'c.jpg',
+      'd.jpg',
+    ]);
+
+    // Una pagina creada con el formulario anterior: campos sueltos y la lista
+    // heredada de la plantilla de la que salio esta.
+    const viejas = getCameraMemories({
       timelinePhotos: ['old-1.jpg', 'old-2.jpg'],
       memoryPhoto1: 'new-1.jpg',
-      memoryDetail1: 'Our day',
     });
-    expect(photos).toHaveLength(4);
-    expect(photos[0]).toEqual({ id: 1, image: 'new-1.jpg', detail: 'Our day' });
-    expect(photos[1].image).toBe('old-2.jpg');
-    expect(photos[2].image).toBe('');
+    expect(viejas).toHaveLength(4);
+    expect(viejas[0].image).toBe('new-1.jpg');
+    expect(viejas[1].image).toBe('old-2.jpg');
+    expect(viejas[2].image).toBe('');
+  });
+
+  it('todas las fotos llevan el mismo texto fijo, que ya no se pide', () => {
+    const photos = getCameraMemories({ memoryPhotos: ['a.jpg'] });
+    expect(photos[0].detail).toBeTruthy();
+    expect(new Set(photos.map((photo) => photo.detail)).size).toBe(1);
   });
 
   it('navigates to the third slide and back', () => {
     render(<SpringWelcome recipient="Ana" memories={memories} />);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Ir a Nuestra música' })
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Ir a Nosotros dos' }));
     fireEvent.click(
       screen.getByRole('button', { name: 'Ir a Recuerditos nuestros' })

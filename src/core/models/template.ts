@@ -67,6 +67,13 @@ export type MusicTemplateField = BaseTemplateField & {
   type: 'music';
   max_songs?: number;
   max_clip_seconds?: number;
+  /**
+   * Si la plantilla dibuja la letra sincronizada. Por defecto si, que es lo
+   * que hacia antes de existir esta opcion. En `false`, el editor no pide la
+   * letra ni deja ajustar su desfase: seria trabajo para algo que nadie va a
+   * ver.
+   */
+  lyrics?: boolean;
 };
 
 export type TemplateField =

@@ -18,9 +18,9 @@ it('reaches screen six and supports start, pause, resume and restart', async () 
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
   render(<SpringWelcome recipient="María" />);
   for (const name of [
+    'Ir a Nuestra música',
     'Ir a Nosotros dos',
     'Ir a Recuerditos nuestros',
-    'Ir a Nuestra música',
     'Ir a Una carta para ti',
     'Ir a Una aventura para ti',
   ]) {

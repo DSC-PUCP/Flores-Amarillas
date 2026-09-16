@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
 import { type CSSProperties, useEffect, useState } from 'react';
 import { useSongClips } from '@/modules/music/hooks/useSongClips';
+import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
 import { assets } from '../assets';
 import { SpringCamera } from './spring-camera';
 import type { CameraMemory } from './spring-camera-data';
@@ -18,12 +19,33 @@ import styles from './spring-welcome.module.css';
 const SCENE_SLIDE: Record<string, number> = {
   cover: 0,
   review: 0,
-  intro: 1,
-  photos: 2,
-  song: 3,
+  song: 1,
+  intro: 2,
+  photos: 3,
   letter: 4,
   finale: 5,
 };
+
+/**
+ * El recorrido, en orden.
+ *
+ * Es la unica lista que hay que tocar para mover una pantalla de sitio: de
+ * aqui salen los textos de los dos botones de navegacion y el contador. Antes
+ * los rotulos eran una cadena de ternarios y un array suelto que habia que
+ * mantener en sincronia a mano.
+ */
+const PANTALLAS = [
+  'la portada',
+  'Nuestra música',
+  'Nosotros dos',
+  'Recuerditos nuestros',
+  'Una carta para ti',
+  'Una aventura para ti',
+  'la despedida',
+] as const;
+
+/** Ultima pantalla del recorrido. */
+const ULTIMA = PANTALLAS.length - 1;
 
 const petals = Array.from({ length: 30 }, (_, index) => ({
   left: `${(index * 37 + 7) % 100}%`,
@@ -106,19 +128,35 @@ export function SpringWelcome({
       }
     >
       <YellowPetals />
-      {music.count > 0 && (
-        // Reproductor de YouTube: solo pone el sonido, no se muestra. No puede
-        // ir con display:none porque el navegador no lo cargaria.
+      {/*
+        El piano suena en las dos pantallas de detalle —la carta corta y los
+        recuerdos—, que son las mismas que acompanaba antes de mover la musica
+        al segundo puesto. No suena en la de musica, que trae la suya: dos
+        canciones a la vez no es ambiente, es ruido. Tampoco en el editor,
+        donde la vista previa vive al lado del formulario.
+      */}
+      <PianoDeFondo
+        activo={slide >= 2 && slide <= 3 && editorScene === undefined}
+        className="right-4 bottom-20 md:right-6 md:bottom-24"
+      />
+      {/*
+        Reproductor de YouTube: solo pone el sonido, no se muestra. No puede ir
+        con display:none porque el navegador no lo cargaria.
+
+        Se monta siempre, tambien sin canciones. Antes colgaba de
+        `music.count > 0` y bastaba que la lista llegara vacia un instante
+        —mientras el editor reenvia, por ejemplo— para que el div se
+        desmontara, el hook destruyera el reproductor y la cancion se cortara.
+      */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 h-[113px] w-[200px] opacity-0"
+      >
         <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-0 h-[113px] w-[200px] opacity-0"
-        >
-          <div
-            ref={music.hostRef}
-            className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full"
-          />
-        </div>
-      )}
+          ref={music.hostRef}
+          className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full"
+        />
+      </div>
       {slide === 0 ? (
         <section
           key={replay}
@@ -154,19 +192,36 @@ export function SpringWelcome({
           </button>
         </section>
       ) : slide === 1 ? (
-        <SpringPaperCard message={cardMessage} />
-      ) : slide === 2 ? (
-        <SpringCamera memories={memories} message={cameraMessage} />
-      ) : slide === 3 ? (
         <SpringMusic music={music} />
+      ) : slide === 2 ? (
+        <SpringPaperCard message={cardMessage} />
+      ) : slide === 3 ? (
+        <SpringCamera memories={memories} message={cameraMessage} />
       ) : slide === 4 ? (
         <SpringLetter
           message={letterMessage}
           recipient={recipient}
           sender={sender}
         />
-      ) : (
+      ) : slide === 5 ? (
         <SpringGame recipient={recipient} />
+      ) : (
+        <section className={styles.slide} aria-label="Gracias por esta primavera">
+          <div className={styles.frame} aria-hidden="true">
+            {[0, 1, 2, 3].map((corner) => (
+              <div key={corner} className={styles.corner} data-corner={corner} />
+            ))}
+          </div>
+          <div className={styles.message}>
+            <h2 className={styles.farewell}>
+              Gracias por alegrar
+              <br />
+              mi primavera
+              <span className={styles.farewellLove}>{recipient}</span>
+            </h2>
+            {sender && <p className={styles.farewellSign}>— {sender}</p>}
+          </div>
+        </section>
       )}
       <nav className={styles.navigation} aria-label="Pantallas del regalo">
         <button
@@ -174,36 +229,21 @@ export function SpringWelcome({
           disabled={slide === 0}
           onClick={() => setSlide((current) => Math.max(0, current - 1))}
           aria-label={
-            [
-              'Ir a la primera pantalla',
-              'Ir a la primera pantalla',
-              'Volver a Nosotros dos',
-              'Volver a Recuerditos nuestros',
-              'Volver a Nuestra música',
-              'Volver a Una carta para ti',
-            ][slide]
+            slide === 0
+              ? 'Ir a la primera pantalla'
+              : `Volver a ${PANTALLAS[slide - 1]}`
           }
         >
           <ArrowLeft size={18} />
         </button>
         <span aria-live="polite">
-          {slide + 1} <span aria-hidden="true">/</span> 6
+          {slide + 1} <span aria-hidden="true">/</span> {ULTIMA + 1}
         </span>
         <button
           type="button"
-          disabled={slide === 5}
-          onClick={() => setSlide((current) => Math.min(5, current + 1))}
-          aria-label={
-            slide === 0
-              ? 'Ir a Nosotros dos'
-              : slide === 1
-                ? 'Ir a Recuerditos nuestros'
-                : slide === 2
-                  ? 'Ir a Nuestra música'
-                  : slide === 3
-                    ? 'Ir a Una carta para ti'
-                    : 'Ir a Una aventura para ti'
-          }
+          disabled={slide === ULTIMA}
+          onClick={() => setSlide((current) => Math.min(ULTIMA, current + 1))}
+          aria-label={`Ir a ${PANTALLAS[Math.min(ULTIMA, slide + 1)]}`}
         >
           <ArrowRight size={18} />
         </button>

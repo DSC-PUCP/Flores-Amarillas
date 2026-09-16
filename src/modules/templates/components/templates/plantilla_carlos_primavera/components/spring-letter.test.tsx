@@ -31,9 +31,9 @@ it('connects the fifth screen to its own saved field, independently of the short
     />
   );
   for (const name of [
+    'Ir a Nuestra música',
     'Ir a Nosotros dos',
     'Ir a Recuerditos nuestros',
-    'Ir a Nuestra música',
     'Ir a Una carta para ti',
   ]) {
     fireEvent.click(screen.getByRole('button', { name }));

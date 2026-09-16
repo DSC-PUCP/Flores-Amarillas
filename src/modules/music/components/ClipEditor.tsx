@@ -32,6 +32,13 @@ type Props = {
   maxClipSeconds: number;
   onSave: (clip: SongClip) => void;
   onCancel: () => void;
+  /**
+   * Si la plantilla de destino dibuja la letra. En `false` se esconde todo el
+   * bloque de letra sincronizada: buscarla, elegirla y cuadrar su desfase es
+   * un rato de trabajo, y no tiene sentido pedirlo para algo que esa plantilla
+   * no muestra. El fragmento se guarda igual, solo que sin lineas.
+   */
+  lyrics?: boolean;
 };
 
 export function ClipEditor({
@@ -40,6 +47,7 @@ export function ClipEditor({
   maxClipSeconds,
   onSave,
   onCancel,
+  lyrics: mostrarLetra = true,
 }: Props) {
   const [guess] = useState(() =>
     initial
@@ -307,6 +315,8 @@ export function ClipEditor({
         {problem && <p className="text-xs text-red-500">{problem}</p>}
       </div>
 
+      {mostrarLetra && (
+        <>
       {/* Letra sincronizada */}
       <div className="space-y-3 border-t border-slate-200 pt-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -462,6 +472,8 @@ export function ClipEditor({
           </>
         )}
       </div>
+        </>
+      )}
 
       <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">
         <Button

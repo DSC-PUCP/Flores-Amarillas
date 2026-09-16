@@ -16,6 +16,10 @@ import {
   stepGarden,
 } from './spring-game-engine';
 import { createDirInput, isJumpKey, sideForKey } from './spring-game-input';
+import {
+  crearSonidoDelJuego,
+  VICTORIA_MS,
+} from './spring-game-sound';
 import { drawGarden } from './spring-game-renderer';
 
 type GameStatus = 'ready' | 'playing' | 'paused' | 'won';
@@ -28,6 +32,15 @@ export function SpringGame({ recipient }: { recipient: string }) {
   const gameRef = useRef(newGardenGame());
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const consoleRef = useRef<HTMLDivElement>(null);
+  // YOU WIN no sale con la victoria: sale cuando la fanfarria termina.
+  const [youWin, setYouWin] = useState(false);
+  const sonido = useRef<ReturnType<typeof crearSonidoDelJuego> | null>(null);
+  if (sonido.current === null) sonido.current = crearSonidoDelJuego();
+
+  useEffect(() => {
+    const audio = sonido.current;
+    return () => audio?.cerrar();
+  }, []);
 
   const startOrJump = useCallback(() => {
     if (!art) return;
@@ -38,7 +51,11 @@ export function SpringGame({ recipient }: { recipient: string }) {
     } else if (status === 'paused') {
       setStatus('playing');
     } else {
+      // `jumpGarden` ignora la orden en el aire: el sonido tiene que ignorarla
+      // tambien, o suena un salto que no ocurre.
+      const puedeSaltar = gameRef.current.y === 0 && !gameRef.current.won;
       jumpGarden(gameRef.current);
+      if (puedeSaltar) sonido.current?.salto();
     }
   }, [art, status]);
 
@@ -78,6 +95,11 @@ export function SpringGame({ recipient }: { recipient: string }) {
         }
         if (gameRef.current.won) setStatus('won');
       }
+      // Pasos solo con los pies en el suelo: en el aire no se camina.
+      const juego = gameRef.current;
+      sonido.current?.pasos(
+        status === 'playing' && juego.dir !== 0 && juego.y === 0 && !juego.won
+      );
       drawGarden(
         ctx,
         gameRef.current,
@@ -99,10 +121,23 @@ export function SpringGame({ recipient }: { recipient: string }) {
     document.addEventListener('visibilitychange', visibility);
     return () => {
       cancelAnimationFrame(frame);
+      sonido.current?.pasos(false);
       window.removeEventListener('blur', pause);
       document.removeEventListener('visibilitychange', visibility);
     };
   }, [status, art]);
+
+  // Victoria: suena la fanfarria y, cuando se apaga, aparece YOU WIN.
+  useEffect(() => {
+    if (status !== 'won') {
+      setYouWin(false);
+      return;
+    }
+    sonido.current?.pasos(false);
+    sonido.current?.victoria();
+    const timer = window.setTimeout(() => setYouWin(true), VICTORIA_MS + 400);
+    return () => window.clearTimeout(timer);
+  }, [status]);
 
   const input = useRef(createDirInput());
 
@@ -194,6 +229,12 @@ export function SpringGame({ recipient }: { recipient: string }) {
               height={360}
               aria-label="Un chico recorre un jardín con una flor amarilla para entregársela a una chica"
             />
+            {youWin && (
+              <div className={styles.youWin}>
+                <span className={styles.youWinText}>YOU WIN</span>
+                <p className={styles.youWinSub}>✿ UNA FLOR ENTREGADA ✿</p>
+              </div>
+            )}
             {(status === 'ready' || status === 'paused') && (
               <div className={styles.overlay}>
                 <span>✿</span>

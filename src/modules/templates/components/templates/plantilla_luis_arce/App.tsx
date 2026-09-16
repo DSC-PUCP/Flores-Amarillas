@@ -11,7 +11,7 @@ import Slide4 from './Slide4';
 import Slide5 from './Slide5';
 import Slide6 from './Slide6';
 import Slide7 from './Slide7';
-import { PianoDeFondo } from './PianoDeFondo';
+import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
 
 /**
  * Textos de prueba que salen ya escritos en el formulario.
@@ -140,7 +140,10 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
         editor mientras el cliente escribia.
       */}
 
-      {currentSlide > 0 && !enElEditor && <PianoDeFondo />}
+      <PianoDeFondo
+        activo={currentSlide > 0 && !enElEditor}
+        className="right-5 bottom-24 md:right-8 md:bottom-28"
+      />
 
       {/* Controles invisibles globales de navegación estilo "Stories" */}
       {currentSlide > 0 && (

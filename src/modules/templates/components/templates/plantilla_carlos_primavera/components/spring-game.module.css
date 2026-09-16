@@ -399,6 +399,70 @@
   min-height: 32px;
 }
 
+/* ── YOU WIN ─────────────────────────────────────────────────
+   Aparece cuando termina la fanfarria, no con la victoria: el
+   sonido primero, el cartel despues, como en las maquinas de
+   entonces. Las letras se dibujan con box-shadow sobre un unico
+   pixel, asi que escalan sin difuminarse y no hace falta ninguna
+   imagen ni fuente extra. */
+.youWin {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #c3cd86f2;
+  animation: youWinEntra 0.22s steps(3) both;
+}
+.youWinText {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: clamp(22px, 7vw, 44px);
+  letter-spacing: 0.14em;
+  color: #384b29;
+  /* Sombra dura y escalonada: relieve de pixel, sin desenfoque. */
+  text-shadow:
+    2px 0 0 #8ba05c,
+    4px 0 0 #8ba05c,
+    2px 2px 0 #8ba05c,
+    4px 4px 0 #6d8047;
+  animation: youWinLatido 0.9s steps(2) infinite;
+}
+.youWinSub {
+  margin: 0;
+  font: 700 9px monospace;
+  letter-spacing: 0.22em;
+  color: #465b32;
+}
+@keyframes youWinEntra {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes youWinLatido {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .youWin,
+  .youWinText {
+    animation: none;
+  }
+}
+
 /* ── Caption below console ──────────────────────────────────── */
 .caption {
   text-align: center;
