@@ -18,9 +18,13 @@ La nueva página presenta el regalo, permite probarlo, explica qué contiene, mu
 
 ## Recursos gráficos
 
-- `public/images/sunflower-bouquet.png`: original generado con la herramienta integrada `image_gen`.
-- `public/images/sunflower-bouquet.webp`: versión de entrega optimizada con `cwebp`, con transparencia, aproximadamente 433 KB frente a 1.8 MB del original. Usada en hero y dedicatoria.
-- `public/images/memory-together.jpg` y `memory-day.jpg`: fotos de ejemplo descargadas de las mismas URLs de Unsplash que ya utilizaba la ruta de previews. No son fotos de clientes ni testimonios.
+Ya no viven en `public/images/` sino en Supabase Storage, bajo `publicas/`, y se
+consumen desde `src/lib/imagenes.ts`. El motivo está explicado ahí: en producción
+el sitio cuelga de un subpath y las rutas absolutas del tipo `/images/x.webp`
+apuntaban al raíz del dominio.
+
+- `sunflower-bouquet.webp`: ramo de girasoles, original generado con la herramienta integrada `image_gen` y entregado en WebP con transparencia (267 KB frente a 1.8 MB del PNG). Se usa en hero, dedicatoria y como `og:image`.
+- `memory-together.webp` y `memory-day.webp`: fotos de ejemplo descargadas de las mismas URLs de Unsplash que ya utilizaba la ruta de previews. No son fotos de clientes ni testimonios.
 
 Prompt utilizado con la herramienta integrada:
 

@@ -7,6 +7,7 @@ import {
   MousePointer2,
 } from 'lucide-react';
 import type { CSSProperties, MouseEvent } from 'react';
+import { imagenes } from '@/lib/imagenes';
 import { Ambient } from '../art/Ambient';
 import { useMarquee } from '../hooks/useMarquee';
 import { useParallax } from '../hooks/useParallax';
@@ -121,7 +122,7 @@ export function HeroSection({ onViewDemo, onCreateGift }: HeroSectionProps) {
           </span>
           <img
             className="bloom-hero-bouquet"
-            src="/images/sunflower-bouquet.webp"
+            src={imagenes.ramoGirasoles}
             alt="Ramo de girasoles amarillos con hojas verdes y un lazo coral"
             width="768"
             height="1024"

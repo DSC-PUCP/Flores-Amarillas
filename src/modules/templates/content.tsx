@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import type { Template } from '@/core/models/template';
+import { imagenes } from '@/lib/imagenes';
 import { usePlans } from '../landing/hooks/usePlans';
 import { PremiumThumbnail } from './components/templates/plantilla_giano_feat_leo/components/premium-thumbnail';
 import { useTemplates } from './hooks/useTemplate';
@@ -20,7 +21,7 @@ function TemplateThumbnail({ template }: { template: Template }) {
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const isFlowerDesign = template.templateKey === 'plantilla_gratuita';
   const image = isFlowerDesign
-    ? '/images/sunflower-bouquet.webp'
+    ? imagenes.ramoGirasoles
     : template.previewImageUrl;
   const imageFailed = !image || failedImage === image;
 
@@ -143,10 +144,9 @@ export function TemplateContent() {
   const filteredTemplates = visibleTemplates.filter(
     (template) => selectedPlan === TODOS || template.tipoPlan === selectedPlan
   );
-  const planNames = [
-    TODOS,
-    ...new Set(plans.map((plan) => plan.name)),
-  ].filter((name, index, names) => names.indexOf(name) === index);
+  const planNames = [TODOS, ...new Set(plans.map((plan) => plan.name))].filter(
+    (name, index, names) => names.indexOf(name) === index
+  );
 
   return (
     <div className="min-h-svh bg-[#FFFCF4] px-5 py-8 text-[#183E32] sm:px-8 sm:py-12">

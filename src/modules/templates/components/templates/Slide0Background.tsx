@@ -1,5 +1,4 @@
-import corazonesTransparentes from '../../assets/gifs/plantilla-1/corazones-transparantes.gif';
-import corazonRojo from '../../assets/images/plantilla-1/corazon-rojo.png';
+import { assets } from '../../assets/plantilla-1';
 
 const WhiteHeartWithRed = ({
   size = 100,
@@ -51,7 +50,7 @@ const WhiteHeartWithRed = ({
         </g>
       </svg>
       <img
-        src={corazonRojo}
+        src={assets.corazonRojo}
         alt=""
         className="absolute"
         style={{
@@ -64,7 +63,7 @@ const WhiteHeartWithRed = ({
         }}
       />
       <img
-        src={corazonRojo}
+        src={assets.corazonRojo}
         alt=""
         className="absolute"
         style={{
@@ -77,7 +76,7 @@ const WhiteHeartWithRed = ({
         }}
       />
       <img
-        src={corazonRojo}
+        src={assets.corazonRojo}
         alt=""
         className="absolute"
         style={{
@@ -145,7 +144,7 @@ export function Slide0Background() {
       {transparentGifs.map((gif, i) => (
         <img
           key={`gif-${i}`}
-          src={corazonesTransparentes}
+          src={assets.corazonesTransparentes}
           alt=""
           className="absolute opacity-100 animate-pulse-slow"
           style={{

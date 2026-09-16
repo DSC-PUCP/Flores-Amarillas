@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight, Flower2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
+import { imagenes } from '@/lib/imagenes';
 import { TEMPLATE_COMPONENTS } from '@/modules/templates/components/config/template-components';
 import { TemplateRenderer } from '@/modules/templates/components/TemplateRenderer';
 import {
@@ -143,10 +144,10 @@ export function PreviewPage() {
               message.trim() ||
               'Gracias por hacer mis días un poquito más bonitos.',
             startDate: '2024-09-21T12:00:00',
-            image: '/images/memory-together.jpg',
+            image: imagenes.recuerdoJuntos,
             ...(search.template === 'premium'
               ? {
-                  timelinePhotos: ['/images/memory-day.jpg'],
+                  timelinePhotos: [imagenes.recuerdoDia],
                   songs: [
                     {
                       videoId: 'yKNxeF4KMsY',
@@ -164,10 +165,7 @@ export function PreviewPage() {
                     'Cómo haces florecer mis días',
                   ],
                   couponText: 'Un picnic entre flores amarillas',
-                  couponPhotos: [
-                    '/images/memory-day.jpg',
-                    '/images/memory-together.jpg',
-                  ],
+                  couponPhotos: [imagenes.recuerdoDia, imagenes.recuerdoJuntos],
                 }
               : {}),
             compactPreview: embed,

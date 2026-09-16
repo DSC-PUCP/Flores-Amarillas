@@ -1,30 +1,9 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from '@tanstack/react-router';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Button } from '@/components/ui/button';
-import caritasPeluches from '../../assets/images/plantilla-1/caritas-peluches.png';
-import cerradura from '../../assets/images/plantilla-1/cerradura.png';
-import conejoRosa from '../../assets/images/plantilla-1/conejo-rosa.png';
-import corazonMensaje from '../../assets/images/plantilla-1/corazon-mensaje.png';
-import corazonRojo from '../../assets/images/plantilla-1/corazon-rojo.png';
-import corazonesDecorativos from '../../assets/images/plantilla-1/corazones-decorativos-foto.png';
-import discoVinilo from '../../assets/images/plantilla-1/disco-vinilo.png';
-import duoFloresAmarillas from '../../assets/images/plantilla-1/duo-flores-amarillas.png';
-import duoRosas from '../../assets/images/plantilla-1/duo-rosas.png';
-import floresAbajoImg from '../../assets/images/plantilla-1/flores-abajo.png';
-import oso1 from '../../assets/images/plantilla-1/oso-1.png';
-import pelucheSobre from '../../assets/images/plantilla-1/peluche-de-sobre.png';
-import perro1 from '../../assets/images/plantilla-1/perro-1.png';
-import perro2 from '../../assets/images/plantilla-1/perro-2.png';
-import perroFlor from '../../assets/images/plantilla-1/perro-flor.png';
-import perroCorazon from '../../assets/images/plantilla-1/perro-sosteniendo-corazon.png';
-import pollitoSorprendido from '../../assets/images/plantilla-1/pollito-sorprendido.png';
-import ramoFlores from '../../assets/images/plantilla-1/ramo-flores.png';
-import reproductor from '../../assets/images/plantilla-1/reproductor.png';
-import sobreDeCarta from '../../assets/images/plantilla-1/sobre-de-carta.png';
-import sobreAbierto from '../../assets/images/plantilla-1/sobre-de-carta-abierto.png';
-import sobreRegalo from '../../assets/images/plantilla-1/sobre-regalo.png';
+import { assets } from '../../assets/plantilla-1';
 import type { TemplateSlideProps } from '../../types';
 import { Slide0Background } from './Slide0Background';
 import { Slide1Background } from './Slide1Background';
@@ -166,14 +145,14 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
                   <img
-                    src={sobreDeCarta}
+                    src={assets.sobreDeCarta}
                     alt="Sobre de carta"
                     className="w-lg h-auto"
                   />
 
                   {/* Perro Flor Decoration */}
                   <img
-                    src={perroFlor}
+                    src={assets.perroFlor}
                     alt="Decoración"
                     className="absolute top-0 -right-10 w-28 h-28 object-contain pointer-events-none"
                     style={{ transform: 'rotate(5deg)' }}
@@ -211,7 +190,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
-                    src={pelucheSobre}
+                    src={assets.pelucheSobre}
                     alt="Cute bunny"
                     className="absolute top-[20%] z-40 w-44 sm:w-64 object-contain"
                   />
@@ -239,7 +218,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
 
                   {/* Open Envelope Image */}
                   <img
-                    src={sobreAbierto}
+                    src={assets.sobreAbierto}
                     alt="Sobre abierto"
                     className="relative z-20 w-full object-contain drop-shadow-xl"
                   />
@@ -301,7 +280,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                   <div className="relative">
                     {/* Flipped Puppy */}
                     <img
-                      src={perroCorazon}
+                      src={assets.perroCorazon}
                       alt="Puppy"
                       className="w-20 sm:w-28 object-contain scale-x-[-1]"
                     />
@@ -321,7 +300,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                   <div className="flex items-center justify-center gap-4 font-railey text-3xl sm:text-5xl text-slate-800 pt-4">
                     <span>¿Me acompañas?</span>
                     <img
-                      src={corazonRojo}
+                      src={assets.corazonRojo}
                       alt="Heart"
                       className="w-10 h-10 sm:w-12 sm:h-12 inline-block animate-pulse"
                     />
@@ -343,17 +322,17 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                 {/* Bottom Decoration - Fixed containment */}
                 <div className="absolute -bottom-16 left-0 right-0 w-full pointer-events-none z-20 flex items-end justify-center">
                   <img
-                    src={floresAbajoImg}
+                    src={assets.floresAbajo}
                     alt=""
                     className="w-[33%] max-h-[300px] object-contain sm:object-cover object-bottom"
                   />
                   <img
-                    src={floresAbajoImg}
+                    src={assets.floresAbajo}
                     alt=""
                     className="w-[33%] max-h-[300px] object-contain sm:object-cover object-bottom"
                   />
                   <img
-                    src={floresAbajoImg}
+                    src={assets.floresAbajo}
                     alt=""
                     className="w-[33%] max-h-[300px] object-contain sm:object-cover object-bottom"
                   />
@@ -382,10 +361,10 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
               {/* Background specific to Slide 3 */}
               <Slide3Background
                 images={[
-                  ramoFlores,
-                  duoFloresAmarillas,
-                  duoRosas,
-                  floresAbajoImg,
+                  assets.ramoFlores,
+                  assets.duoFloresAmarillas,
+                  assets.duoRosas,
+                  assets.floresAbajo,
                 ]}
                 count={15}
                 opacity={0.4}
@@ -400,7 +379,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
 
                 {/* Hint */}
                 <div className="flex items-center gap-2 mb-6">
-                  <img src={corazonRojo} alt="" className="w-5 h-5" />
+                  <img src={assets.corazonRojo} alt="" className="w-5 h-5" />
                   <span className="font-railey text-xl text-slate-600">
                     Pista: Una fecha muy especial
                   </span>
@@ -410,7 +389,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                 <div className="relative flex items-center justify-center mb-6">
                   {/* Left Plushies */}
                   <img
-                    src={caritasPeluches}
+                    src={assets.caritasPeluches}
                     alt=""
                     className="w-20 sm:w-24 object-contain"
                   />
@@ -424,7 +403,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                       <path d="M50 88 C25 65, 0 50, 0 30 A25 25 0 0 1 50 30 A25 25 0 0 1 100 30 C100 50, 75 65, 50 88Z" />
                     </svg>
                     <img
-                      src={cerradura}
+                      src={assets.cerradura}
                       alt="Lock"
                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 sm:w-12 object-contain"
                     />
@@ -432,7 +411,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
 
                   {/* Right Plushies (mirrored) */}
                   <img
-                    src={caritasPeluches}
+                    src={assets.caritasPeluches}
                     alt=""
                     className="w-20 sm:w-24 object-contain scale-x-[-1]"
                   />
@@ -575,7 +554,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                   Preparé esto con mucho cariño para ti! Cada una guarda algo
                   especial. tú decides cual abrir primero
                   <img
-                    src={corazonRojo}
+                    src={assets.corazonRojo}
                     alt=""
                     className="w-8 h-8 inline-block ml-2"
                   />
@@ -593,13 +572,13 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                     <div className="relative">
                       {/* Perro on top */}
                       <img
-                        src={perro1}
+                        src={assets.perro1}
                         alt="Perrito"
                         className="absolute -top-16 left-1/2 -translate-x-1/2 w-24 sm:w-32 object-contain z-10"
                       />
                       {/* Folder/Gift */}
                       <img
-                        src={sobreRegalo}
+                        src={assets.sobreRegalo}
                         alt="Regalo 1"
                         className="w-48 sm:w-56 object-contain"
                       />
@@ -619,13 +598,13 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                     <div className="relative">
                       {/* Oso peeking from side */}
                       <img
-                        src={oso1}
+                        src={assets.oso1}
                         alt="Osito"
                         className="absolute -bottom-4 -right-12 w-20 sm:w-24 object-contain z-10"
                       />
                       {/* Folder/Gift */}
                       <img
-                        src={sobreRegalo}
+                        src={assets.sobreRegalo}
                         alt="Regalo 2"
                         className="w-48 sm:w-56 object-contain"
                       />
@@ -672,28 +651,28 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                 <div className="relative w-full max-w-xl">
                   {/* Heart Background Image */}
                   <img
-                    src={corazonMensaje}
+                    src={assets.corazonMensaje}
                     alt=""
                     className="w-full h-auto object-contain"
                   />
 
                   {/* Perro 1 - Top Left */}
                   <img
-                    src={perro1}
+                    src={assets.perro1}
                     alt=""
                     className="absolute -top-6 left-[10%] w-16 sm:w-20 object-contain z-20"
                   />
 
                   {/* Conejo Rosa - Top Right */}
                   <img
-                    src={conejoRosa}
+                    src={assets.conejoRosa}
                     alt=""
                     className="absolute -top-4 right-[10%] w-16 sm:w-20 object-contain z-20"
                   />
 
                   {/* Perro Corazon - Bottom Right */}
                   <img
-                    src={perroCorazon}
+                    src={assets.perroCorazon}
                     alt=""
                     className="absolute bottom-[10%] -right-8 w-20 sm:w-24 object-contain z-20"
                   />
@@ -712,7 +691,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                     Te amo
                   </span>
                   <img
-                    src={corazonRojo}
+                    src={assets.corazonRojo}
                     alt=""
                     className="w-8 h-8 animate-pulse"
                   />
@@ -750,84 +729,84 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                   {/* Frame Decoration (Image with hearts) */}
                   <div className="absolute inset-0 z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[20%] -left-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute -top-[2%] left-[30%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[100px] h-[100px] object-fill"
                     />
                   </div>
                   <div className="absolute -top-[2%] left-[60%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[100px] h-[100px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[50%] -left-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[80%] -left-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[80%] -right-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[50%] -right-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute -top-[2%] -right-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute top-[20%] -right-[10%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[150px] h-[150px] object-fill"
                     />
                   </div>
                   <div className="absolute -bottom-[10%] left-[30%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[100px] h-[100px] object-fill"
                     />
                   </div>
                   <div className="absolute -bottom-[10%] left-[60%] z-20 pointer-events-none">
                     <img
-                      src={corazonesDecorativos}
+                      src={assets.corazonesDecorativos}
                       alt=""
                       className="w-[100px] h-[100px] object-fill"
                     />
@@ -849,7 +828,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
 
                   {/* Plushie Decoration (Perro 2) */}
                   <img
-                    src={perro2}
+                    src={assets.perro2}
                     alt=""
                     className="absolute -bottom-12 -left-10 w-24 sm:w-32 z-30 object-contain"
                   />
@@ -863,7 +842,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                       Feliz día de San Valentín
                     </h2>
                     <img
-                      src={oso1}
+                      src={assets.oso1}
                       alt=""
                       className="absolute -left-42 z-50 -top-8 w-24 sm:w-28 object-contain"
                     />
@@ -884,7 +863,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                           Actually, let's just center the vinyl and ensure it's visible. 
                       */}
                     <img
-                      src={reproductor}
+                      src={assets.reproductor}
                       alt="Player UI"
                       className="absolute w-full h-full object-contain pointer-events-none"
                     />
@@ -904,7 +883,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                       className="absolute w-[45%] aspect-square rounded-full shadow-lg overflow-hidden border-4 border-black/80 left-[5%] top-[20%]"
                     >
                       <img
-                        src={discoVinilo}
+                        src={assets.discoVinilo}
                         alt="Vinyl"
                         className="w-full h-full object-cover z-40"
                       />
@@ -931,7 +910,7 @@ export function Plantilla1({ templateData }: TemplateSlideProps) {
                       </>
                     )}
                     <img
-                      src={pollitoSorprendido}
+                      src={assets.pollitoSorprendido}
                       alt=""
                       className="absolute -bottom-16 -right-24 w-16 sm:w-24 object-contain"
                     />

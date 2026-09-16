@@ -10,6 +10,7 @@ import {
   Share2,
 } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
+import { imagenes } from '@/lib/imagenes';
 import type { TemplateSlideProps } from '../../types';
 
 const PETAL_ANGLES = Array.from({ length: 12 }, (_, index) => index * 30);
@@ -58,7 +59,7 @@ function Bouquet({ className = '' }: { className?: string }) {
 
   return (
     <img
-      src="/images/sunflower-bouquet.webp"
+      src={imagenes.ramoGirasoles}
       alt=""
       className={`object-contain ${className}`}
       onError={() => setFailed(true)}

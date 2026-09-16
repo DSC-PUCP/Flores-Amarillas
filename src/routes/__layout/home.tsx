@@ -1,23 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { env } from '@/env';
+import { imagenes } from '@/lib/imagenes';
 import { LandingContent } from '@/modules/landing/content';
 
 /**
  * Imagen de la vista previa al compartir el enlace.
  *
- * Tiene que ser absoluta: og:image lo pide la especificacion y los
- * rastreadores de WhatsApp y Facebook no resuelven rutas relativas de forma
- * confiable. Si falta VITE_SERVER_URL se queda relativa, que es lo que habia
- * antes y no empeora nada.
+ * og:image tiene que ser absoluta: la especificacion lo pide y los rastreadores
+ * de WhatsApp y Facebook no resuelven rutas relativas de forma confiable. Al
+ * vivir en Storage ya lo es, sin depender de VITE_SERVER_URL ni del subpath del
+ * que cuelga el sitio en produccion.
  *
- * Se usa el .webp de 443 KB y no el .png de 1.8 MB: WhatsApp descarta las
- * vistas previas que pesan de mas, y compartir el enlace por ahi es como se
- * reparte este regalo.
+ * Es el .webp de 267 KB: WhatsApp descarta las vistas previas que pesan de mas,
+ * y compartir el enlace por ahi es como se reparte este regalo.
  */
-const OG_IMAGE_PATH = '/images/sunflower-bouquet.webp';
-const OG_IMAGE = env.VITE_SERVER_URL
-  ? new URL(OG_IMAGE_PATH, env.VITE_SERVER_URL).href
-  : OG_IMAGE_PATH;
+const OG_IMAGE = imagenes.ramoGirasoles;
 
 export const Route = createFileRoute('/__layout/home')({
   head: () => ({

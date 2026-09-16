@@ -1,5 +1,6 @@
 import { ArrowUpRight, Flower2, Heart, Image, Link2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
+import { imagenes } from '@/lib/imagenes';
 
 export function FeaturesSection() {
   return (
@@ -74,7 +75,7 @@ export function FeaturesSection() {
             </p>
             <div className="bloom-mini-photos" aria-hidden="true">
               <div className="bloom-photo-one">
-                <img src="/images/memory-together.jpg" alt="" loading="lazy" />
+                <img src={imagenes.recuerdoJuntos} alt="" loading="lazy" />
                 <span>Ese día tan bonito ♡</span>
               </div>
               <div className="bloom-photo-two">

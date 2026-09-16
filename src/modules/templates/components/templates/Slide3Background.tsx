@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import petalosCayendo from '../../assets/gifs/plantilla-1/petalos-cayendo.gif';
+import { assets } from '../../assets/plantilla-1';
 
 interface Slide3BackgroundProps {
   images: string[];
@@ -36,7 +36,7 @@ export function Slide3Background({
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Petals Background */}
       <img
-        src={petalosCayendo}
+        src={assets.petalosCayendo}
         alt=""
         className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none mix-blend-screen"
       />

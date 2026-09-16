@@ -1,5 +1,6 @@
 import { Heart } from 'lucide-react';
 import { useState } from 'react';
+import { imagenes } from '@/lib/imagenes';
 import { cn } from '@/lib/utils';
 import styles from '../premium.module.css';
 import { AnimalGift } from './animal-gift';
@@ -71,7 +72,7 @@ export function PremiumThumbnail() {
                 />
               ) : (
                 <img
-                  src="/images/memory-together.jpg"
+                  src={imagenes.recuerdoJuntos}
                   alt=""
                   loading="lazy"
                   onError={() => setPhotoFailed(true)}

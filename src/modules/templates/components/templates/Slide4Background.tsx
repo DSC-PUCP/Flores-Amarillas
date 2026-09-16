@@ -1,7 +1,5 @@
 import { motion } from 'framer-motion';
-import petalosCayendo from '../../assets/gifs/plantilla-1/petalos-cayendo.gif';
-import enmarcoRosa from '../../assets/images/plantilla-1/enmarco-rosa.png';
-import floresMasFlores from '../../assets/images/plantilla-1/flores-mas-flores.png';
+import { assets } from '../../assets/plantilla-1';
 
 export function Slide4Background() {
   const petals = [
@@ -48,7 +46,7 @@ export function Slide4Background() {
       {petals.map((petal, i) => (
         <motion.img
           key={`petal-${i}`}
-          src={petalosCayendo}
+          src={assets.petalosCayendo}
           alt=""
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: petal.scale, rotate: petal.rotate }}
@@ -63,14 +61,14 @@ export function Slide4Background() {
 
       {/* Decorative Frame - Left */}
       <img
-        src={enmarcoRosa}
+        src={assets.enmarcoRosa}
         alt=""
         className="absolute right-0 top-0 h-[500px] w-auto object-contain pointer-events-none opacity-80"
       />
 
       {/* Decorative Frame - Right */}
       <img
-        src={enmarcoRosa}
+        src={assets.enmarcoRosa}
         alt=""
         className="absolute left-0 top-0 h-[500px] w-auto object-contain pointer-events-none scale-x-[-1] opacity-80"
       />
@@ -78,27 +76,27 @@ export function Slide4Background() {
       {/* Bottom Flower Meadow */}
       <div className="absolute flex flex-row -bottom-10 w-full h-32 sm:h-40 pointer-events-none z-20 justify-center -space-x-24 sm:-space-x-32">
         <img
-          src={floresMasFlores}
+          src={assets.floresMasFlores}
           alt=""
           className="w-[35%] h-full object-cover object-top"
         />
         <img
-          src={floresMasFlores}
+          src={assets.floresMasFlores}
           alt=""
           className="w-[35%] h-full object-cover object-top"
         />
         <img
-          src={floresMasFlores}
+          src={assets.floresMasFlores}
           alt=""
           className="w-[35%] h-full object-cover object-top"
         />
         <img
-          src={floresMasFlores}
+          src={assets.floresMasFlores}
           alt=""
           className="w-[35%] h-full object-cover object-top"
         />
         <img
-          src={floresMasFlores}
+          src={assets.floresMasFlores}
           alt=""
           className="w-[35%] h-full object-cover object-top"
         />
