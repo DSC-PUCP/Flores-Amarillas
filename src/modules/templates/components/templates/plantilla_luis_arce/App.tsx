@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { TemplateConfig, TemplateForm } from '@/core/models/template';
 import type { TemplateSlideProps } from '@/modules/templates/types';
 
@@ -11,7 +11,9 @@ import Slide4 from './Slide4';
 import Slide5 from './Slide5';
 import Slide6 from './Slide6';
 import Slide7 from './Slide7';
+import { useSongClips } from '@/modules/music/hooks/useSongClips';
 import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
+import { BotonDeCancion } from './BotonDeCancion';
 
 /**
  * Textos de prueba que salen ya escritos en el formulario.
@@ -88,6 +90,21 @@ export const plantillaLuisArceForm: TemplateForm = [
         required: true,
         default: 'Y en cada flor amarilla vuelvo a encontrarte. (texto de prueba)',
       },
+      {
+        name: 'songs',
+        label: 'Su canción · elige el fragmento que más les guste',
+        type: 'music',
+        // Una sola: esta plantilla habla de "nuestra canción favorita", en
+        // singular, y solo tiene un tocadiscos donde ponerla.
+        max_songs: 1,
+        max_clip_seconds: 120,
+        // Opcional a proposito: las dedicatorias que ya estan publicadas no
+        // tienen cancion, y tienen que seguir funcionando igual.
+        required: false,
+        // El regalo 2 no dibuja la letra en ningun sitio, asi que pedirla solo
+        // alargaria el formulario.
+        lyrics: false,
+      },
     ],
   },
 ];
@@ -103,6 +120,33 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
   const enElEditor =
     (props.templateData as Record<string, unknown> | undefined)
       ?.editorPreview === true;
+
+  /*
+   * El reproductor vive aqui y no dentro del regalo 2 a proposito: al salir de
+   * esa pantalla el componente se desmonta, y con el se iria la cancion. Aqui
+   * arriba sigue sonando por el resto del recorrido, que es justo lo pedido.
+   */
+  const music = useSongClips(
+    (props.templateData as Record<string, unknown> | undefined)?.songs
+  );
+  const hayCancion = music.count > 0 && !enElEditor;
+
+  /**
+   * Una vez que suena la cancion, el piano no vuelve.
+   *
+   * Es un pestillo y no `currentSlide === 5`: si dependiera de la pantalla, al
+   * salir del regalo 2 el piano se encenderia otra vez y se pisaria con la
+   * cancion, que sigue sonando.
+   */
+  const [cancionEncendida, setCancionEncendida] = useState(false);
+
+  // Al entrar al regalo 2 arranca la cancion. Para entonces la persona ya ha
+  // tocado la pantalla varias veces, asi que el navegador deja sonar el audio.
+  useEffect(() => {
+    if (currentSlide !== 5 || !hayCancion) return;
+    setCancionEncendida(true);
+    music.play();
+  }, [currentSlide, hayCancion, music.play]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => Math.min(ULTIMA, prev + 1));
@@ -141,9 +185,35 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
       */}
 
       <PianoDeFondo
-        activo={currentSlide > 0 && !enElEditor}
+        activo={currentSlide > 0 && !enElEditor && !cancionEncendida}
         className="right-5 bottom-24 md:right-8 md:bottom-28"
       />
+
+      {/*
+        El reproductor de YouTube: solo pone el sonido, no se ve. No puede ir
+        con `display: none` porque entonces el navegador no lo carga, y se
+        monta siempre —tambien sin cancion— para que nada lo desmonte a mitad
+        de una reproduccion.
+      */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-0 h-[113px] w-[200px] opacity-0"
+      >
+        <div
+          ref={music.hostRef}
+          className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full"
+        />
+      </div>
+
+      {/* Relevo del piano: mismo sitio, misma pinta, otra musica. */}
+      {cancionEncendida && (
+        <BotonDeCancion
+          sonando={music.playing}
+          onToggle={music.toggle}
+          titulo={music.song?.title}
+          className="right-5 bottom-24 md:right-8 md:bottom-28"
+        />
+      )}
 
       {/* Controles invisibles globales de navegación estilo "Stories" */}
       {currentSlide > 0 && (
