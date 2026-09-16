@@ -12,6 +12,15 @@ import { storageRepository } from '@/repository/storage';
 export const QR_YAPE_URL =
   'https://ewnkbapajehtlumggpvl.supabase.co/storage/v1/object/public/flores-amarillas/Qr-pago/IMG_1399.jpeg';
 
+/**
+ * Numero de Yape al que se paga.
+ *
+ * Va junto al QR y no solo dentro de el: si la camara no lee el codigo —o si
+ * alguien abre el regalo en el mismo celular con el que va a yapear, donde no
+ * hay nada que escanear—, el numero a mano es la unica salida.
+ */
+export const NUMERO_YAPE = '951722132';
+
 /** Lo que aguanta Supabase Storage en el plan gratuito sin devolver 413. */
 const MAX_COMPROBANTE_BYTES = 5 * 1024 * 1024;
 

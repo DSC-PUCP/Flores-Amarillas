@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "limpiar:storage": "bun scripts/limpiar-storage.ts",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check --write .",

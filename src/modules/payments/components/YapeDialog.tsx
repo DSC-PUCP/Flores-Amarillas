@@ -1,5 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
-import { CheckCircle2, ImageUp, Loader2, X } from 'lucide-react';
+import {
+  Check,
+  Copy,
+  Heart,
+  ImageUp,
+  Loader2,
+  PartyPopper,
+  Timer,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +21,80 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { QR_YAPE_URL, registrarAvisoPago, validarAvisoPago } from '../yape';
+import {
+  NUMERO_YAPE,
+  QR_YAPE_URL,
+  registrarAvisoPago,
+  validarAvisoPago,
+} from '../yape';
+
+async function copiarAlPortapapeles(texto: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(texto);
+    return true;
+  } catch {
+    // Sigue el respaldo.
+  }
+  try {
+    const area = document.createElement('textarea');
+    area.value = texto;
+    // Fuera de la vista pero enfocable: un textarea con `display: none` no se
+    // puede seleccionar, y sin seleccion no hay nada que copiar.
+    area.setAttribute('aria-hidden', 'true');
+    area.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+    document.body.appendChild(area);
+    area.select();
+    const bien = document.execCommand('copy');
+    area.remove();
+    return bien;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Boton que copia un texto y lo dice.
+ *
+ * Lo comparten el numero de Yape y el enlace del regalo: los dos necesitan lo
+ * mismo —copiar, avisar de que se copio y volver solos a su estado—, y tener
+ * ese estado dos veces en el componente grande era pedir que se
+ * desincronizaran.
+ */
+function BotonCopiar({
+  texto,
+  etiqueta,
+  className,
+  variant = 'outline',
+}: {
+  /** Lo que va al portapapeles. */
+  texto: string;
+  /** Lo que se lee en el boton mientras no se ha copiado. */
+  etiqueta: string;
+  className?: string;
+  variant?: 'outline' | 'default';
+}) {
+  const [copiado, setCopiado] = useState(false);
+
+  return (
+    <Button
+      type="button"
+      variant={variant}
+      onClick={async () => {
+        if (!(await copiarAlPortapapeles(texto))) return;
+        setCopiado(true);
+        window.setTimeout(() => setCopiado(false), 2000);
+      }}
+      className={className}
+    >
+      {copiado ? (
+        <Check className="mr-2 size-4 shrink-0" />
+      ) : (
+        <Copy className="mr-2 size-4 shrink-0" />
+      )}
+      {copiado ? '¡Copiado!' : etiqueta}
+    </Button>
+  );
+}
 
 interface YapeDialogProps {
   open: boolean;
@@ -39,6 +122,11 @@ export function YapeDialog({
   const [comprobante, setComprobante] = useState<File | null>(null);
   const [errorValidacion, setErrorValidacion] = useState<string | null>(null);
   const inputArchivo = useRef<HTMLInputElement>(null);
+  // El mismo enlace que se guarda con el aviso de pago: la direccion de esta
+  // pagina. Se lee al vuelo y no se guarda en estado porque no cambia mientras
+  // el dialogo esta abierto.
+  const enlaceDelRegalo =
+    typeof window === 'undefined' ? '' : window.location.href;
 
   // La miniatura es un blob local: sube recien al enviar, asi que mientras
   // tanto no hay ninguna URL remota que mostrar.
@@ -94,24 +182,72 @@ export function YapeDialog({
     <Dialog open={open} onOpenChange={alCerrar}>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-lg">
         {enviar.isSuccess ? (
-          <div className="py-4 text-center">
-            <CheckCircle2
-              aria-hidden="true"
-              className="mx-auto mb-4 size-12 text-[#1E3B2A]"
-            />
+          /*
+           * Tres cosas, en este orden: el gracias, el enlace —que es lo unico
+           * que la persona puede perder para siempre— y la espera.
+           *
+           * El bloque del enlace lleva el aviso mas fuerte a proposito: si
+           * cierra esta ventana sin guardarlo, el regalo sigue existiendo pero
+           * se queda sin quien lo abra.
+           */
+          <div className="py-2">
             <DialogHeader>
-              <DialogTitle className="text-center text-2xl">
-                Recibido. Gracias.
+              <span
+                aria-hidden="true"
+                className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[#FFF8D7] text-[#183E32] ring-4 ring-[#F7C325]/40"
+              >
+                <PartyPopper className="size-8" />
+              </span>
+              <DialogTitle className="text-center font-display text-2xl leading-tight sm:text-3xl">
+                ¡Muchas gracias
+                <br />
+                por preferirnos!
               </DialogTitle>
-              <DialogDescription className="text-center">
-                Revisamos tu pago y activamos tu enlace apenas lo confirmemos.
-                Deja esta página abierta: se desbloquea sola. Guardamos tu
-                correo por si necesitamos escribirte.
+              <DialogDescription className="sr-only">
+                Pago recibido. Guarda el enlace de tu regalo y compártelo.
               </DialogDescription>
             </DialogHeader>
+
+            <div className="mt-5 rounded-2xl border-2 border-[#B7801A] bg-[#FFF8D7] p-4">
+              <p className="flex items-start gap-2 text-sm font-bold text-[#8A5A00]">
+                <TriangleAlert
+                  aria-hidden="true"
+                  className="mt-0.5 size-5 shrink-0"
+                />
+                <span>
+                  IMPORTANTE: guarda este enlace y compártelo con esa persona
+                  tan especial.
+                </span>
+              </p>
+              <p className="mt-3 rounded-xl border border-[#183E32]/15 bg-white px-3 py-2.5 text-xs leading-relaxed break-all text-[#183E32] select-all">
+                {enlaceDelRegalo}
+              </p>
+              <BotonCopiar
+                texto={enlaceDelRegalo}
+                etiqueta="Copiar el enlace"
+                className="mt-3 h-11 w-full bg-[#183E32] font-semibold text-white hover:bg-[#285642]"
+                variant="default"
+              />
+            </div>
+
+            <p className="mt-4 flex items-center justify-center gap-2 text-center text-sm font-semibold">
+              <Timer aria-hidden="true" className="size-4 shrink-0" />
+              En 5 minutos máx. esta página mostrará la versión habilitada
+              <Heart
+                aria-hidden="true"
+                className="size-4 shrink-0 fill-[#F17B62] text-[#F17B62]"
+              />
+            </p>
+
+            {/*
+              Sin colores propios: la variante `outline` ya usa los tokens del
+              tema, y asi se lee igual en claro y en oscuro. El bloque del
+              enlace si lleva paleta fija, pero porque pinta su propio fondo.
+            */}
             <Button
               onClick={() => alCerrar(false)}
-              className="mt-6 bg-[#183E32] text-white hover:bg-[#285642]"
+              variant="outline"
+              className="mt-5 w-full"
             >
               Entendido
             </Button>
@@ -137,6 +273,16 @@ export function YapeDialog({
               <p className="mt-3 text-sm font-semibold text-[#183E32]">
                 Monto exacto: S/ {precio.toFixed(2)}
               </p>
+              {/*
+                El numero escrito en el propio boton: asi sirve igual aunque
+                copiar falle —navegadores sin permiso de portapapeles, o una
+                pagina servida por http— y siempre se puede teclear a mano.
+              */}
+              <BotonCopiar
+                texto={NUMERO_YAPE}
+                etiqueta={`Copiar ${NUMERO_YAPE}`}
+                className="mt-3 w-full border-[#183E32]/30 bg-white font-semibold tabular-nums text-[#183E32] hover:bg-[#FFF8D7]"
+              />
             </div>
 
             <form className="space-y-4" onSubmit={alEnviar}>

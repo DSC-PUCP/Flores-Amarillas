@@ -177,7 +177,23 @@
   width: min(92vw, 420px);
   padding: 18px 20px 14px;
   border-radius: 24px;
-  z-index: 4;
+  /*
+   * Por delante del cofre del premium, que esta en 7.
+   *
+   * Los dos viven en la misma banda de abajo —la carta a 88px del borde, el
+   * cofre a 86— y en pantallas estrechas la carta ocupa casi todo el ancho,
+   * asi que se pisan. Con z-index 4 ganaba el cofre y tapaba justo lo que hay
+   * que leer. Sigue por debajo de la intro (10) y de lo que el cofre revela
+   * al abrirse (12), que son las dos cosas que si deben cubrirla.
+   *
+   * Pasar por delante no puede significar comerse los toques: la carta cubre
+   * justo donde esta el cofre, y el cofre se abre a base de golpearlo. Asi que
+   * el panel no captura el puntero y solo lo hace su boton de cerrar —el mismo
+   * reparto que ya usa el cofre con su propia columna—. Se pierde poder
+   * seleccionar el texto de la carta; poder abrir el cofre importa mas.
+   */
+  z-index: 8;
+  pointer-events: none;
   background: rgba(255, 248, 225, 0.93);
   color: #4a2c00;
   box-shadow: 0 18px 50px rgba(30, 10, 60, 0.4);
@@ -227,6 +243,8 @@
 }
 .closeCard {
   position: absolute;
+  /* La carta no captura el puntero; este boton si. */
+  pointer-events: auto;
   top: 6px;
   right: 8px;
   width: 34px;

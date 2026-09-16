@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,6 +12,9 @@ import type { Template } from '@/core/models/template';
 import { usePlans } from '../landing/hooks/usePlans';
 import { PremiumThumbnail } from './components/templates/plantilla_giano_feat_leo/components/premium-thumbnail';
 import { useTemplates } from './hooks/useTemplate';
+
+/** Etiqueta del filtro sin filtrar. Es el valor por defecto de la pantalla. */
+const TODOS = 'Todos';
 
 function TemplateThumbnail({ template }: { template: Template }) {
   const [failedImage, setFailedImage] = useState<string | null>(null);
@@ -120,14 +123,28 @@ export function TemplateContent() {
     refetch,
   } = useTemplates();
   const { data: plans = [] } = usePlans();
-  const [selectedPlan, setSelectedPlan] = useState('Todos');
   const navigate = useNavigate();
+  /*
+   * El plan elegido se lee de la URL, no de un estado local.
+   *
+   * Un `useState` no podia responder a un enlace que ya trae el filtro puesto,
+   * que es lo que mandan las tarjetas del home.
+   */
+  const { plan: planEnLaUrl } = useSearch({ from: '/__layout/template/' });
+  const selectedPlan = planEnLaUrl ?? TODOS;
+  const setSelectedPlan = (name: string) =>
+    navigate({
+      to: '/template',
+      // "Todos" es el estado por defecto: no ensucia la barra de direcciones.
+      search: name === TODOS ? {} : { plan: name },
+      replace: true,
+    });
   const visibleTemplates = templates.filter((template) => template.isVisible);
   const filteredTemplates = visibleTemplates.filter(
-    (template) => selectedPlan === 'Todos' || template.tipoPlan === selectedPlan
+    (template) => selectedPlan === TODOS || template.tipoPlan === selectedPlan
   );
   const planNames = [
-    'Todos',
+    TODOS,
     ...new Set(plans.map((plan) => plan.name)),
   ].filter((name, index, names) => names.indexOf(name) === index);
 
@@ -229,7 +246,7 @@ export function TemplateContent() {
                 {visibleTemplates.length > 0 ? (
                   <button
                     type="button"
-                    onClick={() => setSelectedPlan('Todos')}
+                    onClick={() => setSelectedPlan(TODOS)}
                     className="mt-6 min-h-12 rounded-full bg-[#183E32] px-6 text-sm font-semibold text-white hover:bg-[#285642] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
                   >
                     Ver todos los diseños

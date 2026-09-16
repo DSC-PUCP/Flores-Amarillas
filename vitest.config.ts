@@ -19,6 +19,11 @@ export default defineConfig({
     environmentOptions: {
       jsdom: { url: 'http://localhost:3000/' },
     },
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // `scripts/` tambien entra: el limpiador de Storage decide que archivos
+    // se borran de produccion, y esas reglas tienen que estar cubiertas.
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'scripts/**/*.{test,spec}.{ts,tsx}',
+    ],
   },
 });

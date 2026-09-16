@@ -15,6 +15,8 @@ type YTPlayer = {
   getDuration(): number;
   loadVideoById(options: ClipOptions): void;
   cueVideoById(options: ClipOptions): void;
+  /** No esta en los dobles de las pruebas, de ahi el opcional. */
+  setVolume?(volume: number): void;
   destroy(): void;
 };
 
@@ -91,6 +93,8 @@ export function describePlayerError(
 type Options = {
   onEnded?: () => void;
   onError?: (code: number) => void;
+  /** Volumen del reproductor, 0-100. Si no se pasa, queda el de YouTube. */
+  volume?: number;
 };
 
 /**
@@ -139,7 +143,13 @@ export function useYouTubePlayer(options: Options = {}) {
           },
           events: {
             onReady: () => {
-              if (!cancelled) setReady(true);
+              if (cancelled) return;
+              // El volumen se fija aqui y no en cada clip: YouTube lo guarda
+              // en el reproductor, asi que vale para todo lo que se cargue
+              // despues.
+              const nivel = callbacks.current.volume;
+              if (nivel !== undefined) playerRef.current?.setVolume?.(nivel);
+              setReady(true);
             },
             onStateChange: ({ data }) => {
               if (cancelled) return;

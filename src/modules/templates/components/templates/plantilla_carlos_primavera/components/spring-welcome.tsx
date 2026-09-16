@@ -1,7 +1,6 @@
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
 import { type CSSProperties, useEffect, useState } from 'react';
 import { useSongClips } from '@/modules/music/hooks/useSongClips';
-import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
 import { assets } from '../assets';
 import { SpringCamera } from './spring-camera';
 import type { CameraMemory } from './spring-camera-data';
@@ -128,17 +127,6 @@ export function SpringWelcome({
       }
     >
       <YellowPetals />
-      {/*
-        El piano suena en las dos pantallas de detalle —la carta corta y los
-        recuerdos—, que son las mismas que acompanaba antes de mover la musica
-        al segundo puesto. No suena en la de musica, que trae la suya: dos
-        canciones a la vez no es ambiente, es ruido. Tampoco en el editor,
-        donde la vista previa vive al lado del formulario.
-      */}
-      <PianoDeFondo
-        activo={slide >= 2 && slide <= 3 && editorScene === undefined}
-        className="right-4 bottom-20 md:right-6 md:bottom-24"
-      />
       {/*
         Reproductor de YouTube: solo pone el sonido, no se muestra. No puede ir
         con display:none porque el navegador no lo cargaria.

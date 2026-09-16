@@ -41,6 +41,10 @@ export function useSongClips(value: unknown) {
   const failures = useRef(0);
 
   const player = useYouTubePlayer({
+    // Las plantillas suenan al 60 por ciento: al 100 la cancion tapa todo lo
+    // demas del regalo. El editor de fragmentos no pasa por aqui y se queda
+    // al volumen normal, que es el que la persona necesita para recortar.
+    volume: 60,
     onEnded: () => {
       failures.current = 0;
       loadAt((index + 1) % songs.length, true);

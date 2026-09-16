@@ -268,7 +268,19 @@ export function PlanCard({
 
       <div className="relative mt-auto">
         {interactive ? (
-          <Link to="/template" className={buttonClass}>
+          /*
+           * Lleva a los disenos de ESTE plan, no al catalogo entero. Pulsar
+           * "Premium" y aterrizar en la lista completa obliga a buscar otra vez
+           * lo que ya se acababa de elegir.
+           *
+           * El filtro va por nombre porque es lo que compara la pantalla de
+           * disenos (`template.tipoPlan`), que es el nombre del plan.
+           */
+          <Link
+            to="/template"
+            search={{ plan: plan.name }}
+            className={buttonClass}
+          >
             Ver diseños
             <ArrowUpRight
               aria-hidden="true"
