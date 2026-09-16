@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { TemplateSlideProps } from '@/modules/templates/types';
 import CorazonesSlide6 from './CorazonesSlide6';
 import BackButton from './BackButton';
+import NextButton from './NextButton';
 import { slide6 } from './assets';
 
 const { abajoDer, abajoIzq, arribaDer, photoFrame, slider: sliderIcon, vinylDisc } = slide6;
@@ -13,6 +14,7 @@ interface Slide6Props extends TemplateSlideProps {
 
 export default function Slide6({
   templateData,
+  onNext,
   onPrev,
 }: Slide6Props) {
   const data = (templateData || {}) as Record<string, any>;
@@ -30,6 +32,16 @@ export default function Slide6({
       <CorazonesSlide6 />
       
       <BackButton onClick={onPrev} />
+
+      {/* Cierra el recorrido: hasta aqui el regalo 2 no tenia salida adelante. */}
+      <NextButton
+        onClick={onNext}
+        className="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-[70]"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 20 }}
+        transition={{ delay: 0.5 }}
+      />
 
       {/* Arriba Derecha */}
       <motion.div

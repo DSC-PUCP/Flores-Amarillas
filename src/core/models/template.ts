@@ -51,6 +51,8 @@ export type DateTemplateField = BaseTemplateField & {
 export type TextAreaTemplateField = BaseTemplateField & {
   type: 'textarea';
   max_length?: number;
+  /** Texto de partida, como en `string`. Lo reparte `formDefaults`. */
+  default?: string;
 };
 
 export type ChoiceTemplateField = BaseTemplateField & {

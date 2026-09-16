@@ -10,7 +10,18 @@ import Slide4 from './Slide4';
 
 import Slide5 from './Slide5';
 import Slide6 from './Slide6';
+import Slide7 from './Slide7';
+import { PianoDeFondo } from './PianoDeFondo';
 
+/**
+ * Textos de prueba que salen ya escritos en el formulario.
+ *
+ * Todos terminan en "(texto de prueba)" para que nadie publique un regalo con
+ * ellos sin darse cuenta: si el aviso llega hasta la pagina final, se ve.
+ *
+ * `password` es la excepcion y no lo lleva: el campo admite 6 caracteres y el
+ * aviso solo no ocupa 17.
+ */
 export const plantillaLuisArceForm: TemplateForm = [
   {
     title: 'Protagonistas',
@@ -21,6 +32,7 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Luis (texto de prueba)',
       },
       {
         name: 'personB',
@@ -28,6 +40,7 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'string',
         max_length: 25,
         required: true,
+        default: 'Ana (texto de prueba)',
       },
     ],
   },
@@ -40,6 +53,7 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'string',
         max_length: 6,
         required: true,
+        default: '210926',
       },
     ],
   },
@@ -52,6 +66,8 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'textarea',
         max_length: 250,
         required: true,
+        default:
+          'Gracias por estar, por reirte de mis chistes malos y por hacer que los dias grises se pasen rapido. Esta primavera es tuya. (texto de prueba)',
       },
     ],
   },
@@ -70,16 +86,26 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'textarea',
         max_length: 120,
         required: true,
+        default: 'Y en cada flor amarilla vuelvo a encontrarte. (texto de prueba)',
       },
     ],
   },
 ];
 
+/** Ultima pantalla del recorrido: el cierre del 21 de septiembre. */
+const ULTIMA = 6;
+
 export function PlantillaLuisArce(props: TemplateSlideProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // En el editor la vista previa vive dentro de un iframe al lado del
+  // formulario: musica ahi seria ruido mientras alguien escribe.
+  const enElEditor =
+    (props.templateData as Record<string, unknown> | undefined)
+      ?.editorPreview === true;
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => Math.min(5, prev + 1));
+    setCurrentSlide((prev) => Math.min(ULTIMA, prev + 1));
   };
 
   const prevSlide = () => {
@@ -107,22 +133,14 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
         `}
       </style>
 
-      {/* Marca de agua si es preview */}
-      {props.isPreview && (
-        <div className="absolute inset-0 z-[100] pointer-events-none flex items-center justify-center overflow-hidden opacity-30">
-          <div className="flex flex-col gap-24 transform -rotate-45 scale-150 drop-shadow-md">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="flex gap-24 whitespace-nowrap">
-                {Array.from({ length: 10 }).map((_, j) => (
-                  <span key={j} className="text-6xl md:text-8xl font-black text-[#082b60] tracking-widest uppercase font-league">
-                    Vista Previa
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/*
+        La marca de agua salio de aqui: ahora la pone `TemplateRenderer` para
+        todas las plantillas, y solo en el regalo sin pagar. Colgada de
+        `isPreview` como estaba, tambien tapaba la vista previa en vivo del
+        editor mientras el cliente escribia.
+      */}
+
+      {currentSlide > 0 && !enElEditor && <PianoDeFondo />}
 
       {/* Controles invisibles globales de navegación estilo "Stories" */}
       {currentSlide > 0 && (
@@ -196,6 +214,9 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
             onNext={nextSlide}
             onPrev={prevSlide}
           />
+        )}
+        {currentSlide === ULTIMA && (
+          <Slide7 key="slide7" {...props} onPrev={prevSlide} />
         )}
       </AnimatePresence>
     </div>

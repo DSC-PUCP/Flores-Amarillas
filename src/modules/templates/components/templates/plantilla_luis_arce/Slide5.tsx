@@ -112,6 +112,13 @@ export default function Slide5({
       </motion.div>
 
       {/* Contenido Central */}
+      {/*
+        En movil es una sola columna centrada. Antes apilaba carta y arbol, y
+        entre los dos pasaban del alto de la pantalla: el contenido se salia y
+        no habia forma de leer el mensaje, que es justo lo unico que importa
+        aqui. El arbol se esconde por debajo de `md` (ver mas abajo) y la
+        carta se queda con toda la pantalla para ella.
+      */}
       <div className="z-[30] relative w-full h-full flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 lg:gap-24 px-6 md:px-12 pointer-events-none">
         
         {/* Columna Izquierda: Carta */}
@@ -156,9 +163,9 @@ export default function Slide5({
           </div>
         </motion.div>
 
-        {/* Columna Derecha: Árbol */}
+        {/* Columna Derecha: Árbol (desde tablet; en movil no cabe) */}
         <motion.div
-          className="relative flex items-center justify-center mt-4 md:mt-16"
+          className="relative hidden md:flex items-center justify-center mt-4 md:mt-16"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0, transition: { duration: 0.5 } }}

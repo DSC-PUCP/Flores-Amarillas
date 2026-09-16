@@ -63,6 +63,15 @@ export const slide5 = {
   treeHeart: asset('slide_5-tree-heart.webp'),
 };
 
+/**
+ * Piano de fondo que suena desde la segunda pantalla.
+ *
+ * Sube el archivo como `piano.mp3` a la misma carpeta del bucket. Mientras no
+ * exista, el <audio> falla al cargar, el control se esconde solo y el regalo
+ * funciona igual, en silencio.
+ */
+export const piano = asset('piano.mp3');
+
 export const slide6 = {
   abajoDer: asset('slide_6-abajo_der.webp'),
   abajoIzq: asset('slide_6-abajo_izq.webp'),

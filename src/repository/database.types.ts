@@ -146,6 +146,46 @@ export type Database = {
           },
         ];
       };
+      pagos: {
+        Row: {
+          id: string;
+          page_id: string;
+          nombre: string;
+          correo: string;
+          comprobante_url: string;
+          enlace: string;
+          estado: string;
+          creado_en: string;
+        };
+        Insert: {
+          id?: string;
+          page_id: string;
+          nombre: string;
+          correo: string;
+          comprobante_url: string;
+          enlace: string;
+          estado?: string;
+          creado_en?: string;
+        };
+        Update: {
+          id?: string;
+          page_id?: string;
+          nombre?: string;
+          correo?: string;
+          comprobante_url?: string;
+          enlace?: string;
+          estado?: string;
+          creado_en?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'pagos_page_id_fkey';
+            columns: ['page_id'];
+            referencedRelation: 'pages';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       files: {
         Row: {
           id: string;

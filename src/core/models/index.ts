@@ -1,5 +1,6 @@
 export type { Item, ItemStatus } from './item';
 export type { FileUploadRef, Lovepage } from './lovepage';
+export type { EstadoPago, Pago } from './pago';
 export type { Plan } from './plan';
 export type { LyricLine, SongClip } from './song';
 export type {

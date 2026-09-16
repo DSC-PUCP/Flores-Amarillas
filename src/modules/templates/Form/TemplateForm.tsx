@@ -406,7 +406,23 @@ export function TemplateForm() {
                       >
                         <FieldRenderer
                           field={field}
-                          value={formValues[field.name]}
+                          /*
+                           * El `default` del campo se ve escrito en el input,
+                           * no solo en la vista previa. Es un respaldo y no un
+                           * valor inicial en el estado: en cuanto alguien
+                           * escribe —o borra— manda `formValues`, asi que
+                           * vaciar un campo lo deja vacio y la validacion lo
+                           * reclama como siempre.
+                           *
+                           * Las fotos quedan fuera: ahi `default` seria una
+                           * URL y el subidor espera un archivo.
+                           */
+                          value={
+                            field.type === 'image' || field.type === 'array'
+                              ? formValues[field.name]
+                              : (formValues[field.name] ??
+                                ('default' in field ? field.default : undefined))
+                          }
                           onChange={(val: unknown) =>
                             handleChange(field.name, val)
                           }
