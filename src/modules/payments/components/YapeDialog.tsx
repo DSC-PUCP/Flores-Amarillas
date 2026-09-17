@@ -258,7 +258,7 @@ export function YapeDialog({
               <DialogTitle>Activa tu enlace por S/ {precio.toFixed(2)}</DialogTitle>
               <DialogDescription>
                 Yapea el monto exacto al QR, sube tu captura y déjanos tus
-                datos. Verificamos a mano, así que puede tomar de 2 a 5 minutos.
+                datos.
               </DialogDescription>
             </DialogHeader>
 
