@@ -73,6 +73,17 @@ try {
   Remove-Item -LiteralPath $startLog -Force -ErrorAction SilentlyContinue
 }
 
+Write-Host 'Aplicando migraciones pendientes a Supabase local...'
+$ErrorActionPreference = 'Continue'
+$migrationResult = & $supabase migration up --local 2>&1
+$migrationExitCode = $LASTEXITCODE
+$ErrorActionPreference = 'Stop'
+if ($migrationExitCode -ne 0) {
+  $migrationDetails = ($migrationResult | Select-Object -Last 15 | Out-String).Trim()
+  if (-not $migrationDetails) { $migrationDetails = 'No se recibió información adicional.' }
+  throw "No se pudieron aplicar las migraciones locales: $migrationDetails"
+}
+
 $ErrorActionPreference = 'Continue'
 $statusJson = & $supabase status --output json 2>$null
 $statusExitCode = $LASTEXITCODE
@@ -125,7 +136,6 @@ foreach ($name in $values.Keys) {
 
 Write-Host "Supabase local listo: $apiUrl (Studio: http://127.0.0.1:54323)"
 Write-Host 'Claves locales guardadas en .env sin mostrarlas.'
-Write-Host 'Para probar Flow en sandbox, SERVER_URL debe ser la URL HTTPS de ngrok hacia el puerto 5173.'
 
 $existingListener = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($existingListener) {

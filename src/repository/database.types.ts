@@ -48,21 +48,21 @@ export type Database = {
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Insert: {
           id?: number;
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Update: {
           id?: number;
           name?: string;
           price?: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Relationships: [];
       };
@@ -113,9 +113,6 @@ export type Database = {
           config_json: Json;
           is_paid: boolean | null;
           expires_at: string | null;
-          flow_checkout_url: string | null;
-          flow_order: number | null;
-          flow_amount: number | null;
         };
         Insert: {
           id?: string;
@@ -123,9 +120,6 @@ export type Database = {
           config_json: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
-          flow_checkout_url?: string | null;
-          flow_order?: number | null;
-          flow_amount?: number | null;
         };
         Update: {
           id?: string;
@@ -133,9 +127,6 @@ export type Database = {
           config_json?: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
-          flow_checkout_url?: string | null;
-          flow_order?: number | null;
-          flow_amount?: number | null;
         };
         Relationships: [
           {
@@ -216,10 +207,26 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      pagos_pendientes: {
+        Row: {
+          pago_id: string;
+          creado_en: string;
+          nombre: string;
+          correo: string;
+          comprobante_url: string;
+          enlace: string;
+          precio: number;
+          plantilla: string;
+          pagina_activa: boolean | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
-      [_ in never]: never;
+      activar_pago: {
+        Args: { pago_id: string };
+        Returns: { page_id: string; enlace: string }[];
+      };
     };
     Enums: {
       item_status: 'draft' | 'published' | 'archived';

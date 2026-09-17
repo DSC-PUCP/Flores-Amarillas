@@ -1,7 +1,6 @@
 # Pagos por Yape
 
-Flow quedó fuera: el registro de comercio pide datos de empresa que no tenemos.
-Mientras tanto se cobra por Yape y **la verificación es manual**.
+El cobro se realiza por Yape y **la verificación es manual**.
 
 ## Cómo funciona
 
@@ -15,14 +14,14 @@ Mientras tanto se cobra por Yape y **la verificación es manual**.
 5. La página del cliente se recarga sola cada 10 segundos: en cuanto activas,
    se desbloquea sin que él haga nada.
 
-La web **no puede** activar nada por su cuenta. Marcar `is_paid` sigue siendo
-cosa de `service_role`, igual que antes con Flow.
+La web **no puede** activar nada por su cuenta. Marcar `is_paid` es una
+operación exclusiva del servidor con `service_role`.
 
-## Antes de nada: aplicar la migración
+## Antes de nada: aplicar las migraciones
 
-Pega `supabase/migrations/0006_pagos_yape.sql` completo en el **SQL Editor** de
-Supabase y ejecútalo una sola vez. Hasta que lo hagas, el formulario sube la
-imagen pero falla al guardar y el cliente ve un error.
+Aplica las migraciones pendientes de `supabase/migrations` en orden. La `0006`
+crea los pagos Yape y la `0007` limpia los campos heredados de Flow. Hasta que
+estén aplicadas, el formulario o el panel administrativo pueden fallar.
 
 ## El día a día
 
@@ -56,7 +55,7 @@ update public.pagos set estado = 'rechazado' where id = 'el-pago_id';
 - **La vista previa dura 45 minutos.** Si alguien paga y no lo verificas a
   tiempo, verá «Tu vista previa terminó». No se pierde nada: al activar, su
   regalo vuelve entero. Si esto molesta, se cambia el intervalo en el trigger
-  `set_page_insert_defaults` (migración `0003`).
+  `set_page_insert_defaults` (migración `0003_page_defaults.sql`).
 - **Los comprobantes quedan en un bucket público.** La ruta lleva un UUID, así
   que nadie la adivina, pero quien tenga el enlace ve la imagen. Si quieres que
   sea privado de verdad, hay que crear un bucket aparte con RLS y firmar las
@@ -66,6 +65,3 @@ update public.pagos set estado = 'rechazado' where id = 'el-pago_id';
   mano.
 - **Para cambiar el QR**, sube la imagen nueva al bucket y pega su URL en
   `QR_YAPE_URL`, en `src/modules/payments/yape.ts`.
-- El código de Flow sigue en el repo (`src/modules/payments/flow.ts`,
-  `server.ts` y las rutas `/api/flow/*`), sin usarse. Si algún día completas el
-  registro, se vuelve a enchufar.

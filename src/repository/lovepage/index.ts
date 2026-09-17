@@ -16,8 +16,6 @@ const mapRowToLovepage = (row: LovepageRow): Lovepage => {
     configJson: row.config_json as TemplateData,
     isPaid: row.is_paid ?? false,
     expiresAt: row.expires_at ? new Date(row.expires_at) : null,
-    flowAmount: row.flow_amount,
-    flowCheckoutUrl: row.flow_checkout_url,
   };
 };
 

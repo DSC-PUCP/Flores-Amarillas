@@ -19,7 +19,7 @@ export const Route = createFileRoute('/lovepage/$lovepageId')({
     return {
       ...lovepage,
       templateKey: template.templateKey,
-      price: lovepage.flowAmount ?? plan.price,
+      price: plan.price,
     };
   },
   component: RouteComponent,
@@ -40,9 +40,6 @@ function RouteComponent() {
   }, [lovepage.price, lovepage.isPaid, router]);
 
   const needsPayment = lovepage.price > 0 && !lovepage.isPaid;
-  // Se ignora `flowCheckoutUrl` a proposito: las paginas creadas antes traen
-  // una orden de Flow que ya no lleva a ningun lado, y mandar ahi a alguien
-  // que quiere pagar es peor que no ofrecerle nada.
   const openCheckout = () => setCheckoutOpen(true);
 
   return (
@@ -85,8 +82,8 @@ function RouteComponent() {
               Tu vista previa terminó
             </h1>
             <p className="text-slate-700">
-              Tu página está guardada y vuelve completa en cuanto confirmemos
-              tu pago.
+              Tu página está guardada y vuelve completa en cuanto confirmemos tu
+              pago.
             </p>
             {needsPayment && (
               <Button onClick={openCheckout} className={ctaClassName}>
