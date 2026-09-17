@@ -8,6 +8,10 @@ type CreateLovepageParams = {
   files?: FileUploadRef[];
 };
 
+type CreateLovepageConPromoParams = CreateLovepageParams & {
+  codigo: string;
+};
+
 export function useCreateLovepage() {
   return useMutation({
     mutationFn: (params: CreateLovepageParams) =>
@@ -15,6 +19,18 @@ export function useCreateLovepage() {
         params.templateId,
         params.configJson,
         params.files
+      ),
+  });
+}
+
+export function useCreateLovepageConPromo() {
+  return useMutation({
+    mutationFn: (params: CreateLovepageConPromoParams) =>
+      LovepageService.createLovepageConPromo(
+        params.templateId,
+        params.configJson,
+        params.files,
+        params.codigo
       ),
   });
 }

@@ -101,6 +101,16 @@ interface YapeDialogProps {
   onOpenChange: (open: boolean) => void;
   pageId: string;
   precio: number;
+  /**
+   * Enlace del regalo. Por defecto la direccion actual, que es la del propio
+   * regalo cuando el dialogo se abre desde ahi.
+   *
+   * Hay que pasarlo cuando se cobra desde otra pantalla —el editor, al canjear
+   * un codigo con descuento—: si no, se guardaria el enlace del formulario y
+   * se le diria a la persona que guarde una direccion que no lleva a su
+   * regalo.
+   */
+  enlace?: string;
 }
 
 /**
@@ -116,6 +126,7 @@ export function YapeDialog({
   onOpenChange,
   pageId,
   precio,
+  enlace,
 }: YapeDialogProps) {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
@@ -126,7 +137,7 @@ export function YapeDialog({
   // pagina. Se lee al vuelo y no se guarda en estado porque no cambia mientras
   // el dialogo esta abierto.
   const enlaceDelRegalo =
-    typeof window === 'undefined' ? '' : window.location.href;
+    enlace ?? (typeof window === 'undefined' ? '' : window.location.href);
 
   // La miniatura es un blob local: sube recien al enviar, asi que mientras
   // tanto no hay ninguna URL remota que mostrar.
@@ -151,7 +162,7 @@ export function YapeDialog({
         nombre,
         correo,
         comprobante: archivo,
-        enlace: window.location.href,
+        enlace: enlaceDelRegalo,
       }),
   });
 
@@ -255,7 +266,9 @@ export function YapeDialog({
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Activa tu enlace por S/ {precio.toFixed(2)}</DialogTitle>
+              <DialogTitle>
+                Activa tu enlace por S/ {precio.toFixed(2)}
+              </DialogTitle>
               <DialogDescription>
                 Yapea el monto exacto al QR, sube tu captura y déjanos tus
                 datos.
@@ -353,7 +366,8 @@ export function YapeDialog({
                       aria-label="Quitar el comprobante"
                       onClick={() => {
                         setComprobante(null);
-                        if (inputArchivo.current) inputArchivo.current.value = '';
+                        if (inputArchivo.current)
+                          inputArchivo.current.value = '';
                       }}
                     >
                       <X className="size-4" />

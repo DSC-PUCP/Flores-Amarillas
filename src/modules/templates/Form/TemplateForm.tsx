@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  Gift,
   Loader2,
   Pencil,
   Plus,
@@ -29,6 +30,8 @@ import type { FileUploadRef } from '@/core/models';
 import type { TemplateData, TemplateField } from '@/core/models/template';
 import { cn } from '@/lib/utils';
 import { SongPicker } from '@/modules/music/components/SongPicker';
+import { YapeDialog } from '@/modules/payments/components/YapeDialog';
+import { usePlanById } from '@/modules/plan/hooks/usePlan';
 import { MascotPicker } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/components/mascot-picker';
 import { readGiftMascot } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/mascots';
 import { useTemplateById } from '../hooks/useTemplate';
@@ -39,7 +42,10 @@ import {
   formDefaults,
   stepScene,
 } from './editor-preview-protocol';
-import { useCreateLovepage } from './hooks/useLovePage';
+import {
+  useCreateLovepage,
+  useCreateLovepageConPromo,
+} from './hooks/useLovePage';
 import { ImageUploadField } from './image-upload-field';
 import { useEditorData } from './use-editor-data';
 
@@ -51,8 +57,16 @@ export function TemplateForm() {
   const id = Number(params.id);
 
   const { data: template, isLoading, error } = useTemplateById(id);
+  const { data: plan } = usePlanById(template?.planId ?? 0);
   const createLovepageMutation = useCreateLovepage();
+  const createConPromoMutation = useCreateLovepageConPromo();
 
+  const [promoCode, setPromoCode] = useState('');
+  const [promoAviso, setPromoAviso] = useState<string | null>(null);
+  const [pagoPromo, setPagoPromo] = useState<{
+    pageId: string;
+    precio: number;
+  } | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [files, setFiles] = useState<FileUploadRef[]>([]);
@@ -62,6 +76,23 @@ export function TemplateForm() {
   const [reviewing, setReviewing] = useState(false);
   const steps = template?.schemaJson ?? EMPTY_STEPS;
   const previewData = useEditorData(formValues, steps);
+  /*
+   * Los dos botones de la tarjeta final se bloquean juntos: son dos caminos
+   * al mismo regalo y pulsar el segundo mientras el primero sube las fotos
+   * crearia dos paginas, una de ellas gastando un cupo de la promocion.
+   */
+  const generando =
+    createLovepageMutation.isPending || createConPromoMutation.isPending;
+  /*
+   * En la plantilla gratuita no se pregunta por el codigo: esa ya se ve
+   * completa sin pagar, asi que un codigo ahi no daria nada y gastaria un cupo
+   * de la promocion.
+   *
+   * Mientras el plan no ha cargado se da por gratuita —el campo aparece cuando
+   * se sabe que hay algo que cobrar, y no al reves: es mejor que tarde un
+   * instante en salir a que parpadee en la plantilla donde no va.
+   */
+  const promoDisponible = (plan?.price ?? 0) > 0;
 
   if (isLoading) {
     return (
@@ -187,6 +218,57 @@ export function TemplateForm() {
         },
         onError: (err) => {
           toast.error(err.message || 'Error al crear la dedicatoria');
+        },
+      }
+    );
+  };
+
+  /*
+   * Mismo regalo y mismo formulario; lo que cambia es el final. Hay codigos
+   * que regalan la pagina —queda activa y se va derecho a ella— y codigos que
+   * la dejan a precio fijo, y entonces se abre el Yape de siempre con el monto
+   * de la promocion en vez del precio del plan.
+   *
+   * Que sirva o no lo decide la base. Aqui solo se traduce a palabras.
+   */
+  const handlePromoSubmit = async () => {
+    if (!validateAllSteps()) return;
+    setPromoAviso(null);
+
+    createConPromoMutation.mutate(
+      {
+        templateId: id,
+        configJson: { ...formDefaults(steps), ...formValues } as TemplateData,
+        files: files,
+        codigo: promoCode,
+      },
+      {
+        onSuccess: (canje) => {
+          switch (canje.estado) {
+            case 'agotado':
+              setPromoAviso(
+                'Se agotaron los cupos de este código. Tu regalo sigue aquí: puedes generarlo con el botón de arriba y pagarlo como siempre.'
+              );
+              return;
+            case 'inexistente':
+              setPromoAviso(
+                'Ese código no existe. Revisa que esté escrito tal cual te lo pasaron.'
+              );
+              return;
+            case 'pagar':
+              // La pagina ya existe y el cupo ya es suyo; lo que falta es el
+              // pago. El enlace se arma aqui porque el dialogo se abre desde el
+              // editor: si lo dejara adivinar, guardaria esta direccion y no la
+              // del regalo.
+              setPagoPromo({ pageId: canje.pageId, precio: canje.precio });
+              return;
+            default:
+              toast.success('¡Código aplicado! Tu regalo ya está listo.');
+              navigate({ to: `/lovepage/${canje.pageId}` });
+          }
+        },
+        onError: (err) => {
+          toast.error(err.message || 'No se pudo canjear tu código');
         },
       }
     );
@@ -352,7 +434,7 @@ export function TemplateForm() {
                   </p>
                   <Button
                     onClick={handleSubmit}
-                    disabled={createLovepageMutation.isPending}
+                    disabled={generando}
                     className="mt-5 h-14 w-full rounded-xl bg-[#183E32] text-base font-semibold text-white shadow-md transition-transform hover:bg-[#285642] active:scale-[0.98] disabled:opacity-70"
                   >
                     {createLovepageMutation.isPending ? (
@@ -362,6 +444,74 @@ export function TemplateForm() {
                     )}{' '}
                     Generar mi regalo
                   </Button>
+                  {/* La promocion por codigo: la misma tarjeta, separada por
+                      una linea. Va debajo del boton de siempre y no arriba a
+                      proposito —quien no tiene codigo no deberia tener que
+                      pasar por encima de un campo que no le toca— y no es otra
+                      tarjeta porque entonces parecería otro paso del
+                      formulario.
+
+                      No sale en la plantilla gratuita: ahi no hay nada que
+                      descontar y el codigo solo gastaria un cupo. */}
+                  {promoDisponible && (
+                    <div className="mt-6 border-t border-[#183E32]/20 pt-5">
+                      <h3 className="font-display text-xl">
+                        ¿Tienes un código?
+                      </h3>
+                      <p className="mt-1 text-sm text-[#597157]">
+                        Ingrésalo acá: según el código, tu regalo sale gratis o
+                        a un precio especial.
+                      </p>
+                      <Label htmlFor="promo-codigo" className="sr-only">
+                        Código de promoción
+                      </Label>
+                      <Input
+                        id="promo-codigo"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value);
+                          // El aviso habla del codigo anterior. En cuanto se
+                          // toca una letra deja de ser verdad.
+                          setPromoAviso(null);
+                        }}
+                        placeholder="Escribe tu código"
+                        autoComplete="off"
+                        spellCheck={false}
+                        /*
+                         * `dark:bg-white` no es un descuido: la tarjeta que lo
+                         * contiene tiene el crema escrito a mano, asi que el
+                         * campo se queda claro tambien en modo oscuro. Sin esa
+                         * variante gana el `dark:bg-input/30` que trae Input y
+                         * el campo sale negro translucido sobre el crema.
+                         */
+                        className="mt-4 h-12 rounded-xl border-[#183E32]/20 bg-white text-base text-[#183E32] placeholder:text-[#597157]/60 focus-visible:border-[#b7801a] focus-visible:ring-[#b7801a]/30 dark:bg-white"
+                      />
+                      <Button
+                        onClick={handlePromoSubmit}
+                        disabled={generando || !promoCode.trim()}
+                        className="mt-3 h-14 w-full rounded-xl bg-[#FFC800] text-base font-semibold text-[#183E32] shadow-[0_4px_0_#B07C0C] transition-all hover:bg-[#FFD633] active:translate-y-[3px] active:shadow-none disabled:opacity-60 disabled:shadow-[0_4px_0_#B07C0C]"
+                      >
+                        {createConPromoMutation.isPending ? (
+                          <Loader2 size={18} className="mr-2 animate-spin" />
+                        ) : (
+                          <Gift size={18} className="mr-2" />
+                        )}{' '}
+                        Generar mi regalo con código
+                      </Button>
+                      {/* El aviso vive aquí y no en un toast: si los cupos se
+                        acabaron hay que explicar que el regalo no se perdió y
+                        que queda el camino de siempre, y eso no se lee en dos
+                        segundos. */}
+                      {promoAviso && (
+                        <p
+                          role="alert"
+                          className="mt-3 rounded-xl border border-[#B07C0C] bg-white/70 px-4 py-3 text-sm leading-relaxed font-medium text-[#8A5A00]"
+                        >
+                          {promoAviso}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </>
             ) : (
@@ -421,7 +571,9 @@ export function TemplateForm() {
                             field.type === 'image' || field.type === 'array'
                               ? formValues[field.name]
                               : (formValues[field.name] ??
-                                ('default' in field ? field.default : undefined))
+                                ('default' in field
+                                  ? field.default
+                                  : undefined))
                           }
                           onChange={(val: unknown) =>
                             handleChange(field.name, val)
@@ -521,6 +673,29 @@ export function TemplateForm() {
           </section>
         </div>
       </div>
+      {/*
+        El cobro de un codigo con descuento. Es el mismo dialogo que el de la
+        pagina del regalo —mismo QR, mismos datos, misma tabla— y solo cambia
+        el monto, que lo dijo la promocion y no el plan.
+
+        Al cerrarlo se va al regalo: la pagina existe desde antes de abrirlo,
+        haya pagado o no, y dejar a alguien en el formulario despues de pagar
+        seria esconderle lo unico que no puede perder.
+      */}
+      {pagoPromo && (
+        <YapeDialog
+          open
+          onOpenChange={(abierto) => {
+            if (abierto) return;
+            const { pageId } = pagoPromo;
+            setPagoPromo(null);
+            navigate({ to: `/lovepage/${pageId}` });
+          }}
+          pageId={pagoPromo.pageId}
+          precio={pagoPromo.precio}
+          enlace={`${window.location.origin}/lovepage/${pagoPromo.pageId}`}
+        />
+      )}
     </div>
   );
 }

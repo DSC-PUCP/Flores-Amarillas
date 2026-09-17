@@ -1,12 +1,20 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TemplateForm as FormSchema } from '@/core/models/template';
 import { plantillaGratuitaForm } from '../components/templates/PlantillaGratuita';
 import { plantillaGianoFeatLeoForm } from '../components/templates/plantilla_giano_feat_leo/App';
 import { TemplateForm } from './TemplateForm';
 
-const { mutate, navigate } = vi.hoisted(() => ({
+const { mutate, mutatePromo, navigate } = vi.hoisted(() => ({
   mutate: vi.fn(),
+  mutatePromo: vi.fn(),
   navigate: vi.fn(),
 }));
 vi.mock('@tanstack/react-router', () => ({
@@ -25,9 +33,15 @@ vi.mock('../hooks/useTemplate', () => ({
 }));
 vi.mock('./hooks/useLovePage', () => ({
   useCreateLovepage: () => ({ mutate, isPending: false }),
+  useCreateLovepageConPromo: () => ({ mutate: mutatePromo, isPending: false }),
 }));
 vi.mock('@/modules/music/components/SongPicker', () => ({
   SongPicker: () => null,
+}));
+// El precio del plan decide si se pregunta por el código: en la gratuita no se
+// pregunta.
+vi.mock('@/modules/plan/hooks/usePlan', () => ({
+  usePlanById: () => ({ data: { price: precioDelPlan } }),
 }));
 
 const mascot = plantillaGianoFeatLeoForm[0].fields.find(
@@ -46,10 +60,12 @@ const demoSteps: FormSchema = [
 
 let steps: FormSchema = demoSteps;
 let templateKey = 'plantilla_giano_feat_leo';
+let precioDelPlan = 12;
 
 beforeEach(() => {
   steps = demoSteps;
   templateKey = 'plantilla_giano_feat_leo';
+  precioDelPlan = 12;
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
 });
 
@@ -158,6 +174,104 @@ describe('animalito de la dedicatoria premium', () => {
     );
     expect(screen.getByTitle('Vista previa de tu regalo en vivo')).toBe(frame);
   });
+  it('canjea el código de promoción con los mismos datos del formulario', () => {
+    render(<TemplateForm />);
+    fireEvent.click(screen.getByRole('radio', { name: 'Gatito' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.change(screen.getByLabelText('Mensaje'), {
+      target: { value: 'Son para ti.' },
+    });
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    const boton = screen.getByRole<HTMLButtonElement>('button', {
+      name: 'Generar mi regalo con código',
+    });
+    // Sin código el botón no hace nada: así nadie cree que pulsándolo vacío
+    // el regalo sale gratis.
+    expect(boton.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('Código de promoción'), {
+      target: { value: 'Guardian219' },
+    });
+    fireEvent.click(boton);
+    expect(mutate).not.toHaveBeenCalled();
+    expect(mutatePromo).toHaveBeenCalledWith(
+      {
+        templateId: 2,
+        configJson: { mascot: 'cat', message: 'Son para ti.' },
+        files: [],
+        codigo: 'Guardian219',
+      },
+      expect.any(Object)
+    );
+  });
+  it('no ofrece el código en la plantilla gratuita', () => {
+    precioDelPlan = 0;
+    render(<TemplateForm />);
+    fireEvent.click(screen.getByRole('radio', { name: 'Gatito' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    expect(screen.queryByLabelText('Código de promoción')).toBeNull();
+    // El camino de siempre sigue donde estaba.
+    expect(
+      screen.getByRole('button', { name: 'Generar mi regalo' })
+    ).toBeTruthy();
+  });
+
+  it('avisa de que se agotaron los cupos sin perder el regalo', () => {
+    render(<TemplateForm />);
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    fireEvent.change(screen.getByLabelText('Código de promoción'), {
+      target: { value: 'Guardian219' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Generar mi regalo con código' })
+    );
+    const [, opciones] = mutatePromo.mock.calls[0];
+    act(() => opciones.onSuccess({ estado: 'agotado' }));
+    expect(screen.getByRole('alert').textContent).toContain(
+      'Se agotaron los cupos'
+    );
+    expect(navigate).not.toHaveBeenCalled();
+    // Escribir otro código borra el aviso del anterior.
+    fireEvent.change(screen.getByLabelText('Código de promoción'), {
+      target: { value: 'Letras219' },
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('cobra el precio de la promoción cuando el código es de descuento', () => {
+    // El único test que necesita un QueryClient de verdad: aquí se abre el
+    // diálogo de Yape, que es el de siempre y trae su propia mutación.
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <TemplateForm />
+      </QueryClientProvider>
+    );
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    fireEvent.change(screen.getByLabelText('Código de promoción'), {
+      target: { value: 'Guardian219' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Generar mi regalo con código' })
+    );
+    const [, opciones] = mutatePromo.mock.calls[0];
+    act(() =>
+      opciones.onSuccess({ estado: 'pagar', pageId: 'pagina-1', precio: 3 })
+    );
+    // El monto es el de la promoción, no el del plan.
+    expect(screen.getByText('Activa tu enlace por S/ 3.00')).toBeTruthy();
+    expect(screen.getByText('Monto exacto: S/ 3.00')).toBeTruthy();
+    // Todavía no se va a ningún lado: primero paga.
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it('permite volver de la revisión al paso elegido sin crear todavía la dedicatoria', () => {
     render(<TemplateForm />);
     fireEvent.click(screen.getByRole('radio', { name: 'Gatito' }));
@@ -200,9 +314,11 @@ describe('animalito de la dedicatoria premium', () => {
     expect(files[0].multiple).toBe(false);
     expect(screen.queryByText('Timeline de fotos')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-    expect(screen.getByLabelText<HTMLInputElement>(/¿Cuándo fue su primera primavera?/).value).toBe(
-      ''
-    );
+    expect(
+      screen.getByLabelText<HTMLInputElement>(
+        /¿Cuándo fue su primera primavera?/
+      ).value
+    ).toBe('');
     fireEvent.click(
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );

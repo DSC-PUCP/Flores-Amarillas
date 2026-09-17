@@ -3,6 +3,7 @@ import { uuid } from '@/lib/uuid';
 import { PlanService } from '@/modules/plan/services';
 import { TemplateService } from '@/modules/templates/services';
 import { lovepageRepository } from '@/repository/lovepage';
+import { promoRepository } from '@/repository/promos';
 import { storageRepository } from '@/repository/storage';
 
 // Tiempo que vive el preview de un plan pagado antes de expirar.
@@ -118,5 +119,72 @@ export namespace LovepageService {
 
     if (result.isFailure()) throw new Error(result.getError()?.message);
     return result.getValue();
+  };
+
+  /**
+   * En que termina usar un codigo.
+   *
+   * `agotado` e `inexistente` no son errores: el regalo esta intacto, lo unico
+   * que pasa es que ese codigo no sirve. Por eso vuelven como respuesta y no
+   * como excepcion —quien llama tiene que poder avisar con palabras distintas
+   * de las de un fallo de red.
+   */
+  export type CanjeRegalo =
+    | { estado: 'agotado' }
+    | { estado: 'inexistente' }
+    /** Codigo de regalo: la pagina ya quedo activa. */
+    | { estado: 'gratis'; pageId: string }
+    /** Codigo de descuento: falta pagar `precio` por Yape. */
+    | { estado: 'pagar'; pageId: string; precio: number };
+
+  /**
+   * Crea la pagina gastando un cupo de la promocion.
+   *
+   * El codigo se revisa ANTES de crear nada: si esta mal escrito o ya se
+   * agoto, no tiene sentido subir las fotos al storage para despues fallar.
+   * Esa revision es solo para no gastar la subida —no decide nada—; quien
+   * reparte los cupos de verdad es `canjear_promo`, que vuelve a mirar el
+   * codigo con la fila bloqueada y es quien dice el precio final.
+   *
+   * Entre las dos llamadas hay una rendija: si el ultimo cupo se lo lleva
+   * alguien mientras se suben las fotos, el canje falla y la pagina queda como
+   * una vista previa normal, pendiente de pago. Es el unico final malo posible
+   * y deja el regalo intacto, asi que se avisa y se sigue.
+   */
+  export const createLovepageConPromo = async (
+    templateId: number,
+    configJson: TemplateData,
+    files: FileUploadRef[] = [],
+    codigo: string
+  ): Promise<CanjeRegalo> => {
+    const codigoLimpio = codigo.trim();
+    if (!codigoLimpio) return { estado: 'inexistente' };
+
+    const revision = await promoRepository.revisar(codigoLimpio);
+    if (revision.isFailure())
+      throw new Error(
+        revision.getError()?.message ?? 'No se pudo revisar tu código'
+      );
+
+    const info = revision.getValue();
+    if (!info) return { estado: 'inexistente' };
+    if (info.estado !== 'valido') return { estado: info.estado };
+
+    const pageId = await createLovepage(templateId, configJson, files);
+    if (!pageId) throw new Error('No se pudo crear tu regalo');
+
+    const canje = await promoRepository.canjear({
+      codigo: codigoLimpio,
+      pageId,
+    });
+    if (canje.isFailure())
+      throw new Error(
+        canje.getError()?.message ?? 'No se pudo canjear tu código'
+      );
+
+    const precio = canje.getValue() ?? 0;
+    return precio > 0
+      ? { estado: 'pagar', pageId, precio }
+      : { estado: 'gratis', pageId };
   };
 }

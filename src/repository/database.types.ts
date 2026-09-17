@@ -116,6 +116,7 @@ export type Database = {
           flow_checkout_url: string | null;
           flow_order: number | null;
           flow_amount: number | null;
+          promo_id: number | null;
         };
         Insert: {
           id?: string;
@@ -126,6 +127,7 @@ export type Database = {
           flow_checkout_url?: string | null;
           flow_order?: number | null;
           flow_amount?: number | null;
+          promo_id?: number | null;
         };
         Update: {
           id?: string;
@@ -136,6 +138,7 @@ export type Database = {
           flow_checkout_url?: string | null;
           flow_order?: number | null;
           flow_amount?: number | null;
+          promo_id?: number | null;
         };
         Relationships: [
           {
@@ -144,7 +147,37 @@ export type Database = {
             referencedRelation: 'templates';
             referencedColumns: ['id'];
           },
+          {
+            foreignKeyName: 'pages_promo_id_fkey';
+            columns: ['promo_id'];
+            referencedRelation: 'promos';
+            referencedColumns: ['id'];
+          },
         ];
+      };
+      promos: {
+        Row: {
+          id: number;
+          nombre: string;
+          codigo: string;
+          cantidad: number;
+          precio_descuento: number;
+        };
+        Insert: {
+          id?: never;
+          nombre: string;
+          codigo: string;
+          cantidad?: number;
+          precio_descuento?: number;
+        };
+        Update: {
+          id?: never;
+          nombre?: string;
+          codigo?: string;
+          cantidad?: number;
+          precio_descuento?: number;
+        };
+        Relationships: [];
       };
       pagos: {
         Row: {
@@ -219,7 +252,19 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      revisar_promo: {
+        Args: { codigo_promo: string };
+        /** Siempre una sola fila. `precio` es null si el codigo no existe. */
+        Returns: {
+          estado: 'valido' | 'agotado' | 'inexistente';
+          precio: number | null;
+        }[];
+      };
+      canjear_promo: {
+        Args: { codigo_promo: string; pagina: string };
+        /** Lo que le toca pagar a esa pagina: 0 si el codigo ya la abrio. */
+        Returns: number;
+      };
     };
     Enums: {
       item_status: 'draft' | 'published' | 'archived';
