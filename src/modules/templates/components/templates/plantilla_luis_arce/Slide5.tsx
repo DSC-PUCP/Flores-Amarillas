@@ -21,30 +21,47 @@ export default function Slide5({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const textRef = React.useRef<HTMLParagraphElement>(null);
-  const [textScale, setTextScale] = React.useState(1);
 
   React.useEffect(() => {
     const adjustTextSize = () => {
-      if (containerRef.current && textRef.current) {
-        const containerHeight = containerRef.current.clientHeight;
-        // scrollHeight is the unscaled layout height of the text
-        const textHeight = textRef.current.scrollHeight;
-        
-        if (textHeight > containerHeight && containerHeight > 0) {
-          setTextScale((containerHeight / textHeight) * 0.95);
+      if (!containerRef.current || !textRef.current) return;
+      const container = containerRef.current;
+      const text = textRef.current;
+      
+      // Si el contenedor no tiene altura (ej. la imagen no ha cargado), no hacer nada
+      if (container.clientHeight === 0) return;
+      
+      let min = 0.5; // rem
+      let max = 2.5; // rem
+      let size = max;
+      
+      for (let i = 0; i < 10; i++) {
+        text.style.fontSize = `${size}rem`;
+        if (text.scrollHeight <= container.clientHeight && text.scrollWidth <= container.clientWidth) {
+          min = size;
+          size = (min + max) / 2;
         } else {
-          setTextScale(1);
+          max = size;
+          size = (min + max) / 2;
         }
       }
+      
+      text.style.fontSize = `${min * 0.95}rem`;
     };
 
     adjustTextSize();
-    // Re-adjust if images load late or window resizes
-    window.addEventListener('resize', adjustTextSize);
-    const timeout = setTimeout(adjustTextSize, 100);
+
+    // Usar ResizeObserver para recalcular exactamente cuando la imagen carga y expande el div
+    const observer = new ResizeObserver(() => {
+      adjustTextSize();
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
     return () => {
-      window.removeEventListener('resize', adjustTextSize);
-      clearTimeout(timeout);
+      observer.disconnect();
     };
   }, [userMessage]);
 
@@ -145,8 +162,7 @@ export default function Slide5({
             >
               <p 
                 ref={textRef}
-                className="text-xl md:text-2xl lg:text-3xl text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words"
-                style={{ transform: `scale(${textScale})`, transformOrigin: 'center' }}
+                className="text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words m-0"
               >
                 {userMessage}
               </p>
