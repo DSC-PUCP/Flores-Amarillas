@@ -7,8 +7,8 @@ import { LandingContent } from '@/modules/landing/content';
  *
  * og:image tiene que ser absoluta: la especificacion lo pide y los rastreadores
  * de WhatsApp y Facebook no resuelven rutas relativas de forma confiable. Al
- * vivir en Storage ya lo es, sin depender de VITE_SERVER_URL ni del subpath del
- * que cuelga el sitio en produccion.
+ * vivir en Storage ya lo es, sin depender del dominio ni del subpath del sitio
+ * en produccion.
  *
  * Es el .webp de 267 KB: WhatsApp descarta las vistas previas que pesan de mas,
  * y compartir el enlace por ahi es como se reparte este regalo.

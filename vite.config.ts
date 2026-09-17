@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -7,7 +7,6 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 import tailwindcss from "@tailwindcss/vite";
 
 const config = defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "")
   const isProd = mode === 'production'
   
   return {
@@ -26,10 +25,6 @@ const config = defineConfig(({ mode }) => {
         prerender: {
           enabled: true,
         },
-        sitemap: {
-          enabled: true,
-          host: env.VITE_SERVER_URL
-        }
       }),
       viteReact({
         babel: {

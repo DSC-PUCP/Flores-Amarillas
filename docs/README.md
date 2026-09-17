@@ -91,7 +91,7 @@ renombrar esa carpeta y actualizar links para tu dominio.
 
 ## Supabase
 
-1. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_KEY`.
+1. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`.
 2. Actualiza `src/repository/database.types.ts` con tu schema real.
 3. Crea tu repositorio con queries a tus tablas.
 
