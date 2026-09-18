@@ -16,15 +16,15 @@ const PENDIENTE = 'PENDIENTE';
 
 export const negocio = {
   /** Nombre completo del titular, tal cual figura en el RUC. */
-  nombre: PENDIENTE,
-  ruc: PENDIENTE,
+  nombre: "Leonardo Jaime Flores Vera",
+  ruc: "10723569686",
   /** Direccion fiscal completa: calle, numero, distrito, provincia. */
-  direccion: PENDIENTE,
-  correo: PENDIENTE,
+  direccion: "PENDIENTE",
+  correo: "leoos.1200@gmail.com",
   /** Como se lee en pantalla, con espacios: "+51 951 722 132". */
-  telefono: PENDIENTE,
+  telefono: "+95 1722132",
   /** Solo digitos y con codigo de pais, como lo quiere wa.me. */
-  whatsapp: '51951722132',
+  whatsapp: '951722132',
   nombreComercial: 'Primavera Digital',
 } as const;
 
