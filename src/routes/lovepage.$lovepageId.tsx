@@ -119,8 +119,8 @@ function RouteComponent() {
   /*
    * El enlace de pago de Culqi que corresponde a este precio, si lo hay.
    *
-   * Hoy siempre es `null`: Culqi esta en espera y todo se cobra por WhatsApp.
-   * Ver `CULQI_EN_ESPERA` en `payments/culqi.ts`.
+   * `null` cuando el monto no tiene enlace creado en el panel de Culqi; ese
+   * plan cae al WhatsApp de siempre. Ver `payments/culqi.ts`.
    */
   const culqiLink = enlaceDeCulqi(lovepage.price);
 
@@ -256,9 +256,9 @@ function RouteComponent() {
         los planes sin enlace de Culqi. Ese respaldo ahora es WhatsApp, asi que
         el dialogo se queda sin puerta de entrada.
 
-        `YapeDialog` no se borra: es "por mientras", y el dia que Girasol tenga
-        su enlace de Culqi puede que se quiera volver a colgar de algun sitio.
-        Si para entonces sigue sin usarse, ese es el momento de quitarlo.
+        `YapeDialog` no se borra todavia: ya no lo usa nadie —Girasol cobra por
+        Culqi y el resto por WhatsApp—, asi que es codigo muerto a la espera de
+        que alguien confirme que no hace falta volver a colgarlo.
       */}
     </>
   );

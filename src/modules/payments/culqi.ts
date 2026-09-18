@@ -21,8 +21,8 @@ export function enlaceDeCulqi(precio: number): string | null {
   if (CULQI_EN_ESPERA) return null;
 
   switch (Math.round(precio * 100)) {
-    case 600:
-      return env.VITE_CULQI_LINK_6 ?? null;
+    case 650:
+      return env.VITE_CULQI_LINK_6_50 ?? null;
     case 900:
       return env.VITE_CULQI_LINK_9 ?? null;
     case 1100:

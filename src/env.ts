@@ -22,7 +22,7 @@ export const env = createEnv({
      * Opcionales a proposito. Sin enlace para un monto, el cobro cae al
      * WhatsApp de siempre, que es justo el respaldo que ya estaba escrito.
      */
-    VITE_CULQI_LINK_6: z.url().optional(),
+    VITE_CULQI_LINK_6_50: z.url().optional(),
     VITE_CULQI_LINK_9: z.url().optional(),
     VITE_CULQI_LINK_11: z.url().optional(),
 

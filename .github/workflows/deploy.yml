@@ -30,6 +30,12 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_KEY }}
           VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
           VITE_WHATSAPP_PHONE: ${{ vars.VITE_WHATSAPP_PHONE }}
+          # Enlaces de pago de Culqi. Van en `vars` y no en `secrets` porque no
+          # son secretos: quien llega a la pagina de pago ve la misma direccion.
+          # El que falte deja su plan cobrando por WhatsApp.
+          VITE_CULQI_LINK_6_50: ${{ vars.VITE_CULQI_LINK_6_50 }}
+          VITE_CULQI_LINK_9: ${{ vars.VITE_CULQI_LINK_9 }}
+          VITE_CULQI_LINK_11: ${{ vars.VITE_CULQI_LINK_11 }}
           API_SECRET: ${{ secrets.API_SECRET }}
       
       - name: Deploy to Cloudflare Workers
