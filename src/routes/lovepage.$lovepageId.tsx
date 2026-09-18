@@ -2,8 +2,8 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { env } from '@/env';
 import { LovepageService } from '@/modules/lovepage/services';
+import { enlaceDeCulqi } from '@/modules/payments/culqi';
 import { registrarCompraPorWhatsapp } from '@/modules/payments/whatsapp';
 import { PlanService } from '@/modules/plan/services';
 import {
@@ -52,17 +52,6 @@ const MS_ANTES_DEL_COBRO = 3000;
 
 const ctaClassName =
   'rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-6 py-3 font-semibold text-white shadow-lg shadow-amber-500/30 hover:from-amber-400 hover:to-yellow-400';
-
-function getCulqiLink(price: number) {
-  switch (Math.round(price * 100)) {
-    case 900:
-      return env.VITE_CULQI_LINK_9;
-    case 1100:
-      return env.VITE_CULQI_LINK_11;
-    default:
-      return null;
-  }
-}
 
 function RouteComponent() {
   const lovepage = Route.useLoaderData();
@@ -130,11 +119,10 @@ function RouteComponent() {
   /*
    * El enlace de pago de Culqi que corresponde a este precio, si lo hay.
    *
-   * Los enlaces se crean a mano en el panel, uno por monto, asi que un plan
-   * recien cambiado de precio se queda sin el suyo hasta que alguien lo cree.
-   * Hoy le pasa a Girasol: mientras no tenga enlace, su cobro va por WhatsApp.
+   * Hoy siempre es `null`: Culqi esta en espera y todo se cobra por WhatsApp.
+   * Ver `CULQI_EN_ESPERA` en `payments/culqi.ts`.
    */
-  const culqiLink = getCulqiLink(lovepage.price);
+  const culqiLink = enlaceDeCulqi(lovepage.price);
 
   /*
    * El cobro por WhatsApp, para los planes que aun no tienen enlace de Culqi.

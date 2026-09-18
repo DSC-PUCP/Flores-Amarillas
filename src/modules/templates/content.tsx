@@ -142,6 +142,12 @@ export function TemplateContent() {
       search: name === TODOS ? {} : { plan: name },
       replace: true,
     });
+  /*
+   * El precio de cada diseno sale de su plan. `usePlans` ya estaba cargado
+   * aqui para los chips del filtro, asi que no cuesta ninguna consulta nueva.
+   */
+  const precioDe = (planId: number) =>
+    plans.find((plan) => plan.id === planId)?.price;
   const visibleTemplates = templates.filter((template) => template.isVisible);
   /*
    * `sort` sobre una copia: `filter` ya devuelve un array nuevo, pero dejarlo
@@ -290,6 +296,32 @@ export function TemplateContent() {
                       {template.description && (
                         <p className="mt-3 text-sm leading-relaxed break-words text-[#597157]">
                           {template.description}
+                        </p>
+                      )}
+                      {/*
+                        El precio, a la vista en la tarjeta.
+
+                        Antes solo aparecia en la pagina del regalo, ya creado:
+                        se elegia un diseno sin saber lo que costaba y el precio
+                        salia al final, que es la peor forma de enterarse. Las
+                        pasarelas tambien lo piden: un catalogo tiene que decir
+                        cuanto vale cada cosa antes de comprarla.
+
+                        Si el plan aun no ha cargado no se escribe nada: mejor
+                        un hueco un instante que un "S/ 0.00" que no es cierto.
+                      */}
+                      {precioDe(template.planId) !== undefined && (
+                        <p className="mt-4 font-display text-2xl text-[#183E32]">
+                          {precioDe(template.planId) === 0 ? (
+                            'Gratis'
+                          ) : (
+                            <>
+                              S/ {precioDe(template.planId)?.toFixed(2)}{' '}
+                              <span className="font-sans text-xs font-medium text-[#597157]">
+                                pago único
+                              </span>
+                            </>
+                          )}
                         </p>
                       )}
                       {/*
