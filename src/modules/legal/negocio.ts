@@ -19,7 +19,7 @@ export const negocio = {
   nombre: "Leonardo Jaime Flores Vera",
   ruc: "10723569686",
   /** Direccion fiscal completa: calle, numero, distrito, provincia. */
-  direccion: "PENDIENTE",
+  
   correo: "leoos.1200@gmail.com",
   /** Como se lee en pantalla, con espacios: "+51 951 722 132". */
   telefono: "+95 1722132",
