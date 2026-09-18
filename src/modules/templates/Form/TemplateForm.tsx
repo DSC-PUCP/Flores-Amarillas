@@ -28,6 +28,7 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import type { FileUploadRef } from '@/core/models';
 import type { TemplateData, TemplateField } from '@/core/models/template';
+import { env } from '@/env';
 import { cn } from '@/lib/utils';
 import { SongPicker } from '@/modules/music/components/SongPicker';
 import { registrarCompraPorWhatsapp } from '@/modules/payments/whatsapp';
@@ -63,17 +64,28 @@ export function TemplateForm() {
    * ruta relativa no lleva a ningun sitio.
    *
    * La ruta la arma el router en vez de escribirla a mano, para que siga el
-   * mismo camino que los enlaces de la app si algun dia cambia. Se resuelve
-   * contra `document.baseURI`, que es lo que usa el navegador para lo mismo.
+   * mismo camino que los enlaces de la app si algun dia cambia.
+   *
+   * Se concatena y no se resuelve con `new URL(ruta, base)`: `buildLocation`
+   * devuelve una ruta que empieza por "/", y una ruta asi descarta el path del
+   * base entero. En el despliegue de la PUCP el sitio cuelga de
+   * `/flores-amarillas/`, asi que el enlace salia apuntando al raiz del
+   * dominio —sin el subpath— y no abria nada.
+   *
+   * `VITE_SERVER_URL` es la direccion publica del despliegue, subpath
+   * incluido, y es lo unico que sabe donde cuelga el sitio: ni Vite ni el
+   * router llevan `base`, porque el mismo build sirve al worker (en el raiz) y
+   * a la PUCP (en el subpath). Sin ella se cae al origen, que es lo correcto
+   * para un despliegue en el raiz.
    */
-  const enlaceDelRegalo = (pageId: string) =>
-    new URL(
-      router.buildLocation({
-        to: '/lovepage/$lovepageId',
-        params: { lovepageId: pageId },
-      }).href,
-      document.baseURI
-    ).href;
+  const enlaceDelRegalo = (pageId: string) => {
+    const ruta = router.buildLocation({
+      to: '/lovepage/$lovepageId',
+      params: { lovepageId: pageId },
+    }).href;
+    const base = env.VITE_SERVER_URL ?? window.location.origin;
+    return base.replace(/\/$/, '') + ruta;
+  };
 
   const { data: template, isLoading, error } = useTemplateById(id);
   const { data: plan } = usePlanById(template?.planId ?? 0);
