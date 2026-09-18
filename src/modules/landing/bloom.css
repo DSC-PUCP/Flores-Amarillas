@@ -287,7 +287,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Con los datos de contacto y los enlaces legales ya no caben en una linea
+     en pantallas medianas: que envuelvan en vez de encogerse hasta partir
+     palabras. */
+  flex-wrap: wrap;
   gap: 24px;
+}
+/* Los datos del titular: obligatorios a la vista, pero no son el protagonista
+   del pie. Tamano de la letra pequena, y `address` sin la cursiva que le pone
+   el navegador por defecto. */
+.bloom-footer-contacto {
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.7;
+  color: #c7d8ae;
+}
+.bloom-footer-contacto a {
+  color: inherit;
+  text-decoration: underline;
 }
 .bloom-footer .bloom-logo-mark {
   color: #1e3b2a;
@@ -298,6 +315,7 @@
 }
 .bloom-footer-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 22px;
   font-size: 12px;
 }

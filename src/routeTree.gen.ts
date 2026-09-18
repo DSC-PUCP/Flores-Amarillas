@@ -16,6 +16,9 @@ import { Route as LovepageLovepageIdRouteImport } from './routes/lovepage.$lovep
 import { Route as _layoutHomeRouteImport } from './routes/__layout/home'
 import { Route as _layoutTemplateIndexRouteImport } from './routes/__layout/template/index'
 import { Route as _layoutTemplateIdRouteImport } from './routes/__layout/template/$id'
+import { Route as _layoutLegalTerminosRouteImport } from './routes/__layout/legal/terminos'
+import { Route as _layoutLegalReclamacionesRouteImport } from './routes/__layout/legal/reclamaciones'
+import { Route as _layoutLegalDevolucionesRouteImport } from './routes/__layout/legal/devoluciones'
 
 const PreviewRoute = PreviewRouteImport.update({
   id: '/preview',
@@ -51,12 +54,32 @@ const _layoutTemplateIdRoute = _layoutTemplateIdRouteImport.update({
   path: '/template/$id',
   getParentRoute: () => _layoutRoute,
 } as any)
+const _layoutLegalTerminosRoute = _layoutLegalTerminosRouteImport.update({
+  id: '/legal/terminos',
+  path: '/legal/terminos',
+  getParentRoute: () => _layoutRoute,
+} as any)
+const _layoutLegalReclamacionesRoute =
+  _layoutLegalReclamacionesRouteImport.update({
+    id: '/legal/reclamaciones',
+    path: '/legal/reclamaciones',
+    getParentRoute: () => _layoutRoute,
+  } as any)
+const _layoutLegalDevolucionesRoute =
+  _layoutLegalDevolucionesRouteImport.update({
+    id: '/legal/devoluciones',
+    path: '/legal/devoluciones',
+    getParentRoute: () => _layoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/preview': typeof PreviewRoute
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
+  '/legal/devoluciones': typeof _layoutLegalDevolucionesRoute
+  '/legal/reclamaciones': typeof _layoutLegalReclamacionesRoute
+  '/legal/terminos': typeof _layoutLegalTerminosRoute
   '/template/$id': typeof _layoutTemplateIdRoute
   '/template': typeof _layoutTemplateIndexRoute
 }
@@ -65,6 +88,9 @@ export interface FileRoutesByTo {
   '/preview': typeof PreviewRoute
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
+  '/legal/devoluciones': typeof _layoutLegalDevolucionesRoute
+  '/legal/reclamaciones': typeof _layoutLegalReclamacionesRoute
+  '/legal/terminos': typeof _layoutLegalTerminosRoute
   '/template/$id': typeof _layoutTemplateIdRoute
   '/template': typeof _layoutTemplateIndexRoute
 }
@@ -75,6 +101,9 @@ export interface FileRoutesById {
   '/preview': typeof PreviewRoute
   '/__layout/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
+  '/__layout/legal/devoluciones': typeof _layoutLegalDevolucionesRoute
+  '/__layout/legal/reclamaciones': typeof _layoutLegalReclamacionesRoute
+  '/__layout/legal/terminos': typeof _layoutLegalTerminosRoute
   '/__layout/template/$id': typeof _layoutTemplateIdRoute
   '/__layout/template/': typeof _layoutTemplateIndexRoute
 }
@@ -85,6 +114,9 @@ export interface FileRouteTypes {
     | '/preview'
     | '/home'
     | '/lovepage/$lovepageId'
+    | '/legal/devoluciones'
+    | '/legal/reclamaciones'
+    | '/legal/terminos'
     | '/template/$id'
     | '/template'
   fileRoutesByTo: FileRoutesByTo
@@ -93,6 +125,9 @@ export interface FileRouteTypes {
     | '/preview'
     | '/home'
     | '/lovepage/$lovepageId'
+    | '/legal/devoluciones'
+    | '/legal/reclamaciones'
+    | '/legal/terminos'
     | '/template/$id'
     | '/template'
   id:
@@ -102,6 +137,9 @@ export interface FileRouteTypes {
     | '/preview'
     | '/__layout/home'
     | '/lovepage/$lovepageId'
+    | '/__layout/legal/devoluciones'
+    | '/__layout/legal/reclamaciones'
+    | '/__layout/legal/terminos'
     | '/__layout/template/$id'
     | '/__layout/template/'
   fileRoutesById: FileRoutesById
@@ -164,17 +202,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _layoutTemplateIdRouteImport
       parentRoute: typeof _layoutRoute
     }
+    '/__layout/legal/terminos': {
+      id: '/__layout/legal/terminos'
+      path: '/legal/terminos'
+      fullPath: '/legal/terminos'
+      preLoaderRoute: typeof _layoutLegalTerminosRouteImport
+      parentRoute: typeof _layoutRoute
+    }
+    '/__layout/legal/reclamaciones': {
+      id: '/__layout/legal/reclamaciones'
+      path: '/legal/reclamaciones'
+      fullPath: '/legal/reclamaciones'
+      preLoaderRoute: typeof _layoutLegalReclamacionesRouteImport
+      parentRoute: typeof _layoutRoute
+    }
+    '/__layout/legal/devoluciones': {
+      id: '/__layout/legal/devoluciones'
+      path: '/legal/devoluciones'
+      fullPath: '/legal/devoluciones'
+      preLoaderRoute: typeof _layoutLegalDevolucionesRouteImport
+      parentRoute: typeof _layoutRoute
+    }
   }
 }
 
 interface _layoutRouteChildren {
   _layoutHomeRoute: typeof _layoutHomeRoute
+  _layoutLegalDevolucionesRoute: typeof _layoutLegalDevolucionesRoute
+  _layoutLegalReclamacionesRoute: typeof _layoutLegalReclamacionesRoute
+  _layoutLegalTerminosRoute: typeof _layoutLegalTerminosRoute
   _layoutTemplateIdRoute: typeof _layoutTemplateIdRoute
   _layoutTemplateIndexRoute: typeof _layoutTemplateIndexRoute
 }
 
 const _layoutRouteChildren: _layoutRouteChildren = {
   _layoutHomeRoute: _layoutHomeRoute,
+  _layoutLegalDevolucionesRoute: _layoutLegalDevolucionesRoute,
+  _layoutLegalReclamacionesRoute: _layoutLegalReclamacionesRoute,
+  _layoutLegalTerminosRoute: _layoutLegalTerminosRoute,
   _layoutTemplateIdRoute: _layoutTemplateIdRoute,
   _layoutTemplateIndexRoute: _layoutTemplateIndexRoute,
 }

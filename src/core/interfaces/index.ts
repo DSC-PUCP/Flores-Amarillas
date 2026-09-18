@@ -7,4 +7,9 @@ export type {
   PromoRepository,
   RevisionPromo,
 } from './promo-repository';
+export type {
+  ReclamoRepository,
+  RegistrarReclamoInput,
+  TipoReclamo,
+} from './reclamo-repository';
 export type { TemplateRepository } from './template-repository';

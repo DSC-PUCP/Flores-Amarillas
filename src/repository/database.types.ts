@@ -269,6 +269,25 @@ export type Database = {
         /** Lo que le toca pagar a esa pagina: 0 si el codigo ya la abrio. */
         Returns: number;
       };
+      registrar_reclamo: {
+        Args: {
+          p_tipo: string;
+          p_nombre: string;
+          p_tipo_documento: string;
+          p_documento: string;
+          p_domicilio: string;
+          p_correo: string;
+          p_telefono: string;
+          p_tipo_bien: string;
+          p_descripcion: string;
+          p_detalle: string;
+          p_pedido: string;
+          p_monto?: number | null;
+          p_apoderado?: string | null;
+        };
+        /** El correlativo de la hoja: "LR-000001". */
+        Returns: string;
+      };
       activar_pago: {
         Args: { pago_id: string };
         Returns: { page_id: string; enlace: string }[];

@@ -9,6 +9,7 @@ import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import bloomCss from '@/modules/landing/bloom.css?url';
 import motionCss from '@/modules/landing/motion.css?url';
+import { negocio } from '@/modules/legal/negocio';
 
 export const Route = createFileRoute('/__layout')({
   head: () => ({
@@ -188,6 +189,18 @@ function LayoutComponent() {
       >
         <ArrowUp size={19} />
       </button>
+      {/*
+        El footer lleva los datos de contacto y las paginas legales.
+
+        No es decoracion: un negocio que cobra en linea tiene que decir quien
+        es y como se le encuentra —telefono, correo y direccion fisica—, y
+        tener a la vista sus terminos, su politica de devoluciones y el Libro
+        de Reclamaciones. Las pasarelas lo revisan antes de aprobar una
+        afiliacion, y el Libro ademas es obligatorio por ley.
+
+        Los datos salen de `modules/legal/negocio.ts`, que es el unico sitio
+        donde estan escritos.
+      */}
       <footer className="bloom-footer">
         <div className="bloom-container">
           <Link to="/home" className="bloom-logo">
@@ -198,7 +211,20 @@ function LayoutComponent() {
               Primavera <em>Digital</em>
             </span>
           </Link>
+
+          <address className="bloom-footer-contacto">
+            <strong>{negocio.nombre}</strong> · RUC {negocio.ruc}
+            <br />
+            {negocio.direccion}
+            <br />
+            <a href={`mailto:${negocio.correo}`}>{negocio.correo}</a> ·{' '}
+            <a href={`tel:${negocio.telefono.replace(/\s/g, '')}`}>
+              {negocio.telefono}
+            </a>
+          </address>
+
           <p>© 2026 · Pequeños detalles. Bonitas formas de querer.</p>
+
           <div className="bloom-footer-links">
             <Link to="/home" hash="demo">
               Ver el regalo
@@ -206,6 +232,9 @@ function LayoutComponent() {
             <Link to="/home" hash="faq">
               ¿Tienes dudas?
             </Link>
+            <Link to="/legal/terminos">Términos y condiciones</Link>
+            <Link to="/legal/devoluciones">Cambios y devoluciones</Link>
+            <Link to="/legal/reclamaciones">Libro de Reclamaciones</Link>
           </div>
         </div>
       </footer>
