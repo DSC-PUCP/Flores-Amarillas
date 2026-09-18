@@ -19,11 +19,10 @@ export const env = createEnv({
      * navegador los abre y no tienen nada secreto —cualquiera que llegue a la
      * pagina de pago ve la misma direccion—.
      *
-     * Opcionales a proposito. Venian como `z.url()` obligatorias y eso impedia
-     * arrancar la app a quien no los tuviera —en local, o en un despliegue que
-     * aun no los haya puesto—; sin ellos el cobro cae al Yape de siempre, que
-     * es justo el respaldo que ya estaba escrito.
+     * Opcionales a proposito. Sin enlace para un monto, el cobro cae al
+     * WhatsApp de siempre, que es justo el respaldo que ya estaba escrito.
      */
+    VITE_CULQI_LINK_6: z.url().optional(),
     VITE_CULQI_LINK_9: z.url().optional(),
     VITE_CULQI_LINK_11: z.url().optional(),
 
