@@ -19,6 +19,19 @@ export const env = createEnv({
     VITE_SUPABASE_KEY: z.string(),
     VITE_SERVER_URL: z.url().optional(),
 
+    /*
+     * El WhatsApp al que se manda a quien compra con un codigo con precio.
+     * Solo digitos y con codigo de pais, como lo quiere wa.me: 51951722132.
+     *
+     * Opcional para que la app siga arrancando sin el —en local, o en un
+     * despliegue que aun no lo tenga puesto—; el boton avisa en vez de mandar
+     * a un chat vacio. Ya estaba declarada en el workflow de deploy y no la
+     * leia nadie.
+     */
+    VITE_WHATSAPP_PHONE: z
+      .string()
+      .regex(/^\d{8,15}$/, 'Solo digitos, con codigo de pais y sin +')
+      .optional(),
   },
 
   runtimeEnv: {

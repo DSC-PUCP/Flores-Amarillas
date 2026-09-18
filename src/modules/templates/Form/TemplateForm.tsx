@@ -30,7 +30,7 @@ import type { FileUploadRef } from '@/core/models';
 import type { TemplateData, TemplateField } from '@/core/models/template';
 import { cn } from '@/lib/utils';
 import { SongPicker } from '@/modules/music/components/SongPicker';
-import { YapeDialog } from '@/modules/payments/components/YapeDialog';
+import { registrarCompraPorWhatsapp } from '@/modules/payments/whatsapp';
 import { usePlanById } from '@/modules/plan/hooks/usePlan';
 import { MascotPicker } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/components/mascot-picker';
 import { readGiftMascot } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/mascots';
@@ -82,10 +82,6 @@ export function TemplateForm() {
 
   const [promoCode, setPromoCode] = useState('');
   const [promoAviso, setPromoAviso] = useState<string | null>(null);
-  const [pagoPromo, setPagoPromo] = useState<{
-    pageId: string;
-    precio: number;
-  } | null>(null);
   /*
    * La pagina ya creada, esperando a que se guarde el enlace.
    *
@@ -289,11 +285,43 @@ export function TemplateForm() {
               );
               return;
             case 'pagar':
-              // La pagina ya existe y el cupo ya es suyo; lo que falta es el
-              // pago. El enlace se arma aqui porque el dialogo se abre desde el
-              // editor: si lo dejara adivinar, guardaria esta direccion y no la
-              // del regalo.
-              setPagoPromo({ pageId: canje.pageId, precio: canje.precio });
+              /*
+               * La pagina ya existe y el cupo ya es suyo; lo que falta es el
+               * pago. Un codigo con precio ya es un trato hablado, asi que en
+               * vez del formulario de Yape —monto, captura, revision— se manda
+               * al chat con el mensaje escrito, y el pago queda anotado como
+               * pendiente antes de salir.
+               *
+               * El enlace se arma aqui y no en el chat: se pega en el mensaje y
+               * se guarda en `pagos`, y desde el editor la direccion del
+               * navegador es esta pantalla, no la del regalo.
+               */
+              void (async () => {
+                const enlace = enlaceDelRegalo(canje.pageId);
+                try {
+                  const chat = await registrarCompraPorWhatsapp({
+                    pageId: canje.pageId,
+                    enlace,
+                    codigo: promoCode.trim(),
+                  });
+                  if (!chat) {
+                    setPromoAviso(
+                      `Tu regalo ya está guardado en ${enlace}. Escríbenos por WhatsApp con ese enlace y tu código para activarlo.`
+                    );
+                    return;
+                  }
+                  // `assign` y no `open`: en el movil un `window.open` tras un
+                  // `await` llega fuera del gesto y el navegador lo bloquea
+                  // como ventana emergente.
+                  window.location.assign(chat);
+                } catch (error) {
+                  setPromoAviso(
+                    error instanceof Error
+                      ? error.message
+                      : 'No se pudo registrar tu compra'
+                  );
+                }
+              })();
               return;
             default:
               toast.success('¡Código aplicado! Tu regalo ya está listo.');
@@ -709,28 +737,13 @@ export function TemplateForm() {
         </div>
       </div>
       {/*
-        El cobro de un codigo con descuento. Es el mismo dialogo que el de la
-        pagina del regalo —mismo QR, mismos datos, misma tabla— y solo cambia
-        el monto, que lo dijo la promocion y no el plan.
+        Aqui estaba el Yape de los codigos con descuento —monto, captura y
+        revision a mano—. Ya no: un codigo con precio es un trato hablado y
+        ahora el boton manda al chat con el mensaje escrito, dejando el pago
+        anotado como pendiente. Ver el caso 'pagar' de `handlePromoSubmit`.
 
-        Al cerrarlo se va al regalo: la pagina existe desde antes de abrirlo,
-        haya pagado o no, y dejar a alguien en el formulario despues de pagar
-        seria esconderle lo unico que no puede perder.
+        `YapeDialog` sigue vivo para el cobro normal de la pagina del regalo.
       */}
-      {pagoPromo && (
-        <YapeDialog
-          open
-          onOpenChange={(abierto) => {
-            if (abierto) return;
-            const { pageId } = pagoPromo;
-            setPagoPromo(null);
-            navigate({ to: `/lovepage/${pageId}` });
-          }}
-          pageId={pagoPromo.pageId}
-          precio={pagoPromo.precio}
-          enlace={enlaceDelRegalo(pagoPromo.pageId)}
-        />
-      )}
 
       {/*
         El paso del enlace, para los dos caminos que no pasan por el Yape: el

@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   act,
   cleanup,
@@ -12,10 +11,21 @@ import { plantillaGratuitaForm } from '../components/templates/PlantillaGratuita
 import { plantillaGianoFeatLeoForm } from '../components/templates/plantilla_giano_feat_leo/App';
 import { TemplateForm } from './TemplateForm';
 
-const { mutate, mutatePromo, navigate } = vi.hoisted(() => ({
+const { mutate, mutatePromo, navigate, registrarPago } = vi.hoisted(() => ({
   mutate: vi.fn(),
   mutatePromo: vi.fn(),
   navigate: vi.fn(),
+  // `Result` de la casa: al codigo solo le importa `isFailure`.
+  registrarPago: vi.fn(async () => ({
+    isFailure: () => false,
+    getError: () => null,
+  })),
+}));
+// El pago pendiente del codigo con precio. Se mockea el repositorio y no el
+// cliente de Supabase: lo que se quiere comprobar son los marcadores que pone
+// `payments/whatsapp.ts`, no la cadena de PostgREST.
+vi.mock('@/repository/pagos', () => ({
+  pagoRepository: { registrar: registrarPago },
 }));
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => navigate,
@@ -184,9 +194,10 @@ describe('animalito de la dedicatoria premium', () => {
   });
 
   /**
-   * El codigo que regala la pagina tampoco pasa por el Yape, asi que el enlace
-   * no se lo dice nadie mas. El codigo con precio si: ahi lo da el aviso de
-   * pago y repetirlo seria pedirlo dos veces.
+   * El codigo que regala la pagina deja el regalo listo sin cobrar nada, asi
+   * que el enlace no se lo dice nadie mas y va aqui. El codigo con precio no
+   * pasa por este paso: ese sale al chat de WhatsApp con el enlace dentro del
+   * mensaje.
    */
   it('el codigo que regala la pagina tambien ensena el enlace', () => {
     render(<TemplateForm />);
@@ -319,14 +330,21 @@ describe('animalito de la dedicatoria premium', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
-  it('cobra el precio de la promoción cuando el código es de descuento', () => {
-    // El único test que necesita un QueryClient de verdad: aquí se abre el
-    // diálogo de Yape, que es el de siempre y trae su propia mutación.
-    render(
-      <QueryClientProvider client={new QueryClient()}>
-        <TemplateForm />
-      </QueryClientProvider>
-    );
+  /**
+   * El codigo con precio ya no abre el formulario de Yape.
+   *
+   * Un codigo con precio es un trato hablado; pedir monto, captura y revision
+   * a mano para eso era papeleo. Ahora se anota el pago como pendiente y se
+   * manda al chat con el mensaje escrito.
+   *
+   * Aqui no hay numero de WhatsApp configurado —en los tests no hay
+   * `VITE_WHATSAPP_PHONE`—, asi que se comprueba lo que no depende de el: que
+   * el pago queda registrado y que se avisa con el enlace en vez de dejar a
+   * nadie colgado. El armado del enlace del chat se prueba en
+   * `payments/whatsapp.test.ts`.
+   */
+  it('el codigo con precio anota el pago pendiente y no abre el Yape', async () => {
+    render(<TemplateForm />);
     fireEvent.click(
       screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
     );
@@ -337,13 +355,24 @@ describe('animalito de la dedicatoria premium', () => {
       screen.getByRole('button', { name: 'Generar mi regalo con código' })
     );
     const [, opciones] = mutatePromo.mock.calls[0];
-    act(() =>
-      opciones.onSuccess({ estado: 'pagar', pageId: 'pagina-1', precio: 3 })
-    );
-    // El monto es el de la promoción, no el del plan.
-    expect(screen.getByText('Activa tu enlace por S/ 3.00')).toBeTruthy();
-    expect(screen.getByText('Monto exacto: S/ 3.00')).toBeTruthy();
-    // Todavía no se va a ningún lado: primero paga.
+    await act(async () => {
+      opciones.onSuccess({ estado: 'pagar', pageId: 'pagina-1', precio: 3 });
+    });
+
+    // Queda anotado antes de salir: si se guardara al volver del chat, la
+    // pestana ya se habria ido y no habria registro de la compra.
+    expect(registrarPago).toHaveBeenCalledWith({
+      pageId: 'pagina-1',
+      nombre: 'Pendiente por WhatsApp',
+      correo: 'pendiente@flores-amarillas.pe',
+      comprobanteUrl: 'whatsapp://pendiente-de-captura',
+      // Absoluto: es lo que se pega en el chat y lo que queda guardado.
+      enlace: expect.stringContaining('/lovepage/pagina-1'),
+    });
+
+    // Ni formulario de Yape ni navegacion dentro de la app: de aqui se sale
+    // al chat. El enlace del chat se prueba en `payments/whatsapp.test.ts`.
+    expect(screen.queryByText(/Monto exacto/)).toBeNull();
     expect(navigate).not.toHaveBeenCalled();
   });
 
