@@ -21,30 +21,85 @@ export default function Slide5({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const textRef = React.useRef<HTMLParagraphElement>(null);
-  const [textScale, setTextScale] = React.useState(1);
 
   React.useEffect(() => {
-    const adjustTextSize = () => {
-      if (containerRef.current && textRef.current) {
-        const containerHeight = containerRef.current.clientHeight;
-        // scrollHeight is the unscaled layout height of the text
-        const textHeight = textRef.current.scrollHeight;
-        
-        if (textHeight > containerHeight && containerHeight > 0) {
-          setTextScale((containerHeight / textHeight) * 0.95);
-        } else {
-          setTextScale(1);
-        }
-      }
+    const container = containerRef.current;
+    const text = textRef.current;
+    if (!container || !text) return;
+
+    const MIN_REM = 0.5;
+    const MAX_REM = 2.5;
+    const MARGEN = 0.95; // respiro para que el texto no bese el borde
+    const PRECISION = 0.01; // rem
+
+    let frame = 0;
+
+    const cabe = (rem: number, dispH: number, dispW: number) => {
+      text.style.fontSize = `${rem}rem`;
+      return text.scrollHeight <= dispH && text.scrollWidth <= dispW;
     };
 
-    adjustTextSize();
-    // Re-adjust if images load late or window resizes
-    window.addEventListener('resize', adjustTextSize);
-    const timeout = setTimeout(adjustTextSize, 100);
+    const adjustTextSize = () => {
+      // Si el contenedor no tiene altura (ej. la imagen no ha cargado), no hacer nada
+      if (container.clientHeight === 0) return;
+
+      // clientHeight/clientWidth incluyen el padding, pero el parrafo solo
+      // dispone de la caja de contenido. Si no lo descontamos le regalamos los
+      // 96-128px de p-12/p-14/p-16 y el texto acaba pintado sobre el margen
+      // decorativo de la carta, que es justo lo que queriamos evitar.
+      const cs = getComputedStyle(container);
+      const dispH =
+        container.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const dispW =
+        container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      if (dispH <= 0 || dispW <= 0) return;
+
+      // El techo primero: si el mensaje es corto no hay nada que buscar.
+      if (cabe(MAX_REM, dispH, dispW)) {
+        text.style.fontSize = `${MAX_REM * MARGEN}rem`;
+        return;
+      }
+
+      // Y el piso, que tampoco se puede dar por bueno: `whitespace-pre-wrap`
+      // respeta los saltos de linea, asi que un mensaje con muchos no cabe ni
+      // al minimo. Nos quedamos en el minimo y que `overflow-hidden` recorte.
+      if (!cabe(MIN_REM, dispH, dispW)) {
+        text.style.fontSize = `${MIN_REM}rem`;
+        return;
+      }
+
+      // Busqueda binaria del mayor tamaño que cabe: `min` siempre es un tamaño
+      // ya verificado y `max` siempre uno descartado.
+      let min = MIN_REM;
+      let max = MAX_REM;
+      while (max - min > PRECISION) {
+        const medio = (min + max) / 2;
+        if (cabe(medio, dispH, dispW)) {
+          min = medio;
+        } else {
+          max = medio;
+        }
+      }
+
+      text.style.fontSize = `${min * MARGEN}rem`;
+    };
+
+    // ResizeObserver recalcula exactamente cuando la imagen carga y expande el
+    // div (y tambien al cambiar el tamaño de la ventana). Dispara en cada frame
+    // mientras se arrastra el borde, asi que coalescemos: cada pasada hace una
+    // decena de escrituras+lecturas de layout y no queremos repetirlas por gusto.
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(adjustTextSize);
+    });
+
+    // observe() ya entrega una observacion inicial, no hace falta invocar
+    // adjustTextSize() por separado.
+    observer.observe(container);
+
     return () => {
-      window.removeEventListener('resize', adjustTextSize);
-      clearTimeout(timeout);
+      cancelAnimationFrame(frame);
+      observer.disconnect();
     };
   }, [userMessage]);
 
@@ -145,8 +200,7 @@ export default function Slide5({
             >
               <p 
                 ref={textRef}
-                className="text-xl md:text-2xl lg:text-3xl text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words"
-                style={{ transform: `scale(${textScale})`, transformOrigin: 'center' }}
+                className="text-xl text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words m-0"
               >
                 {userMessage}
               </p>
