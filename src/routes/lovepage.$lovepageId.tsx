@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { env } from '@/env';
 import { LovepageService } from '@/modules/lovepage/services';
-import { YapeDialog } from '@/modules/payments/components/YapeDialog';
+import { registrarCompraPorWhatsapp } from '@/modules/payments/whatsapp';
 import { PlanService } from '@/modules/plan/services';
 import {
   esEjemplo,
@@ -41,11 +41,11 @@ export const Route = createFileRoute('/lovepage/$lovepageId')({
 /**
  * Lo que tarda en aparecer el cobro.
  *
- * El regalo se abre limpio y un segundo despues entran la barra y la marca de
- * agua. Con las dos cosas ya puestas en el primer fotograma, lo primero que se
+ * El regalo se abre limpio y unos segundos despues entran la barra y la marca
+ * de agua. Con las dos cosas ya puestas en el primer fotograma, lo primero que se
  * veia era una pantalla con un cartel de pago encima y un "Vista Previa"
  * cruzado: se veia tan mal que quitaba las ganas de pagar, que es exactamente
- * lo contrario de lo que tiene que hacer. Dando un segundo, primero se ve el
+ * lo contrario de lo que tiene que hacer. Dando ese respiro, primero se ve el
  * regalo —que es lo que convence— y luego lo que cuesta.
  */
 const MS_ANTES_DEL_COBRO = 3000;
@@ -67,7 +67,6 @@ function getCulqiLink(price: number) {
 function RouteComponent() {
   const lovepage = Route.useLoaderData();
   const router = useRouter();
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   useEffect(() => {
     if (lovepage.price <= 0 || lovepage.isPaid) return;
@@ -130,10 +129,53 @@ function RouteComponent() {
 
   /*
    * El enlace de pago de Culqi que corresponde a este precio, si lo hay.
-   * Sin enlace para ese monto se cae al Yape de siempre.
+   *
+   * Los enlaces se crean a mano en el panel, uno por monto, asi que un plan
+   * recien cambiado de precio se queda sin el suyo hasta que alguien lo cree.
+   * Hoy le pasa a Girasol: mientras no tenga enlace, su cobro va por WhatsApp.
    */
   const culqiLink = getCulqiLink(lovepage.price);
-  const openCheckout = () => setCheckoutOpen(true);
+
+  /*
+   * El cobro por WhatsApp, para los planes que aun no tienen enlace de Culqi.
+   *
+   * Se anota el pago como pendiente antes de salir: al saltar al chat la
+   * pestana se va, y guardarlo despues nos dejaria un mensaje de alguien que
+   * no aparece en ninguna lista.
+   *
+   * El enlace del regalo es `window.location.href` y no uno armado: estamos
+   * en la pagina del regalo, asi que esta es su direccion buena, con el
+   * dominio y el subpath que de verdad tenga el despliegue.
+   */
+  const [comprando, setComprando] = useState(false);
+  const [avisoDeCompra, setAvisoDeCompra] = useState<string | null>(null);
+  const comprarPorWhatsapp = async () => {
+    if (comprando) return;
+    setComprando(true);
+    setAvisoDeCompra(null);
+    try {
+      const chat = await registrarCompraPorWhatsapp({
+        pageId: lovepage.id,
+        enlace: window.location.href,
+      });
+      if (!chat) {
+        setAvisoDeCompra(
+          'Anotamos tu compra. Escríbenos por WhatsApp con el enlace de esta página para activarla.'
+        );
+        return;
+      }
+      window.location.assign(chat);
+    } catch (error) {
+      setAvisoDeCompra(
+        error instanceof Error
+          ? error.message
+          : 'No se pudo registrar tu compra'
+      );
+    } finally {
+      setComprando(false);
+    }
+  };
+
   const paymentButton = culqiLink ? (
     <Button asChild className={ctaClassName}>
       <a href={culqiLink} target="_blank" rel="noreferrer">
@@ -141,8 +183,12 @@ function RouteComponent() {
       </a>
     </Button>
   ) : (
-    <Button onClick={openCheckout} className={ctaClassName}>
-      Comprar plan
+    <Button
+      onClick={comprarPorWhatsapp}
+      disabled={comprando}
+      className={ctaClassName}
+    >
+      {comprando ? 'Un momento…' : 'Comprar por WhatsApp'}
     </Button>
   );
 
@@ -165,8 +211,16 @@ function RouteComponent() {
               Activa tu enlace permanente por S/ {lovepage.price.toFixed(2)}.
               {culqiLink
                 ? ' Paga en línea con CulqiLink.'
-                : ' Paga por Yape y lo abrimos apenas verifiquemos.'}
+                : ' Te escribimos por WhatsApp para cerrar la compra.'}
             </p>
+            {avisoDeCompra && (
+              <p
+                role="alert"
+                className="mt-1 text-sm font-medium text-amber-700 dark:text-amber-400"
+              >
+                {avisoDeCompra}
+              </p>
+            )}
           </div>
           {paymentButton}
         </div>
@@ -209,14 +263,15 @@ function RouteComponent() {
         </div>
       )}
 
-      {!culqiLink && (
-        <YapeDialog
-          open={checkoutOpen}
-          onOpenChange={setCheckoutOpen}
-          pageId={lovepage.id}
-          precio={lovepage.price}
-        />
-      )}
+      {/*
+        Aqui estaba el Yape —QR, captura y revision a mano— como respaldo de
+        los planes sin enlace de Culqi. Ese respaldo ahora es WhatsApp, asi que
+        el dialogo se queda sin puerta de entrada.
+
+        `YapeDialog` no se borra: es "por mientras", y el dia que Girasol tenga
+        su enlace de Culqi puede que se quiera volver a colgar de algun sitio.
+        Si para entonces sigue sin usarse, ese es el momento de quitarlo.
+      */}
     </>
   );
 }

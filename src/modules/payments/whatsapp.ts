@@ -29,9 +29,18 @@ const COMPROBANTE_PENDIENTE = 'whatsapp://pendiente-de-captura';
 const NOMBRE_PENDIENTE = 'Pendiente por WhatsApp';
 const CORREO_PENDIENTE = 'pendiente@flores-amarillas.pe';
 
-/** El texto que llega al chat. */
-export function mensajeDeCompra(enlace: string, codigo: string): string {
-  return `hola quiero comprar esta plantilla "${enlace}" con el código "${codigo}"`;
+/**
+ * El texto que llega al chat.
+ *
+ * El codigo es opcional porque hay dos puertas a este camino: la del codigo
+ * promocional, desde el formulario, y la del plan que todavia no tiene enlace
+ * de pago en Culqi, desde la propia pagina del regalo. La segunda no tiene
+ * ningun codigo que mencionar y nombrarlo vacio solo confundiria a quien lea
+ * el mensaje del otro lado.
+ */
+export function mensajeDeCompra(enlace: string, codigo?: string): string {
+  const base = `hola quiero comprar esta plantilla "${enlace}"`;
+  return codigo ? `${base} con el código "${codigo}"` : base;
 }
 
 /**
@@ -43,7 +52,7 @@ export function mensajeDeCompra(enlace: string, codigo: string): string {
  */
 export function enlaceDeWhatsapp(
   enlace: string,
-  codigo: string
+  codigo?: string
 ): string | null {
   const telefono = env.VITE_WHATSAPP_PHONE;
   if (!telefono) return null;
@@ -65,7 +74,8 @@ export async function registrarCompraPorWhatsapp(datos: {
   pageId: string;
   /** El enlace del regalo, absoluto: es lo que se pega en el chat. */
   enlace: string;
-  codigo: string;
+  /** Solo cuando se llega por un codigo promocional. */
+  codigo?: string;
 }): Promise<string | null> {
   const guardado = await pagoRepository.registrar({
     pageId: datos.pageId,
