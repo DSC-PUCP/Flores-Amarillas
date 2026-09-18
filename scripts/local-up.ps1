@@ -73,6 +73,17 @@ try {
   Remove-Item -LiteralPath $startLog -Force -ErrorAction SilentlyContinue
 }
 
+Write-Host 'Aplicando migraciones pendientes a Supabase local...'
+$ErrorActionPreference = 'Continue'
+$migrationResult = & $supabase migration up --local 2>&1
+$migrationExitCode = $LASTEXITCODE
+$ErrorActionPreference = 'Stop'
+if ($migrationExitCode -ne 0) {
+  $migrationDetails = ($migrationResult | Select-Object -Last 15 | Out-String).Trim()
+  if (-not $migrationDetails) { $migrationDetails = 'No se recibió información adicional.' }
+  throw "No se pudieron aplicar las migraciones locales: $migrationDetails"
+}
+
 $ErrorActionPreference = 'Continue'
 $statusJson = & $supabase status --output json 2>$null
 $statusExitCode = $LASTEXITCODE
@@ -83,12 +94,10 @@ if ($statusExitCode -ne 0) {
 $status = ($statusJson -join "`n") | ConvertFrom-Json
 $apiUrl = [string]$status.API_URL
 $anonKey = [string]$status.ANON_KEY
-$serviceKey = [string]$status.SERVICE_ROLE_KEY
 if (-not $anonKey) { $anonKey = [string]$status.PUBLISHABLE_KEY }
-if (-not $serviceKey) { $serviceKey = [string]$status.SECRET_KEY }
 
-if ($apiUrl -notmatch '^http://(127\.0\.0\.1|localhost):\d+$' -or -not $anonKey -or -not $serviceKey) {
-  throw 'Faltan URL o claves locales en supabase status; .env no se modificó.'
+if ($apiUrl -notmatch '^http://(127\.0\.0\.1|localhost):\d+$' -or -not $anonKey) {
+  throw 'Faltan la URL o la publishable key local en supabase status; .env no se modificó.'
 }
 
 $envPath = Join-Path $projectRoot '.env'
@@ -108,9 +117,7 @@ if ($contents -match '(?m)^VITE_SUPABASE_URL=https://') {
 $newline = if ($contents.Contains("`r`n")) { "`r`n" } else { "`n" }
 $values = [ordered]@{
   VITE_SUPABASE_URL = $apiUrl
-  VITE_SUPABASE_KEY = $anonKey
-  VITE_SERVER_URL = 'http://localhost:5173'
-  SUPABASE_SERVICE_ROLE_KEY = $serviceKey
+  VITE_SUPABASE_PUBLISHABLE_KEY = $anonKey
 }
 foreach ($name in $values.Keys) {
   $line = $name + '=' + $values[$name]
@@ -125,7 +132,6 @@ foreach ($name in $values.Keys) {
 
 Write-Host "Supabase local listo: $apiUrl (Studio: http://127.0.0.1:54323)"
 Write-Host 'Claves locales guardadas en .env sin mostrarlas.'
-Write-Host 'Para probar Flow en sandbox, SERVER_URL debe ser la URL HTTPS de ngrok hacia el puerto 5173.'
 
 $existingListener = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($existingListener) {

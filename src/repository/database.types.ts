@@ -48,21 +48,21 @@ export type Database = {
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Insert: {
           id?: number;
           name: string;
           price: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Update: {
           id?: number;
           name?: string;
           price?: number;
           description: string;
-          features:Json;
+          features: Json;
         };
         Relationships: [];
       };
@@ -113,9 +113,6 @@ export type Database = {
           config_json: Json;
           is_paid: boolean | null;
           expires_at: string | null;
-          flow_checkout_url: string | null;
-          flow_order: number | null;
-          flow_amount: number | null;
           promo_id: number | null;
         };
         Insert: {
@@ -124,9 +121,6 @@ export type Database = {
           config_json: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
-          flow_checkout_url?: string | null;
-          flow_order?: number | null;
-          flow_amount?: number | null;
           promo_id?: number | null;
         };
         Update: {
@@ -135,9 +129,6 @@ export type Database = {
           config_json?: Json;
           is_paid?: boolean | null;
           expires_at?: string | null;
-          flow_checkout_url?: string | null;
-          flow_order?: number | null;
-          flow_amount?: number | null;
           promo_id?: number | null;
         };
         Relationships: [
@@ -249,7 +240,20 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      pagos_pendientes: {
+        Row: {
+          pago_id: string;
+          creado_en: string;
+          nombre: string;
+          correo: string;
+          comprobante_url: string;
+          enlace: string;
+          precio: number;
+          plantilla: string;
+          pagina_activa: boolean | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       revisar_promo: {
@@ -264,6 +268,10 @@ export type Database = {
         Args: { codigo_promo: string; pagina: string };
         /** Lo que le toca pagar a esa pagina: 0 si el codigo ya la abrio. */
         Returns: number;
+      };
+      activar_pago: {
+        Args: { pago_id: string };
+        Returns: { page_id: string; enlace: string }[];
       };
     };
     Enums: {

@@ -7,12 +7,13 @@ import { promoRepository } from '@/repository/promos';
 import { storageRepository } from '@/repository/storage';
 
 // Tiempo que vive el preview de un plan pagado antes de expirar.
-// La vista previa puede vencer mientras Flow confirma un pago asincrono;
-// un pago confirmado limpia expires_at y reactiva la pagina.
+// La vista previa puede vencer mientras se verifica el Yape;
+// al aprobar el pago se limpia expires_at y se reactiva la pagina.
 //
 // OJO: cambiar este numero NO cambia nada. El valor que se guarda lo fija el
-// trigger set_page_insert_defaults (supabase/migrations/0003_flow_pages.sql),
-// que sobrescribe expires_at en cada INSERT sin mirar lo que manda el cliente.
+// trigger set_page_insert_defaults (definido historicamente en 0003 y
+// actualizado en 0007), que sobrescribe expires_at en cada INSERT sin mirar
+// lo que manda el cliente.
 // Para ajustar el plazo real hay que tocar esa migracion.
 const PREVIEW_EXPIRATION_MINUTES = 45;
 

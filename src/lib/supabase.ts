@@ -5,25 +5,32 @@ import { env } from '@/env';
 import type { Database } from '@/repository/database.types';
 
 const getSupabaseServerClient = () =>
-  createServerClient<Database>(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_KEY, {
-    cookies: {
-      getAll: () => {
-        const cookies = getCookies();
-        return Object.entries(cookies).map(([name, value]) => ({
-          name,
-          value,
-        }));
+  createServerClient<Database>(
+    env.VITE_SUPABASE_URL,
+    env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    {
+      cookies: {
+        getAll: () => {
+          const cookies = getCookies();
+          return Object.entries(cookies).map(([name, value]) => ({
+            name,
+            value,
+          }));
+        },
+        setAll: (cookies) => {
+          cookies.forEach(({ name, value, options }) => {
+            setCookie(name, value, options);
+          });
+        },
       },
-      setAll: (cookies) => {
-        cookies.forEach(({ name, value, options }) => {
-          setCookie(name, value, options);
-        });
-      },
-    },
-  });
+    }
+  );
 
 const getSupabaseBrowserClient = () =>
-  createBrowserClient<Database>(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_KEY);
+  createBrowserClient<Database>(
+    env.VITE_SUPABASE_URL,
+    env.VITE_SUPABASE_PUBLISHABLE_KEY
+  );
 
 const getSupabaseClient = createIsomorphicFn()
   .server(() => getSupabaseServerClient())

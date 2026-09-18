@@ -2,31 +2,37 @@ import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
 export const env = createEnv({
-  server: {
-    SERVER_URL: z.url().optional(),
-
-    FLOW_API_KEY: z.string().min(1).optional(),
-    FLOW_SECRET_KEY: z.string().min(1).optional(),
-    FLOW_MODE: z.enum(['sandbox', 'production']).default('sandbox'),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
-  },
+  server: {},
 
   clientPrefix: 'VITE_',
 
   client: {
-    VITE_APP_TITLE: z.string().min(1).optional(),
     VITE_SUPABASE_URL: z.url(),
-    VITE_SUPABASE_KEY: z.string(),
+    VITE_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
     VITE_SERVER_URL: z.url().optional(),
+
+    /*
+     * Los enlaces de pago de Culqi, uno por precio de plan.
+     *
+     * Son enlaces creados a mano en el panel de Culqi, no una integracion por
+     * API: por eso viven en el entorno y no en la base. `VITE_` porque el
+     * navegador los abre y no tienen nada secreto —cualquiera que llegue a la
+     * pagina de pago ve la misma direccion—.
+     *
+     * Opcionales a proposito. Venian como `z.url()` obligatorias y eso impedia
+     * arrancar la app a quien no los tuviera —en local, o en un despliegue que
+     * aun no los haya puesto—; sin ellos el cobro cae al Yape de siempre, que
+     * es justo el respaldo que ya estaba escrito.
+     */
+    VITE_CULQI_LINK_9: z.url().optional(),
+    VITE_CULQI_LINK_11: z.url().optional(),
 
     /*
      * El WhatsApp al que se manda a quien compra con un codigo con precio.
      * Solo digitos y con codigo de pais, como lo quiere wa.me: 51951722132.
      *
-     * Opcional para que la app siga arrancando sin el —en local, o en un
-     * despliegue que aun no lo tenga puesto—; el boton avisa en vez de mandar
-     * a un chat vacio. Ya estaba declarada en el workflow de deploy y no la
-     * leia nadie.
+     * Opcional para que la app siga arrancando sin el; el boton avisa en vez
+     * de mandar a un chat vacio.
      */
     VITE_WHATSAPP_PHONE: z
       .string()
@@ -34,14 +40,7 @@ export const env = createEnv({
       .optional(),
   },
 
-  runtimeEnv: {
-    ...import.meta.env,
-    FLOW_API_KEY: process.env.FLOW_API_KEY,
-    FLOW_SECRET_KEY: process.env.FLOW_SECRET_KEY,
-    FLOW_MODE: process.env.FLOW_MODE,
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    SERVER_URL: process.env.SERVER_URL,
-  },
+  runtimeEnv: import.meta.env,
 
   emptyStringAsUndefined: true,
 });

@@ -50,15 +50,7 @@ bun run dev
 | Variable | Obligatoria | Para qué |
 |----------|-------------|----------|
 | `VITE_SUPABASE_URL` | sí | URL del proyecto de Supabase |
-| `VITE_SUPABASE_KEY` | sí | Clave anónima de Supabase |
-| `VITE_WHATSAPP_PHONE` | sí | Número **institucional** de ventas, formato internacional sin `+` ni espacios (ej. `51987654321`) |
-| `VITE_SERVER_URL` | sí en producción | URL pública; se usa para armar los enlaces que se comparten |
-| `VITE_APP_TITLE` | no | Título de la app |
-| `API_SECRET` | sí en producción | Secreto del endpoint `/api/activate` |
-
-⚠️ **Nunca escribas el número de WhatsApp ni credenciales directamente en el
-código.** El proyecto original quedó con números personales incrustados; por eso
-ahora todo pasa por variables de entorno.
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | sí | Clave pública de Supabase |
 
 ## Scripts
 

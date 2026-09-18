@@ -15,10 +15,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LovepageLovepageIdRouteImport } from './routes/lovepage.$lovepageId'
 import { Route as _layoutHomeRouteImport } from './routes/__layout/home'
 import { Route as _layoutTemplateIndexRouteImport } from './routes/__layout/template/index'
-import { Route as PaymentResultPageIdRouteImport } from './routes/payment.result.$pageId'
-import { Route as ApiPaymentCreateRouteImport } from './routes/api.payment.create'
-import { Route as ApiFlowReturnRouteImport } from './routes/api.flow.return'
-import { Route as ApiFlowConfirmRouteImport } from './routes/api.flow.confirm'
 import { Route as _layoutTemplateIdRouteImport } from './routes/__layout/template/$id'
 
 const PreviewRoute = PreviewRouteImport.update({
@@ -50,26 +46,6 @@ const _layoutTemplateIndexRoute = _layoutTemplateIndexRouteImport.update({
   path: '/template/',
   getParentRoute: () => _layoutRoute,
 } as any)
-const PaymentResultPageIdRoute = PaymentResultPageIdRouteImport.update({
-  id: '/payment/result/$pageId',
-  path: '/payment/result/$pageId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPaymentCreateRoute = ApiPaymentCreateRouteImport.update({
-  id: '/api/payment/create',
-  path: '/api/payment/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiFlowReturnRoute = ApiFlowReturnRouteImport.update({
-  id: '/api/flow/return',
-  path: '/api/flow/return',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiFlowConfirmRoute = ApiFlowConfirmRouteImport.update({
-  id: '/api/flow/confirm',
-  path: '/api/flow/confirm',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const _layoutTemplateIdRoute = _layoutTemplateIdRouteImport.update({
   id: '/template/$id',
   path: '/template/$id',
@@ -82,10 +58,6 @@ export interface FileRoutesByFullPath {
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/template/$id': typeof _layoutTemplateIdRoute
-  '/api/flow/confirm': typeof ApiFlowConfirmRoute
-  '/api/flow/return': typeof ApiFlowReturnRoute
-  '/api/payment/create': typeof ApiPaymentCreateRoute
-  '/payment/result/$pageId': typeof PaymentResultPageIdRoute
   '/template': typeof _layoutTemplateIndexRoute
 }
 export interface FileRoutesByTo {
@@ -94,10 +66,6 @@ export interface FileRoutesByTo {
   '/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/template/$id': typeof _layoutTemplateIdRoute
-  '/api/flow/confirm': typeof ApiFlowConfirmRoute
-  '/api/flow/return': typeof ApiFlowReturnRoute
-  '/api/payment/create': typeof ApiPaymentCreateRoute
-  '/payment/result/$pageId': typeof PaymentResultPageIdRoute
   '/template': typeof _layoutTemplateIndexRoute
 }
 export interface FileRoutesById {
@@ -108,10 +76,6 @@ export interface FileRoutesById {
   '/__layout/home': typeof _layoutHomeRoute
   '/lovepage/$lovepageId': typeof LovepageLovepageIdRoute
   '/__layout/template/$id': typeof _layoutTemplateIdRoute
-  '/api/flow/confirm': typeof ApiFlowConfirmRoute
-  '/api/flow/return': typeof ApiFlowReturnRoute
-  '/api/payment/create': typeof ApiPaymentCreateRoute
-  '/payment/result/$pageId': typeof PaymentResultPageIdRoute
   '/__layout/template/': typeof _layoutTemplateIndexRoute
 }
 export interface FileRouteTypes {
@@ -122,10 +86,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/lovepage/$lovepageId'
     | '/template/$id'
-    | '/api/flow/confirm'
-    | '/api/flow/return'
-    | '/api/payment/create'
-    | '/payment/result/$pageId'
     | '/template'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -134,10 +94,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/lovepage/$lovepageId'
     | '/template/$id'
-    | '/api/flow/confirm'
-    | '/api/flow/return'
-    | '/api/payment/create'
-    | '/payment/result/$pageId'
     | '/template'
   id:
     | '__root__'
@@ -147,10 +103,6 @@ export interface FileRouteTypes {
     | '/__layout/home'
     | '/lovepage/$lovepageId'
     | '/__layout/template/$id'
-    | '/api/flow/confirm'
-    | '/api/flow/return'
-    | '/api/payment/create'
-    | '/payment/result/$pageId'
     | '/__layout/template/'
   fileRoutesById: FileRoutesById
 }
@@ -159,10 +111,6 @@ export interface RootRouteChildren {
   _layoutRoute: typeof _layoutRouteWithChildren
   PreviewRoute: typeof PreviewRoute
   LovepageLovepageIdRoute: typeof LovepageLovepageIdRoute
-  ApiFlowConfirmRoute: typeof ApiFlowConfirmRoute
-  ApiFlowReturnRoute: typeof ApiFlowReturnRoute
-  ApiPaymentCreateRoute: typeof ApiPaymentCreateRoute
-  PaymentResultPageIdRoute: typeof PaymentResultPageIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -209,34 +157,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _layoutTemplateIndexRouteImport
       parentRoute: typeof _layoutRoute
     }
-    '/payment/result/$pageId': {
-      id: '/payment/result/$pageId'
-      path: '/payment/result/$pageId'
-      fullPath: '/payment/result/$pageId'
-      preLoaderRoute: typeof PaymentResultPageIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/payment/create': {
-      id: '/api/payment/create'
-      path: '/api/payment/create'
-      fullPath: '/api/payment/create'
-      preLoaderRoute: typeof ApiPaymentCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/flow/return': {
-      id: '/api/flow/return'
-      path: '/api/flow/return'
-      fullPath: '/api/flow/return'
-      preLoaderRoute: typeof ApiFlowReturnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/flow/confirm': {
-      id: '/api/flow/confirm'
-      path: '/api/flow/confirm'
-      fullPath: '/api/flow/confirm'
-      preLoaderRoute: typeof ApiFlowConfirmRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/__layout/template/$id': {
       id: '/__layout/template/$id'
       path: '/template/$id'
@@ -267,10 +187,6 @@ const rootRouteChildren: RootRouteChildren = {
   _layoutRoute: _layoutRouteWithChildren,
   PreviewRoute: PreviewRoute,
   LovepageLovepageIdRoute: LovepageLovepageIdRoute,
-  ApiFlowConfirmRoute: ApiFlowConfirmRoute,
-  ApiFlowReturnRoute: ApiFlowReturnRoute,
-  ApiPaymentCreateRoute: ApiPaymentCreateRoute,
-  PaymentResultPageIdRoute: PaymentResultPageIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

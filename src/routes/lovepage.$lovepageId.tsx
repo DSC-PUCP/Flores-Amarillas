@@ -2,6 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { env } from '@/env';
 import { LovepageService } from '@/modules/lovepage/services';
 import { YapeDialog } from '@/modules/payments/components/YapeDialog';
 import { PlanService } from '@/modules/plan/services';
@@ -31,7 +32,7 @@ export const Route = createFileRoute('/lovepage/$lovepageId')({
       // Lo necesita el cierre de los ejemplos, para "Configurar esta
       // plantilla": el id del diseno, no el de la pagina.
       templateId: template.id,
-      price: lovepage.flowAmount ?? plan.price,
+      price: plan.price,
     };
   },
   component: RouteComponent,
@@ -51,6 +52,17 @@ const MS_ANTES_DEL_COBRO = 3000;
 
 const ctaClassName =
   'rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-6 py-3 font-semibold text-white shadow-lg shadow-amber-500/30 hover:from-amber-400 hover:to-yellow-400';
+
+function getCulqiLink(price: number) {
+  switch (Math.round(price * 100)) {
+    case 900:
+      return env.VITE_CULQI_LINK_9;
+    case 1100:
+      return env.VITE_CULQI_LINK_11;
+    default:
+      return null;
+  }
+}
 
 function RouteComponent() {
   const lovepage = Route.useLoaderData();
@@ -115,10 +127,24 @@ function RouteComponent() {
   // con el en las dependencias, y una funcion nueva en cada render la haria
   // repetirse. Con el setter de estado, que React mantiene estable, no pasa.
   const [avisarDelFinal] = useState(() => () => setEjemploTerminado(true));
-  // Se ignora `flowCheckoutUrl` a proposito: las paginas creadas antes traen
-  // una orden de Flow que ya no lleva a ningun lado, y mandar ahi a alguien
-  // que quiere pagar es peor que no ofrecerle nada.
+
+  /*
+   * El enlace de pago de Culqi que corresponde a este precio, si lo hay.
+   * Sin enlace para ese monto se cae al Yape de siempre.
+   */
+  const culqiLink = getCulqiLink(lovepage.price);
   const openCheckout = () => setCheckoutOpen(true);
+  const paymentButton = culqiLink ? (
+    <Button asChild className={ctaClassName}>
+      <a href={culqiLink} target="_blank" rel="noreferrer">
+        Pagar con CulqiLink
+      </a>
+    </Button>
+  ) : (
+    <Button onClick={openCheckout} className={ctaClassName}>
+      Comprar plan
+    </Button>
+  );
 
   return (
     <>
@@ -137,12 +163,12 @@ function RouteComponent() {
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300">
               Activa tu enlace permanente por S/ {lovepage.price.toFixed(2)}.
-              Pagas por Yape y lo abrimos apenas verifiquemos.
+              {culqiLink
+                ? ' Paga en línea con CulqiLink.'
+                : ' Paga por Yape y lo abrimos apenas verifiquemos.'}
             </p>
           </div>
-          <Button onClick={openCheckout} className={ctaClassName}>
-            Comprar plan
-          </Button>
+          {paymentButton}
         </div>
       )}
 
@@ -178,21 +204,19 @@ function RouteComponent() {
               Tu página está guardada y vuelve completa en cuanto confirmemos tu
               pago.
             </p>
-            {needsPayment && (
-              <Button onClick={openCheckout} className={ctaClassName}>
-                {`Comprar plan por S/ ${lovepage.price.toFixed(2)}`}
-              </Button>
-            )}
+            {needsPayment && paymentButton}
           </div>
         </div>
       )}
 
-      <YapeDialog
-        open={checkoutOpen}
-        onOpenChange={setCheckoutOpen}
-        pageId={lovepage.id}
-        precio={lovepage.price}
-      />
+      {!culqiLink && (
+        <YapeDialog
+          open={checkoutOpen}
+          onOpenChange={setCheckoutOpen}
+          pageId={lovepage.id}
+          precio={lovepage.price}
+        />
+      )}
     </>
   );
 }

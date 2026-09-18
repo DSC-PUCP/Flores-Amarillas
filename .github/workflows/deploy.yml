@@ -24,7 +24,10 @@ jobs:
         run: bun run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
+          # Puente durante el cambio de nombre: usa la clave nueva si ya existe
+          # como secreto, y si no la de siempre. Asi el deploy no se cae el dia
+          # que entra el renombrado y antes de crear el secreto nuevo.
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_KEY }}
           VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
           VITE_WHATSAPP_PHONE: ${{ vars.VITE_WHATSAPP_PHONE }}
           API_SECRET: ${{ secrets.API_SECRET }}
