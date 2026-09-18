@@ -23,44 +23,82 @@ export default function Slide5({
   const textRef = React.useRef<HTMLParagraphElement>(null);
 
   React.useEffect(() => {
-    const adjustTextSize = () => {
-      if (!containerRef.current || !textRef.current) return;
-      const container = containerRef.current;
-      const text = textRef.current;
-      
-      // Si el contenedor no tiene altura (ej. la imagen no ha cargado), no hacer nada
-      if (container.clientHeight === 0) return;
-      
-      let min = 0.5; // rem
-      let max = 2.5; // rem
-      let size = max;
-      
-      for (let i = 0; i < 10; i++) {
-        text.style.fontSize = `${size}rem`;
-        if (text.scrollHeight <= container.clientHeight && text.scrollWidth <= container.clientWidth) {
-          min = size;
-          size = (min + max) / 2;
-        } else {
-          max = size;
-          size = (min + max) / 2;
-        }
-      }
-      
-      text.style.fontSize = `${min * 0.95}rem`;
+    const container = containerRef.current;
+    const text = textRef.current;
+    if (!container || !text) return;
+
+    const MIN_REM = 0.5;
+    const MAX_REM = 2.5;
+    const MARGEN = 0.95; // respiro para que el texto no bese el borde
+    const PRECISION = 0.01; // rem
+
+    let frame = 0;
+
+    const cabe = (rem: number, dispH: number, dispW: number) => {
+      text.style.fontSize = `${rem}rem`;
+      return text.scrollHeight <= dispH && text.scrollWidth <= dispW;
     };
 
-    adjustTextSize();
+    const adjustTextSize = () => {
+      // Si el contenedor no tiene altura (ej. la imagen no ha cargado), no hacer nada
+      if (container.clientHeight === 0) return;
 
-    // Usar ResizeObserver para recalcular exactamente cuando la imagen carga y expande el div
+      // clientHeight/clientWidth incluyen el padding, pero el parrafo solo
+      // dispone de la caja de contenido. Si no lo descontamos le regalamos los
+      // 96-128px de p-12/p-14/p-16 y el texto acaba pintado sobre el margen
+      // decorativo de la carta, que es justo lo que queriamos evitar.
+      const cs = getComputedStyle(container);
+      const dispH =
+        container.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const dispW =
+        container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      if (dispH <= 0 || dispW <= 0) return;
+
+      // El techo primero: si el mensaje es corto no hay nada que buscar.
+      if (cabe(MAX_REM, dispH, dispW)) {
+        text.style.fontSize = `${MAX_REM * MARGEN}rem`;
+        return;
+      }
+
+      // Y el piso, que tampoco se puede dar por bueno: `whitespace-pre-wrap`
+      // respeta los saltos de linea, asi que un mensaje con muchos no cabe ni
+      // al minimo. Nos quedamos en el minimo y que `overflow-hidden` recorte.
+      if (!cabe(MIN_REM, dispH, dispW)) {
+        text.style.fontSize = `${MIN_REM}rem`;
+        return;
+      }
+
+      // Busqueda binaria del mayor tamaño que cabe: `min` siempre es un tamaño
+      // ya verificado y `max` siempre uno descartado.
+      let min = MIN_REM;
+      let max = MAX_REM;
+      while (max - min > PRECISION) {
+        const medio = (min + max) / 2;
+        if (cabe(medio, dispH, dispW)) {
+          min = medio;
+        } else {
+          max = medio;
+        }
+      }
+
+      text.style.fontSize = `${min * MARGEN}rem`;
+    };
+
+    // ResizeObserver recalcula exactamente cuando la imagen carga y expande el
+    // div (y tambien al cambiar el tamaño de la ventana). Dispara en cada frame
+    // mientras se arrastra el borde, asi que coalescemos: cada pasada hace una
+    // decena de escrituras+lecturas de layout y no queremos repetirlas por gusto.
     const observer = new ResizeObserver(() => {
-      adjustTextSize();
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(adjustTextSize);
     });
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    // observe() ya entrega una observacion inicial, no hace falta invocar
+    // adjustTextSize() por separado.
+    observer.observe(container);
 
     return () => {
+      cancelAnimationFrame(frame);
       observer.disconnect();
     };
   }, [userMessage]);
@@ -162,7 +200,7 @@ export default function Slide5({
             >
               <p 
                 ref={textRef}
-                className="text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words m-0"
+                className="text-xl text-[#082b60] font-dancing leading-relaxed text-center whitespace-pre-wrap break-words m-0"
               >
                 {userMessage}
               </p>
