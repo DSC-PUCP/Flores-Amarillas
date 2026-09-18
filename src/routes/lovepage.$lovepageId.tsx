@@ -167,7 +167,7 @@ function RouteComponent() {
   const paymentButton = culqiLink ? (
     <Button asChild className={ctaClassName}>
       <a href={culqiLink} target="_blank" rel="noreferrer">
-        Pagar con CulqiLink
+        Pagar
       </a>
     </Button>
   ) : (
@@ -176,7 +176,7 @@ function RouteComponent() {
       disabled={comprando}
       className={ctaClassName}
     >
-      {comprando ? 'Un momento…' : 'Comprar por WhatsApp'}
+      {comprando ? 'Un momento…' : 'Pagar'}
     </Button>
   );
 
