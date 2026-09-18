@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import {
   ArrowLeft,
   ArrowRight,
+  Eye,
   Flower2,
   Heart,
   ImageOff,
@@ -11,6 +12,7 @@ import { useState } from 'react';
 import type { Template } from '@/core/models/template';
 import { imagenes } from '@/lib/imagenes';
 import { usePlans } from '../landing/hooks/usePlans';
+import { ejemploDe, porDestacados } from './components/config/ejemplos';
 import { PremiumThumbnail } from './components/templates/plantilla_giano_feat_leo/components/premium-thumbnail';
 import { useTemplates } from './hooks/useTemplate';
 
@@ -141,9 +143,17 @@ export function TemplateContent() {
       replace: true,
     });
   const visibleTemplates = templates.filter((template) => template.isVisible);
-  const filteredTemplates = visibleTemplates.filter(
-    (template) => selectedPlan === TODOS || template.tipoPlan === selectedPlan
-  );
+  /*
+   * `sort` sobre una copia: `filter` ya devuelve un array nuevo, pero dejarlo
+   * escrito evita que un dia se ordene el array de la query y React Query
+   * reparta a otros el orden cambiado. El comparador solo sube los destacados;
+   * `sort` es estable, asi que el resto conserva el orden de la base.
+   */
+  const filteredTemplates = visibleTemplates
+    .filter(
+      (template) => selectedPlan === TODOS || template.tipoPlan === selectedPlan
+    )
+    .sort(porDestacados);
   const planNames = [TODOS, ...new Set(plans.map((plan) => plan.name))].filter(
     (name, index, names) => names.indexOf(name) === index
   );
@@ -282,37 +292,56 @@ export function TemplateContent() {
                           {template.description}
                         </p>
                       )}
-                      <div className="mt-auto pt-6">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            navigate({ to: `/template/${template.id}` })
-                          }
-                          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#FFD329] px-4 py-3 text-sm font-semibold text-[#183E32] hover:bg-[#F0C51C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
-                        >
-                          Personalizar este diseño{' '}
-                          <ArrowRight size={16} className="shrink-0" />
-                        </button>
-                        {(template.templateKey === 'plantilla_gratuita' ||
-                          template.templateKey ===
-                            'plantilla_giano_feat_leo') && (
-                          <Link
-                            to="/preview"
-                            search={{
-                              template:
-                                template.templateKey ===
-                                'plantilla_giano_feat_leo'
-                                  ? 'premium'
-                                  : 'free',
-                              recipient: 'Sofía',
-                              message:
-                                'Estas flores son para recordarte lo mucho que te quiero.',
-                              embed: false,
-                            }}
-                            className="mt-3 flex min-h-11 items-center justify-center text-xs font-semibold underline decoration-[#183E32]/30 underline-offset-4 hover:decoration-[#183E32] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
+                      {/*
+                        Ver el ejemplo es la accion principal, no un enlace
+                        pequeno debajo. Quien llega no sabe que va a recibir su
+                        persona querida, y hasta que no lo ve no tiene con que
+                        decidir: ensenarselo de un clic es lo que vende. Abre la
+                        pagina de ejemplo, ya activada, tal como la recibe esa
+                        persona.
+
+                        Personalizar sigue a la vista y a un clic, en
+                        secundario. Si un diseno nuevo todavia no tiene ejemplo
+                        (ver `ejemplos.ts`), personalizar vuelve a ser el boton
+                        principal y la tarjeta no queda coja.
+                      */}
+                      <div className="mt-auto flex flex-col gap-3 pt-6">
+                        {ejemploDe(template.templateKey) ? (
+                          <>
+                            <Link
+                              to="/lovepage/$lovepageId"
+                              params={{
+                                lovepageId: ejemploDe(
+                                  template.templateKey
+                                ) as string,
+                              }}
+                              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#FFD329] px-4 py-3 text-sm font-semibold text-[#183E32] hover:bg-[#F0C51C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
+                            >
+                              <Eye size={16} className="shrink-0" />
+                              Ver el ejemplo completo
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                navigate({ to: `/template/${template.id}` })
+                              }
+                              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#183E32]/20 px-4 py-3 text-sm font-semibold text-[#183E32] hover:border-[#183E32]/50 hover:bg-[#FFFCF4] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
+                            >
+                              Personalizar este diseño{' '}
+                              <ArrowRight size={16} className="shrink-0" />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              navigate({ to: `/template/${template.id}` })
+                            }
+                            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#FFD329] px-4 py-3 text-sm font-semibold text-[#183E32] hover:bg-[#F0C51C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#183E32]"
                           >
-                            Ver ejemplo
-                          </Link>
+                            Personalizar este diseño{' '}
+                            <ArrowRight size={16} className="shrink-0" />
+                          </button>
                         )}
                       </div>
                     </div>

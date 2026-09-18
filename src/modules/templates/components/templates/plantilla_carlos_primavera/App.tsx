@@ -64,8 +64,7 @@ export const plantillaCarlosPrimaveraForm = [
         type: 'textarea',
         max_length: 250,
         required: true,
-        default:
-          'Contigo hasta lo normal se vuelve bonito. (texto de prueba)',
+        default: 'Contigo hasta lo normal se vuelve bonito. (texto de prueba)',
       },
     ],
   },
@@ -118,7 +117,10 @@ export const plantillaCarlosPrimaveraForm = [
   },
 ] satisfies TemplateForm;
 
-export function PlantillaCarlosPrimavera({ templateData }: TemplateSlideProps) {
+export function PlantillaCarlosPrimavera({
+  templateData,
+  onComplete,
+}: TemplateSlideProps) {
   const recipient =
     typeof templateData.personB === 'string' ? templateData.personB.trim() : '';
   const message =
@@ -135,6 +137,7 @@ export function PlantillaCarlosPrimavera({ templateData }: TemplateSlideProps) {
           : ''
       }
       songs={templateData.songs}
+      onComplete={onComplete}
       editorScene={
         typeof templateData.editorScene === 'string'
           ? templateData.editorScene

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useRouter } from '@tanstack/react-router';
 import {
   Check,
   ChevronLeft,
@@ -35,6 +35,7 @@ import { usePlanById } from '@/modules/plan/hooks/usePlan';
 import { MascotPicker } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/components/mascot-picker';
 import { readGiftMascot } from '@/modules/templates/components/templates/plantilla_giano_feat_leo/mascots';
 import { useTemplateById } from '../hooks/useTemplate';
+import { GuardaTuEnlace } from './components/GuardaTuEnlace';
 import { EditorPreview } from './editor-preview';
 import {
   type EditorScene,
@@ -53,8 +54,26 @@ const EMPTY_STEPS: import('@/core/models/template').TemplateForm = [];
 
 export function TemplateForm() {
   const navigate = useNavigate();
+  const router = useRouter();
   const params = useParams({ strict: false });
   const id = Number(params.id);
+
+  /*
+   * La direccion del regalo, absoluta: se va a pegar en un chat, y ahi una
+   * ruta relativa no lleva a ningun sitio.
+   *
+   * La ruta la arma el router en vez de escribirla a mano, para que siga el
+   * mismo camino que los enlaces de la app si algun dia cambia. Se resuelve
+   * contra `document.baseURI`, que es lo que usa el navegador para lo mismo.
+   */
+  const enlaceDelRegalo = (pageId: string) =>
+    new URL(
+      router.buildLocation({
+        to: '/lovepage/$lovepageId',
+        params: { lovepageId: pageId },
+      }).href,
+      document.baseURI
+    ).href;
 
   const { data: template, isLoading, error } = useTemplateById(id);
   const { data: plan } = usePlanById(template?.planId ?? 0);
@@ -67,6 +86,18 @@ export function TemplateForm() {
     pageId: string;
     precio: number;
   } | null>(null);
+  /*
+   * La pagina ya creada, esperando a que se guarde el enlace.
+   *
+   * Es un paso entre generar y ver el regalo: se ensena la direccion, se
+   * copia, y solo entonces se va al regalo. Ver `GuardaTuEnlace`.
+   *
+   * No entra aqui el codigo con precio: ese abre el Yape, que ya da el enlace
+   * con el aviso de pago y lo repetiria dos veces.
+   */
+  const [paginaParaCompartir, setPaginaParaCompartir] = useState<string | null>(
+    null
+  );
   const [currentStep, setCurrentStep] = useState(0);
   const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [files, setFiles] = useState<FileUploadRef[]>([]);
@@ -214,7 +245,9 @@ export function TemplateForm() {
             return;
           }
           toast.success('¡Dedicatoria creada con éxito!');
-          navigate({ to: `/lovepage/${data}` });
+          // Antes de llevar al regalo, la direccion: es lo unico que hace que
+          // llegue a alguien, y al ver el regalo ya nadie la lee.
+          setPaginaParaCompartir(data);
         },
         onError: (err) => {
           toast.error(err.message || 'Error al crear la dedicatoria');
@@ -264,7 +297,9 @@ export function TemplateForm() {
               return;
             default:
               toast.success('¡Código aplicado! Tu regalo ya está listo.');
-              navigate({ to: `/lovepage/${canje.pageId}` });
+              // Igual que el boton de siempre: el codigo gratis tampoco pasa
+              // por el Yape, asi que el enlace no se lo dice nadie mas.
+              setPaginaParaCompartir(canje.pageId);
           }
         },
         onError: (err) => {
@@ -693,9 +728,25 @@ export function TemplateForm() {
           }}
           pageId={pagoPromo.pageId}
           precio={pagoPromo.precio}
-          enlace={`${window.location.origin}/lovepage/${pagoPromo.pageId}`}
+          enlace={enlaceDelRegalo(pagoPromo.pageId)}
         />
       )}
+
+      {/*
+        El paso del enlace, para los dos caminos que no pasan por el Yape: el
+        boton verde de siempre y el codigo que regala la pagina. El codigo con
+        precio no lo necesita —el Yape ya da el enlace con el aviso de pago—.
+      */}
+      <GuardaTuEnlace
+        open={paginaParaCompartir !== null}
+        enlace={paginaParaCompartir ? enlaceDelRegalo(paginaParaCompartir) : ''}
+        onContinuar={() => {
+          if (!paginaParaCompartir) return;
+          const pageId = paginaParaCompartir;
+          setPaginaParaCompartir(null);
+          navigate({ to: `/lovepage/${pageId}` });
+        }}
+      />
     </div>
   );
 }

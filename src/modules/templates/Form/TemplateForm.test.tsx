@@ -20,6 +20,16 @@ const { mutate, mutatePromo, navigate } = vi.hoisted(() => ({
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => navigate,
   useParams: () => ({ id: '2' }),
+  // El formulario arma con el router el enlace del regalo que ensena antes de
+  // llevar a la pagina.
+  useRouter: () => ({
+    buildLocation: ({
+      params,
+    }: {
+      to: string;
+      params: { lovepageId: string };
+    }) => ({ href: `/lovepage/${params.lovepageId}` }),
+  }),
 }));
 vi.mock('../hooks/useTemplate', () => ({
   useTemplateById: () => ({
@@ -136,6 +146,71 @@ describe('animalito de la dedicatoria premium', () => {
       expect.objectContaining({ configJson: { mascot: 'rabbit' } }),
       expect.any(Object)
     );
+  });
+
+  /**
+   * Generar el regalo ya no lleva derecho a la pagina.
+   *
+   * Quien lo crea no sabe como se lo va a hacer llegar a nadie —el formulario
+   * nunca pide un correo ni un telefono—, y esa direccion es la unica que hay.
+   * Al llegar al regalo la atencion se va entera a la plantilla y el aviso se
+   * lo come la sorpresa, asi que el enlace va antes.
+   */
+  it('antes de llevar al regalo ensena el enlace para guardarlo', () => {
+    render(<TemplateForm />);
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Generar mi regalo' }));
+
+    // La pagina ya existe; es lo que responde la mutacion al crearla.
+    const [, opciones] = mutate.mock.calls.at(-1) as [
+      unknown,
+      { onSuccess: (id: string) => void },
+    ];
+    act(() => opciones.onSuccess('pagina-123'));
+
+    // El enlace se ensena absoluto, listo para pegar en un chat.
+    expect(screen.getByText(/\/lovepage\/pagina-123$/)).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /Copiar el enlace/ })
+    ).toBeTruthy();
+    // Nada de navegar todavia: el enlace se ensena antes del regalo.
+    expect(navigate).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /Ver mi regalo/ }));
+    expect(navigate).toHaveBeenCalledWith({ to: '/lovepage/pagina-123' });
+  });
+
+  /**
+   * El codigo que regala la pagina tampoco pasa por el Yape, asi que el enlace
+   * no se lo dice nadie mas. El codigo con precio si: ahi lo da el aviso de
+   * pago y repetirlo seria pedirlo dos veces.
+   */
+  it('el codigo que regala la pagina tambien ensena el enlace', () => {
+    render(<TemplateForm />);
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Revisar regalo completo' })[0]
+    );
+    fireEvent.change(screen.getByPlaceholderText(/código/i), {
+      target: { value: 'Letras219' },
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Generar mi regalo con código' })
+    );
+
+    const [, opciones] = mutatePromo.mock.calls.at(-1) as [
+      unknown,
+      { onSuccess: (canje: { estado: string; pageId: string }) => void },
+    ];
+    act(() =>
+      opciones.onSuccess({ estado: 'regalada', pageId: 'pagina-promo' })
+    );
+
+    expect(screen.getByText(/\/lovepage\/pagina-promo$/)).toBeTruthy();
+    expect(navigate).not.toHaveBeenCalled();
   });
   it('actualiza la carta sin sustituir el iframe y conserva los datos al cambiar de pestaña', () => {
     render(<TemplateForm />);

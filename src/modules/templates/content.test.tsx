@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { EJEMPLOS } from './components/config/ejemplos';
 import { TemplateContent } from './content';
 
 /** Lo que trae la URL en cada prueba. Sin plan, se ven todos los disenos. */
@@ -14,18 +15,31 @@ vi.mock('@tanstack/react-router', () => ({
   Link: ({
     to,
     search,
+    params,
     children,
-  }: PropsWithChildren<{ to: string; search?: Record<string, unknown> }>) => (
-    <a
-      href={
-        search
-          ? `${to}?${new URLSearchParams(Object.entries(search).map(([key, value]) => [key, String(value)]))}`
-          : to
-      }
-    >
-      {children}
-    </a>
-  ),
+  }: PropsWithChildren<{
+    to: string;
+    search?: Record<string, unknown>;
+    params?: Record<string, string>;
+  }>) => {
+    // Los `$param` de la ruta se sustituyen como haria el router: sin esto,
+    // el href de un ejemplo seria literalmente "/lovepage/$lovepageId".
+    const ruta = Object.entries(params ?? {}).reduce(
+      (camino, [clave, valor]) => camino.replace(`$${clave}`, valor),
+      to
+    );
+    return (
+      <a
+        href={
+          search
+            ? `${ruta}?${new URLSearchParams(Object.entries(search).map(([key, value]) => [key, String(value)]))}`
+            : ruta
+        }
+      >
+        {children}
+      </a>
+    );
+  },
 }));
 vi.mock('../landing/hooks/usePlans', () => ({
   usePlans: () => ({
@@ -83,26 +97,33 @@ describe('probar diseños del catálogo', () => {
     ).toHaveLength(1);
   });
 
-  it('abre la demo correspondiente para la gratuita y la premium', () => {
+  /**
+   * El ejemplo es la accion principal de la tarjeta y lleva a una pagina real
+   * ya activada, no a una demo con datos de relleno. Antes esto solo existia
+   * para dos disenos y salia como un enlace pequeno debajo del boton.
+   */
+  it('lleva al ejemplo desplegado de cada diseno que tenga uno', () => {
     render(<TemplateContent />);
-    const links = screen.getAllByRole('link', {
-      name: 'Ver ejemplo',
+    const enlaces = screen.getAllByRole('link', {
+      name: 'Ver el ejemplo completo',
     });
-    expect(links).toHaveLength(2);
-    const urls = links.map(
-      (link) => new URL(link.getAttribute('href') ?? '', 'http://localhost')
-    );
-    expect(urls.map((url) => url.searchParams.get('template'))).toEqual([
-      'free',
-      'premium',
+    // La gratuita y la premium tienen ejemplo; "otra" no esta en EJEMPLOS.
+    expect(enlaces).toHaveLength(2);
+    expect(enlaces.map((enlace) => enlace.getAttribute('href'))).toEqual([
+      `/lovepage/${EJEMPLOS.plantilla_gratuita}`,
+      `/lovepage/${EJEMPLOS.plantilla_giano_feat_leo}`,
     ]);
+  });
+
+  /**
+   * Sin ejemplo la tarjeta no se queda coja: personalizar vuelve a ser el
+   * boton principal, y sigue habiendo uno por diseno.
+   */
+  it('un diseno sin ejemplo conserva su boton de personalizar', () => {
+    render(<TemplateContent />);
     expect(
-      urls.every(
-        (url) =>
-          url.pathname === '/preview' &&
-          url.searchParams.get('embed') === 'false'
-      )
-    ).toBe(true);
+      screen.getAllByRole('button', { name: /Personalizar este diseño/ })
+    ).toHaveLength(3);
   });
 
   /**

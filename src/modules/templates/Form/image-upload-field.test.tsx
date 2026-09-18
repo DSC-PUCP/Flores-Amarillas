@@ -14,6 +14,16 @@ const { mutate } = vi.hoisted(() => ({ mutate: vi.fn() }));
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => vi.fn(),
   useParams: () => ({ id: '1' }),
+  // El formulario arma con el router el enlace del regalo que ensena antes de
+  // llevar a la pagina.
+  useRouter: () => ({
+    buildLocation: ({
+      params,
+    }: {
+      to: string;
+      params: { lovepageId: string };
+    }) => ({ href: `/lovepage/${params.lovepageId}` }),
+  }),
 }));
 vi.mock('../hooks/useTemplate', () => ({
   useTemplateById: () => ({

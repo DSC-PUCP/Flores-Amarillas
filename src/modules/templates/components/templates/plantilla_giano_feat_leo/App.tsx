@@ -192,6 +192,7 @@ export const plantillaGianoFeatLeoForm = [
 export function PlantillaGianoFeatLeo({
   templateData,
   isPreview = true,
+  onComplete,
 }: TemplateSlideProps) {
   const data = useMemo(() => readPremiumData(templateData), [templateData]);
   const editor = isPreview && templateData.editorPreview === true;
@@ -392,7 +393,19 @@ export function PlantillaGianoFeatLeo({
         <SceneDeck
           scenes={scenes}
           scrollRef={deckRef}
-          onSceneChange={(id) => setSongInView(id === 'song')}
+          /*
+             La ultima escena del deck cierra el recorrido. Se compara con el
+             id que toque ser el ultimo en vez de con 'finale' escrito a mano:
+             las escenas se arman segun lo que trae el regalo y la lista puede
+             cambiar de orden o de contenido.
+
+             Solo lo escucha una pagina de ejemplo; en un regalo de verdad
+             nadie pasa `onComplete`.
+          */
+          onSceneChange={(id) => {
+            setSongInView(id === 'song');
+            if (id === scenes[scenes.length - 1]?.id) onComplete?.();
+          }}
           targetScene={
             editor
               ? editorScene === 'cover' || editorScene === 'review'

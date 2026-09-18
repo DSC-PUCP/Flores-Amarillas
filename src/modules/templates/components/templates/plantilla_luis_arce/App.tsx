@@ -1,19 +1,17 @@
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import type { TemplateConfig, TemplateForm } from '@/core/models/template';
+import { useSongClips } from '@/modules/music/hooks/useSongClips';
+import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
 import type { TemplateSlideProps } from '@/modules/templates/types';
-
+import { BotonDeCancion } from './BotonDeCancion';
 import Slide1 from './Slide1';
 import Slide2 from './Slide2';
 import Slide3 from './Slide3';
 import Slide4 from './Slide4';
-
 import Slide5 from './Slide5';
 import Slide6 from './Slide6';
 import Slide7 from './Slide7';
-import { useSongClips } from '@/modules/music/hooks/useSongClips';
-import { PianoDeFondo } from '@/modules/music/PianoDeFondo';
-import { BotonDeCancion } from './BotonDeCancion';
 
 /**
  * Textos de prueba que salen ya escritos en el formulario.
@@ -88,7 +86,8 @@ export const plantillaLuisArceForm: TemplateForm = [
         type: 'textarea',
         max_length: 120,
         required: true,
-        default: 'Y en cada flor amarilla vuelvo a encontrarte. (texto de prueba)',
+        default:
+          'Y en cada flor amarilla vuelvo a encontrarte. (texto de prueba)',
       },
       {
         name: 'songs',
@@ -147,6 +146,17 @@ export function PlantillaLuisArce(props: TemplateSlideProps) {
     setCancionEncendida(true);
     music.play();
   }, [currentSlide, hayCancion, music.play]);
+
+  /*
+   * Al llegar al cierre se avisa una sola vez. Solo escucha esto una pagina de
+   * ejemplo, para poner delante su "gracias por ver este ejemplo"; en un
+   * regalo de verdad nadie pasa `onComplete` y aqui no cambia nada.
+   */
+  const { onComplete } = props;
+  useEffect(() => {
+    if (currentSlide !== ULTIMA) return;
+    onComplete?.();
+  }, [currentSlide, onComplete]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => Math.min(ULTIMA, prev + 1));

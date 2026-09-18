@@ -90,6 +90,7 @@ export function SpringWelcome({
   editorScene,
   letterMessage = '',
   sender = '',
+  onComplete,
 }: {
   recipient: string;
   cardMessage?: string;
@@ -101,6 +102,8 @@ export function SpringWelcome({
   editorScene?: string;
   letterMessage?: string;
   sender?: string;
+  /** Aviso de ultima pantalla; solo lo escuchan las paginas de ejemplo. */
+  onComplete?: () => void;
 }) {
   const [replay, setReplay] = useState(0);
   const [slide, setSlide] = useState(0);
@@ -115,6 +118,13 @@ export function SpringWelcome({
     const target = SCENE_SLIDE[editorScene];
     if (target !== undefined) setSlide(target);
   }, [editorScene]);
+
+  // Al llegar a la despedida el recorrido se acabo. Solo lo escucha una pagina
+  // de ejemplo, para poner delante su cierre; en un regalo nadie lo pasa.
+  useEffect(() => {
+    if (slide !== ULTIMA) return;
+    onComplete?.();
+  }, [slide, onComplete]);
   return (
     <main
       className={styles.spring}
@@ -194,10 +204,17 @@ export function SpringWelcome({
       ) : slide === 5 ? (
         <SpringGame recipient={recipient} />
       ) : (
-        <section className={styles.slide} aria-label="Gracias por esta primavera">
+        <section
+          className={styles.slide}
+          aria-label="Gracias por esta primavera"
+        >
           <div className={styles.frame} aria-hidden="true">
             {[0, 1, 2, 3].map((corner) => (
-              <div key={corner} className={styles.corner} data-corner={corner} />
+              <div
+                key={corner}
+                className={styles.corner}
+                data-corner={corner}
+              />
             ))}
           </div>
           <div className={styles.message}>

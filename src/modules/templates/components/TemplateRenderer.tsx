@@ -20,6 +20,17 @@ interface TemplateRendererProps {
    * Por defecto no se marca nada: quien quiera la marca tiene que pedirla.
    */
   marcaDeAgua?: boolean;
+  /**
+   * Aviso de que la plantilla llego a su ultima pantalla.
+   *
+   * Solo lo usan las paginas de ejemplo, para poner delante el cierre con
+   * "Gracias por ver este ejemplo". Un regalo de verdad no pasa nada: quien lo
+   * recibe se queda en la ultima pantalla, que es donde debe quedarse.
+   *
+   * No todas las plantillas avisan; las que se pasean en vez de recorrerse no
+   * tienen ultima pantalla. Ver `MODO_FIN` en `config/ejemplos.ts`.
+   */
+  onComplete?: () => void;
 }
 
 // Default fallback template
@@ -44,11 +55,16 @@ export function TemplateRenderer({
   isPreview = true,
   templateId,
   marcaDeAgua = false,
+  onComplete,
 }: TemplateRendererProps) {
   const TemplateComponent = TEMPLATE_COMPONENTS[templateKey] || DefaultTemplate;
   return (
     <>
-      <TemplateComponent templateData={templateData} isPreview={isPreview} />
+      <TemplateComponent
+        templateData={templateData}
+        isPreview={isPreview}
+        onComplete={onComplete}
+      />
       {marcaDeAgua && <MarcaDeAgua />}
     </>
   );
