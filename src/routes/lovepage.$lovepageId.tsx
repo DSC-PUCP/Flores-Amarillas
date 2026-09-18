@@ -47,7 +47,7 @@ export const Route = createFileRoute('/lovepage/$lovepageId')({
  * lo contrario de lo que tiene que hacer. Dando un segundo, primero se ve el
  * regalo —que es lo que convence— y luego lo que cuesta.
  */
-const MS_ANTES_DEL_COBRO = 1000;
+const MS_ANTES_DEL_COBRO = 2000;
 
 const ctaClassName =
   'rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-6 py-3 font-semibold text-white shadow-lg shadow-amber-500/30 hover:from-amber-400 hover:to-yellow-400';
