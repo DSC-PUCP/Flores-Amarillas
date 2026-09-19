@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useRouter } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   Check,
   ChevronLeft,
@@ -28,7 +28,6 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import type { FileUploadRef } from '@/core/models';
 import type { TemplateData, TemplateField } from '@/core/models/template';
-import { env } from '@/env';
 import { cn } from '@/lib/utils';
 import { SongPicker } from '@/modules/music/components/SongPicker';
 import { registrarCompraPorWhatsapp } from '@/modules/payments/whatsapp';
@@ -53,9 +52,14 @@ import { useEditorData } from './use-editor-data';
 
 const EMPTY_STEPS: import('@/core/models/template').TemplateForm = [];
 
+/** Donde vive el sitio, subpath incluido. Ver `enlaceDelRegalo`. */
+const BASES = [
+  'https://dsc.inf.pucp.edu.pe/flores-amarillas',
+  'https://flores-amarillas.a20212540.workers.dev',
+];
+
 export function TemplateForm() {
   const navigate = useNavigate();
-  const router = useRouter();
   const params = useParams({ strict: false });
   const id = Number(params.id);
 
@@ -63,28 +67,17 @@ export function TemplateForm() {
    * La direccion del regalo, absoluta: se va a pegar en un chat, y ahi una
    * ruta relativa no lleva a ningun sitio.
    *
-   * La ruta la arma el router en vez de escribirla a mano, para que siga el
-   * mismo camino que los enlaces de la app si algun dia cambia.
-   *
-   * Se concatena y no se resuelve con `new URL(ruta, base)`: `buildLocation`
-   * devuelve una ruta que empieza por "/", y una ruta asi descarta el path del
-   * base entero. En el despliegue de la PUCP el sitio cuelga de
-   * `/flores-amarillas/`, asi que el enlace salia apuntando al raiz del
-   * dominio —sin el subpath— y no abria nada.
-   *
-   * `VITE_SERVER_URL` es la direccion publica del despliegue, subpath
-   * incluido, y es lo unico que sabe donde cuelga el sitio: ni Vite ni el
-   * router llevan `base`, porque el mismo build sirve al worker (en el raiz) y
-   * a la PUCP (en el subpath). Sin ella se cae al origen, que es lo correcto
-   * para un despliegue en el raiz.
+   * Las bases van escritas a mano porque son las dos que hay y nadie mas sabe
+   * cual toca: en la PUCP el sitio cuelga de `/flores-amarillas/`, y ni Vite
+   * ni el router llevan ese subpath —el mismo build sirve a los dos sitios—,
+   * asi que el enlace salia apuntando al raiz del dominio y no abria nada.
+   * Fuera de esas dos, el origen, que es lo que vale en local.
    */
   const enlaceDelRegalo = (pageId: string) => {
-    const ruta = router.buildLocation({
-      to: '/lovepage/$lovepageId',
-      params: { lovepageId: pageId },
-    }).href;
-    const base = env.VITE_SERVER_URL ?? window.location.origin;
-    return base.replace(/\/$/, '') + ruta;
+    const base =
+      BASES.find((sitio) => sitio.startsWith(window.location.origin)) ??
+      window.location.origin;
+    return `${base}/lovepage/${pageId}`;
   };
 
   const { data: template, isLoading, error } = useTemplateById(id);
